@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://ics54374348-art.github.io/sitemap.xml
