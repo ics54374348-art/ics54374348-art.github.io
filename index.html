@@ -1,0 +1,6556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta name="description" content="임고AZ - 초등 임용 내체표, 개체표, 모형 정리 사이트">
+<meta name="robots" content="index, follow">
+  <meta charset="UTF-8">
+<title>임고AZ</title>
+<meta name="description" content="임고AZ - 초등 임용 내체표, 개체표, 모형 정리 사이트">
+<meta name="robots" content="index,follow">
+
+<style>
+body{
+  margin:0;
+  font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  color:#212529;
+}
+header{background:#0d6efd;color:#fff;padding:18px 24px;font-size:28px;font-weight:700}
+nav{background:#f1f3f5}
+nav ul{margin:0;padding:0;list-style:none;display:flex}
+nav li{position:relative;padding:14px 18px;font-weight:600;cursor:pointer}
+nav li:hover{background:#e9ecef}
+.sub{display:none;position:absolute;top:48px;left:0;background:#fff;border:1px solid #ccc;z-index:10;min-width:140px}
+.sub div{padding:10px}
+.sub div:hover{background:#f1f3f5}
+nav li:hover .sub{display:block}
+
+.content{display:none;padding:30px}
+.content.active{display:block}
+
+/* 체크박스 */
+.subject{margin-bottom:40px}
+.subject-title{font-size:22px;font-weight:700;margin-bottom:6px}
+label{display:block;margin:6px 0;font-size:16px}
+.progress-box{width:100%;height:24px;background:#e9ecef;border-radius:12px;overflow:hidden;margin-top:8px}
+.progress-bar{height:100%;width:0%;background:#0d6efd}
+.percent{font-weight:600;margin-top:4px}
+
+/* 내체표 */
+.table-wrap{max-width:1100px;margin:auto}
+.nt-title{font-size:22px;font-weight:700;margin:50px 0 10px}
+th,td{border:1px solid #ddd;padding:10px;vertical-align:top}
+th{background:#f8f9fa;width:180px}
+.center{text-align:center;font-weight:600}
+textarea{width:100%;height:34px;resize:none;font-family:inherit}
+.rows textarea{margin-bottom:6px}
+
+button{padding:8px 14px;margin-right:6px;border:0;border-radius:6px;cursor:pointer}
+.grade{background:#0d6efd;color:#fff}
+.clear{background:#adb5bd;color:#fff}
+.correct{color:#0d6efd}
+.wrong{color:#dc3545}
+/* ===== 실과 내체표 공통 디자인 ===== */
+
+table{
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+th{
+  background:#f8f9fa;
+  font-size:14px;
+  font-weight:700;
+  color:#343a40;
+}
+
+td{
+  background:#fff;
+}
+
+textarea{
+  border:1px solid #dee2e6;
+  border-radius:6px;
+  padding:6px 8px;
+  font-size:14px;
+  line-height:1.4;
+}
+
+textarea:focus{
+  outline:none;
+  border-color:#0d6efd;
+  background:#f8fbff;
+}
+
+.nt-title{
+  font-size:20px;
+  font-weight:800;
+  color:#212529;
+}
+
+button.grade{
+  background:#0d6efd;
+  font-weight:600;
+}
+
+button.clear{
+  background:#adb5bd;
+  font-weight:600;
+}
+/* ===== 정답률 표시 ===== */
+
+.score{
+  margin-top:10px;
+  padding:8px 12px;
+  background:#f1f3f5;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  color:#495057;
+}
+/* ===== 역량 탭 ===== */
+.competency-wrap{
+  max-width:900px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.competency-box{
+  background:#fff;
+  border-radius:14px;
+  padding:18px 20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+.competency-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.competency-box textarea{
+  width:100%;
+  height:36px;
+  margin-bottom:10px;
+}
+
+.competency-actions{
+  display:flex;
+  gap:6px;
+}
+/* ===============================
+   전체 톤 정리
+=============================== */
+body{
+  background:#f8f9fb;
+}
+
+/* ===============================
+   헤더 / 네비 개선
+=============================== */
+header{
+  letter-spacing:-0.3px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+nav{
+  border-bottom:1px solid #dee2e6;
+}
+
+nav li{
+  transition:background .15s;
+}
+
+.sub{
+  border-radius:8px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* ===============================
+   콘텐츠 영역
+=============================== */
+.content{
+  background:#f8f9fb;
+}
+
+/* ===============================
+   내체표 카드화
+=============================== */
+.table-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:60px;
+}
+
+.nt-title{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding-left:4px;
+}
+
+/* 표 자체를 카드처럼 */
+
+/* ===============================
+   표 디테일
+=============================== */
+th{
+  text-align:left;
+}
+
+td.idea-block{
+  line-height:1.7;
+  font-size:15px;
+}
+
+/* ===============================
+   입력칸 (textarea + blank)
+=============================== */
+textarea{
+  transition:border .15s, background .15s;
+}
+
+.blank{
+  width:90px;
+  padding:4px 6px;
+  border:1px solid #ced4da;
+  border-radius:6px;
+  font-size:14px;
+  text-align:center;
+}
+
+.blank:focus{
+  outline:none;
+  border-color:#0d6efd;
+  background:#f8fbff;
+}
+
+/* ===============================
+   버튼 정리
+=============================== */
+button{
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+button.grade:hover{
+  background:#0b5ed7;
+}
+
+button.clear:hover{
+  background:#868e96;
+}
+
+/* ===============================
+   정답률 박스
+=============================== */
+.score{
+  display:inline-block;
+  margin-top:14px;
+}
+
+/* ===============================
+   도덕 / 체육 / 실과 공통 가독성
+=============================== */
+.rows textarea{
+  background:#fcfcfd;
+}
+
+.rows textarea:focus{
+  background:#f8fbff;
+}
+/* ===============================
+   채점 색상 효과
+=============================== */
+.correct{
+  background:#e6f4ea !important; /* 연초록 */
+}
+
+.wrong{
+  background:#fde8e8 !important; /* 연분홍 */
+}
+/* 학년군 헤더 */
+.sub-head{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-weight: 600;
+}
+
+/* 지식/과정/가치 답칸 */
+.two-col{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.two-col .col{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.two-col textarea{
+  width: 100%;
+  resize: none;
+}
+
+.correct{
+  color:#0d6efd;
+  font-weight:600;
+}
+.wrong{
+  color:#dc3545;
+  font-weight:600;
+}
+  .admin-only{display:none;padding:8px 12px;background:#0d6efd;color:#fff;border:none;border-radius:5px;cursor:pointer;}
+  #posts div{background:#fff;padding:10px;margin:8px 0;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.06);}
+  #adminModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;}
+  #adminModalContent{background:#fff;padding:20px;border-radius:8px;}
+  #adminModal input{padding:5px;margin-right:5px;}
+  
+  .site-footer{
+  margin-top:80px;
+  padding:24px;
+  text-align:center;
+  font-size:14px;
+  color:#555;
+  background:#f8f9fa;
+  border-top:1px solid #dee2e6;
+}
+
+.site-footer strong{
+  color:#212529;
+}
+/* ===============================
+   사회 내체표 스타일
+=============================== */
+
+.social-table{
+  padding:20px;
+}
+
+.social-table table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin-bottom:36px;
+  background:#fff;
+  table-layout:fixed; /* ⭐ textarea 삐져나오는 거 방지 핵심 */
+}
+
+/* 헤더 */
+.social-table th{
+  background:#f1f4f9;
+  font-weight:600;
+  font-size:14px;
+  padding:10px 8px;
+  border:1px solid #dfe3ea;
+  text-align:center;
+  color:#333;
+}
+
+/* 일반 셀 */
+.social-table td{
+  border:1px solid #e3e6ec;
+  padding:6px;
+  vertical-align:top;
+  background:#fff;
+}
+
+/* 첫 번째 열(영역/범주) */
+.social-table th:first-child,
+.social-table td:first-child{
+  background:#fff7e6;
+  font-weight:600;
+  text-align:center;
+  width:90px;
+  color:#8a5a00;
+}
+
+/* textarea 공통 */
+.social-table textarea{
+  width:100%;
+  height:52px;
+  resize:none;
+  border:1px dashed #cfd4dc;
+  border-radius:6px;
+  padding:6px 8px;
+  font-size:13px;
+  line-height:1.4;
+  box-sizing:border-box; /* ⭐ 삐져나옴 방지 핵심 */
+  background:#fafbfc;
+}
+
+/* 포커스 */
+.social-table textarea:focus{
+  outline:none;
+  border-color:#0d6efd;
+  background:#fff;
+}
+
+/* placeholder */
+.social-table textarea::placeholder{
+  color:#adb5bd;
+}
+
+/* 빈칸 없는 셀은 흐리게 */
+.social-table td:empty{
+  background:#f9fafb;
+}
+/* ===============================
+   개체표 / 내체표 공통 테이블 디자인
+=============================== */
+.subject-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,0.06);
+  margin:30px 0;
+}
+
+/* 헤더 */
+.subject-table th{
+  background:#f4f7fb;
+  color:#333;
+  font-weight:700;
+  font-size:15px;
+  padding:14px 12px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:center;
+}
+
+/* 왼쪽 고정 영역(영역/범주) */
+.subject-table th:first-child{
+  background:#fff6dd;
+  color:#8a5a00;
+  width:140px;
+}
+
+/* 일반 셀 */
+.subject-table td{
+  padding:14px 12px;
+  border-bottom:1px solid #eef1f4;
+  border-right:1px solid #eef1f4;
+  vertical-align:middle;
+}
+
+.subject-table tr:last-child td{
+  border-bottom:none;
+}
+.subject-table td:last-child{
+  border-right:none;
+}
+
+/* 입력칸 */
+.subject-table input,
+.subject-table textarea{
+  width:100%;
+  min-height:32px;
+  padding:10px 12px;
+  border:1px dashed #cfd8e3;
+  border-radius:10px;
+  font-size:14px;
+  resize:none;
+  outline:none;
+  background:#fafcff;
+  transition:.15s ease;
+}
+
+/* 포커스 */
+.subject-table input:focus,
+.subject-table textarea:focus{
+  border-color:#3b82f6;
+  background:#fff;
+}
+
+/* 채점 색상 */
+.subject-table textarea.correct,
+.subject-table input.correct{
+  color:#2563eb;
+  font-weight:600;
+}
+
+.subject-table textarea.wrong,
+.subject-table input.wrong{
+  color:#dc2626;
+  font-weight:600;
+}
+
+/* 모바일 대응 */
+@media (max-width:768px){
+  .subject-table{
+    font-size:13px;
+  }
+  .subject-table th:first-child{
+    width:110px;
+  }
+}
+/* ===============================
+   음악 개체표 textarea 정리
+=============================== */
+
+.subject-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* 🔥 이게 핵심 */
+}
+
+.subject-table th,
+.subject-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  vertical-align: top;
+}
+
+.subject-table td {
+  word-break: break-word;
+}
+
+.subject-table textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  margin-bottom: 6px;
+  min-height: 32px;
+  padding: 6px 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+/* ===============================
+   실과 / 도덕 / 체육 표 최종 정리
+=============================== */
+
+.subject-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  background:#fff;
+  margin:40px 0;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+/* ===== 공통 셀 ===== */
+.subject-table th,
+.subject-table td{
+  border:1px solid #e6e6e6;
+  padding:12px 14px;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* ===== 왼쪽 세로 제목칸 (핵심 아이디어, 범주 등) ===== */
+.subject-table th.row-title{
+  width:130px;
+  background:#f3ead2;
+  text-align:left;
+  font-weight:700;
+  vertical-align:middle;
+}
+
+/* ===== 상단 가로 헤더 ===== */
+.subject-table th.col-title{
+  background:#e9dfc3;
+  text-align:center;
+  font-weight:700;
+  vertical-align:middle;
+}
+
+/* ===== 일반 내용칸 ===== */
+.subject-table td{
+  background:#fff;
+  vertical-align:middle;
+}
+
+/* ===== 빈칸 (작게) ===== */
+.subject-table .blank{
+  width:90px;
+  height:28px;
+  padding:3px 6px;
+  font-size:13px;
+  border:1px solid #ced4da;
+  border-radius:6px;
+  text-align:center;
+  resize:none;
+  box-sizing:border-box;
+}
+
+/* ===== 일반 textarea ===== */
+.subject-table textarea{
+  width:100%;
+  min-height:32px;
+  padding:6px 8px;
+  font-size:13px;
+  border:1px solid #ced4da;
+  border-radius:6px;
+  resize:none;
+  box-sizing:border-box;
+}
+
+/* ===== 채점 색 ===== */
+.subject-table textarea.correct{
+  color:#0d6efd;
+  font-weight:600;
+}
+
+.subject-table textarea.wrong{
+  color:#dc3545;
+  font-weight:600;
+}
+/* ===== (1) 제목 영역 정리 ===== */
+.nt-title{
+  font-size:18px;
+  font-weight:700;
+  margin:24px 0 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.nt-title .blank{
+  width:140px;
+  height:32px;
+  min-height:32px;
+  padding:4px 6px;
+  font-size:14px;
+}
+.bs-input{
+  width:100%;
+  min-height:36px;
+  margin-bottom:6px;
+  padding:6px 8px;
+  font-size:14px;
+  border:1px solid #ced4da;
+  border-radius:6px;
+  resize:none;
+  box-sizing:border-box;
+}
+
+.bs-input:last-child{
+  margin-bottom:0;
+}
+/* =========================================
+   ✅ 표 전용 버튼 (슬림 + 간격 조정 버전)
+   - 카드 제외
+========================================= */
+
+/* 표 아래 버튼 공통 */
+.table-wrap button.grade,
+.table-wrap button.clear,
+#basle .table-actions.vertical button{
+  width:100% !important;
+  height:42px !important;          /* 🔥 더 슬림 */
+  border-radius:10px !important;
+  font-size:14px !important;
+  font-weight:700 !important;
+  margin:12px 0 0 !important;      /* 🔥 버튼 간격 살짝 증가 */
+  box-shadow:0 2px 6px rgba(0,0,0,0.05) !important;
+  letter-spacing:0.5px;
+}
+
+/* 채점/정답 = 파란색 */
+.table-wrap button.grade,
+#basle .table-actions.vertical .btn-grade,
+#basle .table-actions.vertical .btn-answer{
+  background:#0d6efd !important;
+  color:#fff !important;
+}
+
+/* 지우기 = 회색 */
+.table-wrap button.clear,
+#basle .table-actions.vertical .btn-clear{
+  background:#9ea4aa !important;   /* 🔥 살짝 더 연한 회색 */
+  color:#fff !important;
+}
+
+/* hover 부드럽게 */
+.table-wrap button.grade:hover{
+  background:#0b5ed7 !important;
+}
+.table-wrap button.clear:hover{
+  background:#868e96 !important;
+}
+
+/* =========================================
+   ✅ 정답률 박스 (슬림 + 버튼과 간격 맞춤)
+========================================= */
+.table-wrap .score,
+#basle .table-actions.vertical .score{
+  width:100% !important;
+  height:42px !important;          /* 🔥 버튼과 동일 높이 */
+  display:flex !important;
+  align-items:center !important;
+  padding:0 14px !important;
+  border-radius:10px !important;
+  margin:12px 0 0 !important;      /* 🔥 버튼과 동일 간격 */
+  background:#f4f6f8 !important;
+  border:1px solid #e1e5ea !important;
+  font-size:14px !important;
+  font-weight:700 !important;
+  color:#495057 !important;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05) !important;
+}
+
+/* =========================================
+   ✅ 카드 버튼은 영향 안 받게 유지
+========================================= */
+.competency-box button{
+  width:auto !important;
+  height:auto !important;
+  margin-right:6px !important;
+}
+/* ===============================
+   핵심아이디어(빈칸) 스타일
+=============================== */
+.keyidea{
+  line-height: 1.55;
+  font-size: 14px;
+}
+.keyidea .ki-line{ margin: 2px 0; }
+.keyidea .ki-input{
+  width: 72px;
+  height: 22px;
+  padding: 2px 6px;
+  margin: 0 2px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  vertical-align: middle;
+  font-size: 13px;
+  outline: none;
+}
+.keyidea .ki-input.correct{ border-color: #198754; }
+.keyidea .ki-input.wrong{ border-color: #dc3545; }
+
+background: transparent;
+border: none;
+border-bottom: 2px solid #ced4da;
+border-radius: 0;
+</style>
+<script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
+<script type="text/javascript">
+if(!wcs_add) var wcs_add = {};
+wcs_add["wa"] = "b7f467c833ffc8";
+if(window.wcs) {
+  wcs_do();
+}
+</script>
+</head>
+
+<body>
+  
+<!-- 관리자 로그인 모달 -->
+<div id="adminModal" style="display:none;">
+  <div id="adminModalContent">
+    <input type="password" id="adminPw" placeholder="비밀번호">
+    <button onclick="adminLogin()">확인</button>
+    <button onclick="closeAdminLogin()">취소</button>
+  </div>
+</div>
+
+<header style="display:flex; align-items:center; justify-content:space-between;">
+  <span>🎓 임고AZ</span>
+
+<div style="padding:10px; text-align:right;">
+  <button id="adminLoginBtn" onclick="openAdminLogin()">관리자 로그인</button>
+  <button id="adminLogoutBtn" onclick="adminLogout()" style="display:none;">로그아웃</button>
+</div>
+</header>
+
+<nav>
+<ul>
+<li onclick="show('home')">홈</li>
+<li onclick="show('competency')">역량</li>
+<li>모형<div class="sub"><div onclick="show('model-korean')">국어</div><div onclick="show('model-math')">수학</div><div onclick="show('model-social')">사회</div><div onclick="show('model-science')">과학</div><div onclick="show('model-art')">미술</div><div onclick="show('model-pe')">체육</div><div onclick="show('model-moral')">도덕</div><div onclick="show('model-pa')">실과</div><div onclick="show('model-bsj')">바슬즐</div></li>
+<li>국어
+  <div class="sub">
+    <div onclick="show('kkorean')">문제</div>
+    <div onclick="show('korean')">내체표</div>
+  </div>
+</li>
+<li>수학<div class="sub"><div onclick="show('mmath')">문제</div></div></li>
+<li>사회<div class="sub"><div onclick="show('ssocial')">문제</div><div onclick="show('social')">내체표</div></div></li>
+<li>과학<div class="sub"><div onclick="show('sscience')">문제</div></div></li>
+<li>영어<div class="sub"><div onclick="show('eenglish')">문제</div></div></li>
+<li>음악
+  <div class="sub">
+    <div onclick="show('mmusic')">문제</div>
+    <div onclick="show('music-object')">개체표</div>
+    <div onclick="show('music')">내체표</div>
+  </div>
+</li>
+<li>미술
+  <div class="sub">
+    <div onclick="show('aart')">문제</div>
+    <div onclick="show('art')">내체표</div>
+  </div>
+</li>
+<li>체육
+  <div class="sub">
+    <div onclick="show('ppe')">문제</div>
+    <div onclick="show('pe')">내체표</div>
+  </div>
+</li>
+<li>도덕
+  <div class="sub">
+    <div onclick="show('mmoral')">문제</div>
+    <div onclick="show('moral')">내체표</div>
+  </div>
+</li>
+<li>실과<div class="sub"><div onclick="show('ppa')">문제</div><div onclick="show('silgwa')">내체표</div></div></li>
+<li>바슬즐
+  <div class="sub">
+    <div onclick="show('bbasle')">문제</div>
+    <div onclick="show('basle')">내체표</div>
+  </div>
+</li>
+<li onclick="show('ch')">총론</li>
+<li onclick="show('check')">체크박스</li>
+</ul>
+</nav>
+
+<div id="home" class="content active"><h2></h2></div>
+<div id="posts"></div>
+<div id="siteStats" style="margin:10px 0;"></div>
+<button class="admin-only" onclick="openWrite()" style="display:none;">
+  ✏️ 글쓰기
+</button>
+
+<!-- 역량 탭 -->
+<div id="competency" class="content">
+  <div class="competency-wrap" id="competencyWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 국어
+=============================== -->
+<div id="model-korean" class="content">
+  <div class="competency-wrap" id="modelKoreanWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 수학
+=============================== -->
+<div id="model-math" class="content">
+  <div class="competency-wrap" id="modelMathWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 사회
+=============================== -->
+<div id="model-social" class="content">
+  <div class="competency-wrap" id="modelSocialWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 과학
+=============================== -->
+<div id="model-science" class="content">
+  <div class="competency-wrap" id="modelScienceWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 미술
+=============================== -->
+<div id="model-art" class="content">
+  <div class="competency-wrap" id="modelArtWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 체육
+=============================== -->
+<div id="model-pe" class="content">
+  <div class="competency-wrap" id="modelPeWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 도덕
+=============================== -->
+<div id="model-moral" class="content">
+  <div class="competency-wrap" id="modelMoralWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 실과
+=============================== -->
+<div id="model-pa" class="content">
+  <div class="competency-wrap" id="modelPaWrap"></div>
+</div>
+<!-- ===============================
+   모형 > 바슬즐
+=============================== -->
+<div id="model-bsj" class="content">
+  <div class="competency-wrap" id="modelBsjWrap"></div>
+</div>
+<!-- 체크박스 -->
+<div id="check" class="content">
+<h2>전체 진도율</h2>
+<div class="progress-box"><div id="totalBar" class="progress-bar"></div></div>
+<div id="totalPercent" class="percent">0%</div>
+<hr><br>
+<div id="subjects"></div>
+</div>
+
+<!-- 실과 내체표 -->
+<div id="silgwa" class="content">
+<div class="table-wrap" id="tables"></div>
+</div>
+
+<!-- 도덕 내체표 -->
+<div id="moral" class="content">
+  <div class="table-wrap" id="moralTables"></div>
+</div>
+
+<!-- 음악 개체표 -->
+<div id="music-object" class="content">
+  <h2>음악 개체표</h2>
+<div class="table-wrap" id="music-objectTables"></div>
+</div>
+
+<!-- 음악 내체표 -->
+<div id="music" class="content">
+  <div class="table-wrap" id="musicTables"></div>
+</div>
+
+<!-- 미술 내체표 -->
+<div id="art" class="content">
+  <div class="table-wrap" id="artTables"></div>
+</div>
+
+<!-- 체육 내체표 -->
+<div id="pe" class="content">
+  <div class="table-wrap" id="peTables"></div>
+</div>
+
+<!-- 국어 내체표 -->
+<div id="korean" class="content">
+  <div class="table-wrap" id="koreanTables"></div>
+</div>
+
+<!-- 사회 내체표 -->
+<div id="social" class="content">
+
+<div class="table-wrap social-table">
+
+  <!-- ① 지리 영역 -->
+  <table>
+    <tr>
+      <th>영역</th>
+      <th>지리인식</th>
+      <th>자연환경과 인간생활</th>
+      <th>인문환경과 인간생활</th>
+      <th>지속가능한 세계</th>
+    </tr>
+    <tr>
+      <th>범주</th>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td></td>
+    </tr>
+  </table>
+  
+  <div class="table-actions vertical">
+  <button class="btn-grade">채점</button>
+  <button class="btn-answer">정답</button>
+  <button class="btn-clear">지우기</button>
+
+  <div class="score">정답률 : 0%</div>
+</div>
+
+  <!-- ② 일반사회 영역 -->
+  <table>
+    <tr>
+      <th>영역</th>
+      <th>정치</th>
+      <th>법</th>
+      <th>경제</th>
+      <th>사회·문화</th>
+      <th>역사일반</th>
+    </tr>
+    <tr>
+      <td>범주</td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td><textarea placeholder="입력"></textarea></td>
+      <td></td>
+    </tr>
+  </table>
+  
+  <div class="table-actions vertical">
+  <button class="btn-grade">채점</button>
+  <button class="btn-answer">정답</button>
+  <button class="btn-clear">지우기</button>
+
+  <div class="score">정답률 : 0%</div>
+</div>
+
+  <!-- ③ 역사 영역 -->
+  <table>
+    <tr>
+      <th>영역</th>
+      <th>지역사</th>
+      <th>한국사</th>
+    </tr>
+    <tr>
+      <td>범주</td>
+      <td>지역사</td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><textarea placeholder="입력"></textarea></td>
+    </tr>
+  </table>
+  
+  <div class="table-actions vertical">
+  <button class="btn-grade">채점</button>
+  <button class="btn-answer">정답</button>
+  <button class="btn-clear">지우기</button>
+
+  <div class="score">정답률 : 0%</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===============================
+바슬즐 내체표
+=============================== -->
+<div id="basle" class="content">
+  <div class="bs-table-wrap">
+
+    <!-- (1) 바른 생활 -->
+    <div class="bs-title">(1) 바른 생활</div>
+    <table class="subject-table">
+      <thead>
+        <tr>
+          <th>영역</th><th>핵심 아이디어</th><th>범주</th><th colspan="2">내용 요소</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">우리는 누구로 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">우리는 어디서 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">우리는 지금 어떻게 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">우리는 무엇을 하며 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+      </tbody>
+    </table>
+
+    <div class="table-actions vertical">
+      <button class="btn-grade">채점</button>
+      <button class="btn-answer">정답</button>
+      <button class="btn-clear">지우기</button>
+      <div class="score">정답률 : 0%</div>
+    </div>
+
+
+    <!-- (2) 슬기로운 생활 -->
+    <div class="bs-title">(2) 슬기로운 생활</div>
+    <table class="subject-table">
+      <thead>
+        <tr>
+          <th>영역</th><th>핵심 아이디어</th><th>범주</th><th colspan="2">내용 요소</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">우리는 누구로 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">우리는 어디서 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">우리는 지금 어떻게 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">우리는 무엇을 하며 살아갈까</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+      </tbody>
+    </table>
+
+    <div class="table-actions vertical">
+      <button class="btn-grade">채점</button>
+      <button class="btn-answer">정답</button>
+      <button class="btn-clear">지우기</button>
+      <div class="score">정답률 : 0%</div>
+    </div>
+
+
+    <!-- (3) 건강한 생활 -->
+    <div class="bs-title">(3) 건강한 생활</div>
+    <table class="subject-table">
+      <thead>
+        <tr>
+          <th>영역</th><th>핵심 아이디어</th><th>범주</th><th colspan="2">내용 요소</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">건강한 몸</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">활기찬 움직임</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">창의적 표현</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+      </tbody>
+    </table>
+
+    <div class="table-actions vertical">
+      <button class="btn-grade">채점</button>
+      <button class="btn-answer">정답</button>
+      <button class="btn-clear">지우기</button>
+      <div class="score">정답률 : 0%</div>
+    </div>
+
+
+    <!-- (4) 즐거운 생활 -->
+    <div class="bs-title">(4) 즐거운 생활</div>
+    <table class="subject-table">
+      <thead>
+        <tr>
+          <th>영역</th><th>핵심 아이디어</th><th>범주</th><th colspan="2">내용 요소</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">체험</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">표현</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+
+        <tr><td rowspan="3">감상</td><td rowspan="3"></td><td>지식·이해</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>과정·기능</td><td colspan="2" class="answer"></td></tr>
+        <tr><td>가치·태도</td><td colspan="2" class="answer"></td></tr>
+      </tbody>
+    </table>
+
+    <div class="table-actions vertical">
+      <button class="btn-grade">채점</button>
+      <button class="btn-answer">정답</button>
+      <button class="btn-clear">지우기</button>
+      <div class="score">정답률 : 0%</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 글쓰기 모달 -->
+<div id="writeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:20px; border-radius:10px; width:400px;">
+    <h3>글 작성</h3>
+    <input id="postTitle" placeholder="제목" style="width:100%; margin-bottom:10px; padding:8px;">
+    <textarea id="postContent" placeholder="내용" style="width:100%; height:120px; padding:8px;"></textarea>
+    <div style="margin-top:10px; text-align:right;">
+      <button onclick="closeWrite()">취소</button>
+      <button onclick="savePost()">저장</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>
+    ⬇️문의사항 및 오류 사항은 아래 주소로 문의바랍니다.⬇️<br>
+    임고AZ 블로그 주소: m.blog.naver.com/imgoaz<br>
+    임고AZ 인스타 주소: https://www.instagram.com/imgo_atoz?igsh=NjU1Njhuc3E0MDkw
+  </p>
+</footer>
+
+<script>
+/* ===============================
+   바슬즐 정답 데이터
+=============================== */
+const bsAnswers = [
+
+/* (1) 바른 생활 */
+[
+  [
+    ["학교 생활 습관과 학습 습관","자기 이해","생태환경"],
+    ["습관 형성하기","관계 맺기"],
+    ["안전하고 건강한 생활","자기 존중","배려","더불어 사는 삶"]
+  ],
+  [
+    ["공동체 생활 모습","우리나라의 소중함"],
+    ["실천하기","호기심 갖기"],
+    ["나라 사랑","다양성 존중","적극성과 도전의식"]
+  ],
+  [
+    ["인물의 삶","지속가능한 삶의 방식"],
+    ["하루 생활 관리하기","변화에 대응하기","실천하기"],
+    ["시간의 가치","적절성","공동체성","지속가능성"]
+  ],
+  [
+    ["모두를 위한 생활 환경","학습 습관","생활 습관"],
+    ["참여하기","생각이나 의견 나누기","협력하기","되돌아보기"],
+    ["모두를 위한 마음","개방성","자발성"]
+  ]
+],
+
+/* (2) 슬기로운 생활 (바른 생활과 동일) */
+[
+  [
+    ["학교 생활 습관과 학습 습관","자기 이해","생태환경"],
+    ["습관 형성하기","관계 맺기"],
+    ["안전하고 건강한 생활","자기 존중","배려","더불어 사는 삶"]
+  ],
+  [
+    ["공동체 생활 모습","우리나라의 소중함"],
+    ["실천하기","호기심 갖기"],
+    ["나라 사랑","다양성 존중","적극성과 도전의식"]
+  ],
+  [
+    ["인물의 삶","지속가능한 삶의 방식"],
+    ["하루 생활 관리하기","변화에 대응하기","실천하기"],
+    ["시간의 가치","적절성","공동체성","지속가능성"]
+  ],
+  [
+    ["모두를 위한 생활 환경","학습 습관","생활 습관"],
+    ["참여하기","생각이나 의견 나누기","협력하기","되돌아보기"],
+    ["모두를 위한 마음","개방성","자발성"]
+  ]
+],
+
+/* (3) 건강한 생활 */
+[
+  [
+    ["나의 몸","건강과 신체 활동","건강하고 안전한 생활 습관"],
+    ["신체 활동에 안전하게 참여하기","건강하고 안전한 생활 습관 기르기"],
+    ["나의 몸에 대한 긍정적 인식","지속적인 실천 의지"]
+  ],
+  [
+    ["제자리 움직임","걷고 달리는 움직임","뜀뛰는 움직임","도구를 다루는 움직임"],
+    ["다양한 움직임 탐색하기","놀이 속 움직임 시도하기","상황에 맞는 움직임 수행하기","다양한 움직임 연결하기"],
+    ["자기 주도성","적극성","자신감","상호 배려","함께 어울림"]
+  ],
+  [
+    ["움직임 표현","움직임 요소"],
+    ["다양한 움직임 활용하기","생각과 느낌 표현하기"],
+    ["움직임 표현의 즐거움","움직임 표현의 창의성"]
+  ]
+],
+
+/* (4) 즐거운 생활 */
+[
+  [
+    ["소리의 특징","소리를 내는 도구","대상의 특징과 느낌","생활 속 이미지"],
+    ["소리 탐색하기","소리로 나타내기","감각으로 탐색하기","이미지 발견하기"],
+    ["탐색 활동에 대한 호기심","감각적 경험의 즐거움"]
+  ],
+  [
+    ["기초적인 자세와 주법","기초적인 음악 요소","조형 요소","표현 재료와 용구"],
+    ["노래 부르거나 악기 연주하기","모방하여 소리나 신체로 나타내기","탐색하고 익히기","관찰하고 상상하기"],
+    ["표현의 소중함","표현하는 즐거움"]
+  ],
+  [
+    ["여러 가지 악곡","생활 속 국악","기초적인 음악 요소","전통 미술","미술 작품과 전시"],
+    ["듣고 반응하기","듣고 찾아보기","반응하고 나타내기","찾아보고 관람하기"],
+    ["국악과 전통 미술에 대한 친근감","다양성에 대한 수용"]
+  ]
+]
+
+];
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  const lineConfig = [
+    [[3,2,4],[2,2,3],[2,3,4],[3,4,3]],
+    [[3,2,4],[2,2,3],[2,3,4],[3,4,3]],
+    [[3,2,2],[4,4,5],[2,2,2]],
+    [[4,4,2],[4,4,2],[4,4,2]]
+  ];
+  
+  /* ===============================
+   핵심아이디어 HTML(빈칸 포함)
+=============================== */
+/* ===============================
+   핵심아이디어 HTML(빈칸 포함) - 괄호 제거 버전
+=============================== */
+const keyIdeaHTML = [
+  /* (1) 바른 생활 */
+  `
+    <div class="ki-line">ㆍ우리는 내가 누구인지 생각하며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 서로 <input class="ki-input" data-ans="관계">를/을 맺으며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 여러 <input class="ki-input" data-ans="공동체"> 속에서 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 삶의 <input class="ki-input" data-ans="공간">를/을 넓히며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 여러 유형의 <input class="ki-input" data-ans="주기">로/으로 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 과거, 현재, 미래를 생각하며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 <input class="ki-input" data-ans="경험">하고 상상하고 만들며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 느끼고 생각하고 표현하며 생활한다.</div>
+  `,
+
+  /* (2) 슬기로운 생활 */
+  `
+    <div class="ki-line">ㆍ우리는 내가 누구인지 생각하며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 서로 관계를 맺으며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 여러 공동체 속에서 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 삶의 공간을 넓히며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 여러 유형의 주기로 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 과거, 현재, 미래를 생각하며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 경험하고 상상하고 만들며 생활한다.</div>
+    <div class="ki-line">ㆍ우리는 느끼고 생각하고 표현하며 생활한다.</div>
+  `,
+
+  /* (3) 건강한 생활 */
+  `
+    <div class="ki-line">ㆍ지속적인 신체 활동은 건강한 생활 습관의 바탕이고, <input class="ki-input" data-ans="건강">과/와 <input class="ki-input" data-ans="안전">는/은 행복한 삶의 토대가 된다.</div>
+    <div class="ki-line">ㆍ<input class="ki-input" data-ans="움직임">는/은 성장과 발달의 원동력이고, 기본 움직임 기술은 활기찬 신체 활동의 기초가 된다.</div>
+    <div class="ki-line">ㆍ생각과 느낌은 움직임을 통해 표현되고, 다양한 움직임은 <input class="ki-input" data-ans="창의적 표현">의 기반이 된다.</div>
+  `,
+
+  /* (4) 즐거운 생활 */
+  `
+    <div class="ki-line">ㆍ소리와 이미지를 <input class="ki-input" data-ans="감각적">로/으로 경험하고 탐색함으로써 삶의 즐거움과 의미를 발견한다.</div>
+    <div class="ki-line">ㆍ느낌과 생각을 <input class="ki-input" data-ans="청각적">ㆍ<input class="ki-input" data-ans="시각적">로/으로 나타내고 소통함으로써 표현의 즐거움과 소중함을 느낀다.</div>
+    <div class="ki-line">ㆍ음악과 미술 작품을 보고 들으며 <input class="ki-input" data-ans="예술">에 대해 흥미와 관심을 가진다.</div>
+  `
+];
+
+  const basle = document.getElementById('basle');
+  if(!basle) return;
+
+  const tables = basle.querySelectorAll('table.subject-table');
+  const actionBoxes = basle.querySelectorAll('.table-actions.vertical');
+
+  const norm = (t)=> (t||'').replace(/\s+/g,'').trim();
+
+  function setScore(actions, correct, total){
+    const score = actions.querySelector('.score');
+    const percent = total ? Math.round(correct/total*100) : 0;
+    if(score) score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+  }
+
+  function clearMark(el){
+    el.classList.remove('correct','wrong');
+    el.style.color = '';
+  }
+
+  // textarea 생성
+  tables.forEach((table, tableIndex)=>{
+    const rows = table.querySelectorAll('tbody tr');
+    let blockIndex = 0;
+
+    for(let i=0; i<rows.length; i+=3){
+      const cfg = lineConfig[tableIndex]?.[blockIndex];
+      if(!cfg) continue;
+
+      for(let j=0; j<3; j++){
+        const cell = rows[i+j].querySelector('.answer');
+        if(!cell) continue;
+        
+        // (추가) 핵심아이디어(2번째 열) 채우기
+    const kiCell = rows[i].children[1]; // 0:영역, 1:핵심아이디어
+    if(kiCell){
+      kiCell.classList.add('keyidea');
+      kiCell.innerHTML = keyIdeaHTML[tableIndex] || '';
+    }
+
+        cell.innerHTML = '';
+        for(let k=0; k<cfg[j]; k++){
+          const ta = document.createElement('textarea');
+          ta.className = 'bs-input';
+          cell.appendChild(ta);
+        }
+      }
+      blockIndex++;
+    }
+  });
+
+  // 버튼 연결
+  actionBoxes.forEach((actions, tableIndex)=>{
+
+    const table = tables[tableIndex];
+    if(!table) return;
+
+    const btnGrade  = actions.querySelector('.btn-grade');
+    const btnAnswer = actions.querySelector('.btn-answer');
+    const btnClear  = actions.querySelector('.btn-clear');
+
+    btnAnswer?.addEventListener('click', ()=>{
+      const rows = table.querySelectorAll('tbody tr');
+      let blockIndex = 0;
+      let total = 0;
+
+      for(let i=0; i<rows.length; i+=3){
+        for(let j=0; j<3; j++){
+          const cell = rows[i+j].querySelector('.answer');
+          if(!cell) continue;
+
+          const textareas = cell.querySelectorAll('textarea');
+          const answers = bsAnswers?.[tableIndex]?.[blockIndex]?.[j] || [];
+
+          textareas.forEach((ta,k)=>{
+            ta.value = answers[k] || '';
+            clearMark(ta);
+            ta.classList.add('correct');
+            total++;
+          });
+        }
+        blockIndex++;
+      }
+// (추가) 핵심아이디어 빈칸도 정답 채우기
+      table.querySelectorAll('.ki-input').forEach(inp=>{
+        inp.value = inp.dataset.ans || '';
+        clearMark(inp);
+        inp.classList.add('correct');
+        total++;
+      });
+      setScore(actions, total, total);
+    });
+
+    btnGrade?.addEventListener('click', ()=>{
+      const rows = table.querySelectorAll('tbody tr');
+      let blockIndex = 0;
+      let correct = 0;
+      let total = 0;
+
+      for(let i=0; i<rows.length; i+=3){
+        for(let j=0; j<3; j++){
+          const cell = rows[i+j].querySelector('.answer');
+          if(!cell) continue;
+
+          const textareas = cell.querySelectorAll('textarea');
+          const answers = bsAnswers?.[tableIndex]?.[blockIndex]?.[j] || [];
+
+          textareas.forEach((ta,k)=>{
+            const ans = answers[k] || '';
+            if(ans === '') return;
+
+            total++;
+            clearMark(ta);
+
+            if(norm(ta.value) === norm(ans)){
+              ta.classList.add('correct');
+              correct++;
+            }else{
+              ta.classList.add('wrong');
+            }
+          });
+        }
+        blockIndex++;
+      }
+      // (추가) 핵심아이디어 빈칸도 채점 포함
+      table.querySelectorAll('.ki-input').forEach(inp=>{
+        const ans = inp.dataset.ans || '';
+        if(ans === '') return;
+
+        total++;
+        clearMark(inp);
+
+        if(norm(inp.value) === norm(ans)){
+          inp.classList.add('correct');
+          correct++;
+        }else{
+          inp.classList.add('wrong');
+        }
+      });
+
+      setScore(actions, correct, total);
+    });
+
+    btnClear?.addEventListener('click', ()=>{
+      table.querySelectorAll('textarea, .ki-input').forEach(el=>{
+        el.value = '';
+        clearMark(el);
+      });
+      setScore(actions, 0, 0);
+    });
+
+  });
+
+});
+const postsEl = document.getElementById('posts');
+const statsEl = document.getElementById('siteStats');
+const ADMIN_PASSWORD = '20002026';
+
+let isAdmin = false;
+let currentTabId = 'home';
+let editingPostId = null; // 수정 모드용
+
+// ===============================
+// 방문자 통계 (localStorage 기반)
+// ===============================
+function loadStats(){
+  return JSON.parse(localStorage.getItem('siteStats') || '{}');
+}
+function saveStats(s){
+  localStorage.setItem('siteStats', JSON.stringify(s));
+}
+function todayKey(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function bumpVisitorStats(){
+  const sessionKey = 'visitedThisSession';
+  const today = todayKey();
+
+  const stats = loadStats();
+  stats.totalVisits = stats.totalVisits || 0;
+  stats.uniqueDays = stats.uniqueDays || {};
+  stats.todayVisits = stats.todayVisits || {};
+
+  if(sessionStorage.getItem(sessionKey) !== '1'){
+    sessionStorage.setItem(sessionKey, '1');
+    stats.totalVisits += 1;
+    stats.uniqueDays[today] = true;
+    stats.todayVisits[today] = (stats.todayVisits[today] || 0) + 1;
+    saveStats(stats);
+  }
+
+  renderStats(); // 관리자면 보이고 아니면 숨김
+}
+
+function renderStats(){
+  if(!statsEl) return;
+
+  // ✅ 관리자 아닐 땐 아예 숨김
+  if(!isAdmin){
+    statsEl.style.display = 'none';
+    statsEl.innerHTML = '';
+    return;
+  }
+
+  statsEl.style.display = 'block';
+
+  const stats = loadStats();
+  const today = todayKey();
+
+  const total = stats.totalVisits || 0;
+  const todayCount = (stats.todayVisits && stats.todayVisits[today]) ? stats.todayVisits[today] : 0;
+  const uniqueDayCount = stats.uniqueDays ? Object.keys(stats.uniqueDays).length : 0;
+
+  statsEl.innerHTML = `
+    <div style="
+      background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+      padding:10px 12px; box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      font-size:13px; color:#495057; font-weight:700;
+      display:flex; gap:12px; flex-wrap:wrap;
+    ">
+      <span>총 방문: ${total}</span>
+      <span>오늘 방문: ${todayCount}</span>
+      <span>방문한 날짜 수: ${uniqueDayCount}</span>
+      <span style="font-weight:600; color:#868e96;">(이 기기 기준)</span>
+    </div>
+  `;
+}
+
+// ===============================
+// 탭 전환
+// ===============================
+function show(id){
+  currentTabId = id;
+
+  document.querySelectorAll('.content')
+    .forEach(c => c.classList.remove('active'));
+
+  document.getElementById(id)?.classList.add('active');
+
+  renderPostsForTab(id);
+}
+
+function openAdminLogin(){ adminModal.style.display = 'flex'; }
+function closeAdminLogin(){ adminModal.style.display = 'none'; }
+
+// ===============================
+// 관리자 로그인
+// ===============================
+function adminLogin(){
+  const pw = adminPw.value;
+
+  if(pw === ADMIN_PASSWORD){
+    isAdmin = true;
+    localStorage.setItem('isAdmin','true');
+    closeAdminLogin();
+    applyAdminUI();
+    renderPostsForTab(currentTabId);
+    renderStats(); // ✅ 로그인하자마자 통계 표시
+    alert('관리자 모드 ON');
+  } else alert('비밀번호 틀림');
+}
+
+function adminLogout(){
+  isAdmin = false;
+  localStorage.removeItem('isAdmin');
+  applyAdminUI();
+  renderPostsForTab(currentTabId);
+  renderStats(); // ✅ 로그아웃하면 통계 숨김
+}
+
+function applyAdminUI(){
+  adminLoginBtn.style.display = isAdmin ? 'none' : 'inline-block';
+  adminLogoutBtn.style.display = isAdmin ? 'inline-block' : 'none';
+
+  document.querySelectorAll('.admin-only')
+    .forEach(el => el.style.display = isAdmin ? 'inline-block' : 'none');
+}
+
+// ===============================
+// 저장 유틸
+// ===============================
+function loadPosts(){
+  return JSON.parse(localStorage.getItem('posts') || '[]');
+}
+function savePosts(arr){
+  localStorage.setItem('posts', JSON.stringify(arr));
+}
+function updatePostById(postId, updater){
+  const saved = loadPosts();
+  const idx = saved.findIndex(p => p.id === postId);
+  if(idx === -1) return null;
+
+  const updated = updater(saved[idx]) || saved[idx];
+
+  // ✅ 안전장치: date 없으면 만들어줌(옛 글 NaN 방지)
+  if(!updated.date || isNaN(Number(updated.date))){
+    updated.date = Date.now();
+  }
+
+  // ✅ 안전장치: views/likes/comments 기본값
+  updated.views = updated.views || 0;
+  updated.likes = updated.likes || 0;
+  updated.comments = updated.comments || [];
+
+  saved[idx] = updated;
+  savePosts(saved);
+  return updated;
+}
+
+// ===============================
+// 날짜 포맷(NaN 방지)
+// ===============================
+function formatDate(timestamp){
+  const t = Number(timestamp);
+  if(!t || Number.isNaN(t)) return '-';
+  const d = new Date(t);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+// ===============================
+// 탭별 렌더링
+// ===============================
+function renderPostsForTab(tabId){
+  if(!postsEl) return;
+
+  postsEl.innerHTML = '';
+
+  const all = loadPosts();
+  const list = all
+    .map(p => {
+      // ✅ 옛 글 보정(작성일/기본값)
+      if(!p.date || isNaN(Number(p.date))) p.date = p.date || p.id || Date.now();
+      p.views = p.views || 0;
+      p.likes = p.likes || 0;
+      p.comments = p.comments || [];
+      p.tabId = p.tabId || 'home';
+      return p;
+    })
+    .filter(p => p.tabId === tabId);
+
+  // 최신글이 위로 오게(원하면 제거 가능)
+  list.sort((a,b)=> (b.date||0) - (a.date||0));
+
+  savePosts(all); // 보정값 저장
+  list.forEach(addPostToDOM);
+}
+
+// ===============================
+// 좋아요(이 기기 1번만)
+// ===============================
+function hasLiked(postId){
+  const liked = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+  return liked[String(postId)] === true;
+}
+function setLiked(postId){
+  const liked = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+  liked[String(postId)] = true;
+  localStorage.setItem('likedPosts', JSON.stringify(liked));
+}
+
+// ===============================
+// 댓글 유틸
+// ===============================
+function makeComment(text){
+  return {
+    id: Date.now() + Math.floor(Math.random()*1000),
+    text,
+    date: Date.now()
+  };
+}
+
+// ===============================
+// DOM 생성
+// ===============================
+function addPostToDOM(post){
+
+  const wrap = document.createElement('div');
+
+  const title = document.createElement('div');
+  title.textContent = post.title;
+  title.style.fontWeight = '800';
+  title.style.cursor = 'pointer';
+
+  const meta = document.createElement('div');
+  meta.style.fontSize = '12px';
+  meta.style.color = '#888';
+  meta.style.margin = '4px 0';
+
+  const likesCount = post.likes || 0;
+  const viewsCount = post.views || 0;
+  meta.textContent = `작성일: ${formatDate(post.date)} | 조회수: ${viewsCount} | 좋아요: ${likesCount}`;
+
+  // ✅ 줄바꿈 유지: textContent 대신, whiteSpace 설정 + \n 그대로 쓰기
+  const content = document.createElement('div');
+  content.textContent = post.content;
+  content.style.whiteSpace = 'pre-wrap'; // 🔥 엔터/줄바꿈 그대로 표시
+  content.style.display = 'none';
+  content.style.marginTop = '8px';
+
+  // 액션 바(좋아요)
+  const actionRow = document.createElement('div');
+  actionRow.style.display = 'none';
+  actionRow.style.marginTop = '10px';
+
+  const likeBtn = document.createElement('button');
+  likeBtn.textContent = hasLiked(post.id) ? '👍 좋아요 완료' : '👍 좋아요';
+  likeBtn.disabled = hasLiked(post.id);
+  likeBtn.onclick = () => {
+    if(hasLiked(post.id)) return;
+
+    setLiked(post.id);
+    const updated = updatePostById(post.id, (p)=>{
+      p.likes = (p.likes || 0) + 1;
+      return p;
+    });
+
+    likeBtn.textContent = '👍 좋아요 완료';
+    likeBtn.disabled = true;
+
+    meta.textContent = `작성일: ${formatDate(updated.date)} | 조회수: ${updated.views || 0} | 좋아요: ${updated.likes || 0}`;
+  };
+
+  actionRow.appendChild(likeBtn);
+
+  // 댓글 영역
+  const commentWrap = document.createElement('div');
+  commentWrap.style.display = 'none';
+  commentWrap.style.marginTop = '12px';
+  commentWrap.style.borderTop = '1px solid #eee';
+  commentWrap.style.paddingTop = '10px';
+
+  const commentTitle = document.createElement('div');
+  commentTitle.textContent = '댓글';
+  commentTitle.style.fontWeight = '800';
+  commentTitle.style.marginBottom = '6px';
+
+  const commentList = document.createElement('div');
+
+  const commentForm = document.createElement('div');
+  commentForm.style.display = 'flex';
+  commentForm.style.gap = '8px';
+  commentForm.style.marginTop = '8px';
+
+  const commentInput = document.createElement('input');
+  commentInput.placeholder = '댓글을 입력하세요';
+  commentInput.style.flex = '1';
+  commentInput.style.padding = '10px 12px';
+  commentInput.style.border = '1px solid #e5e7eb';
+  commentInput.style.borderRadius = '10px';
+
+  const commentBtn = document.createElement('button');
+  commentBtn.textContent = '등록';
+  commentBtn.onclick = () => {
+    const txt = commentInput.value.trim();
+    if(!txt) return alert('댓글을 입력하세요');
+
+    const updated = updatePostById(post.id, (p)=>{
+      p.comments = p.comments || [];
+      p.comments.push(makeComment(txt));
+      return p;
+    });
+
+    commentInput.value = '';
+    renderComments(updated);
+  };
+
+  commentForm.append(commentInput, commentBtn);
+  commentWrap.append(commentTitle, commentList, commentForm);
+
+  function renderComments(p){
+    commentList.innerHTML = '';
+    const comments = p.comments || [];
+
+    if(comments.length === 0){
+      const empty = document.createElement('div');
+      empty.style.color = '#888';
+      empty.style.fontSize = '13px';
+      empty.textContent = '아직 댓글이 없어요.';
+      commentList.appendChild(empty);
+      return;
+    }
+
+    comments.forEach(c=>{
+      const row = document.createElement('div');
+      row.style.padding = '8px 0';
+      row.style.borderBottom = '1px dashed #eee';
+
+      const top = document.createElement('div');
+      top.style.display = 'flex';
+      top.style.justifyContent = 'space-between';
+      top.style.gap = '8px';
+
+      const left = document.createElement('div');
+      left.style.fontSize = '13px';
+      left.style.color = '#495057';
+      left.style.whiteSpace = 'pre-wrap'; // 댓글도 엔터 되게
+      left.textContent = c.text;
+
+      const right = document.createElement('div');
+      right.style.fontSize = '12px';
+      right.style.color = '#999';
+      right.textContent = formatDate(c.date);
+
+      top.append(left, right);
+
+      if(isAdmin){
+        const delC = document.createElement('button');
+        delC.textContent = '댓글삭제';
+        delC.style.marginTop = '6px';
+        delC.onclick = () => {
+          const updated = updatePostById(post.id, (pp)=>{
+            pp.comments = (pp.comments || []).filter(x => x.id !== c.id);
+            return pp;
+          });
+          renderComments(updated);
+        };
+        row.append(top, delC);
+      }else{
+        row.append(top);
+      }
+
+      commentList.appendChild(row);
+    });
+  }
+
+  // 글 열기/닫기 + 조회수
+  title.onclick = () => {
+    const isOpen = content.style.display === 'block';
+
+    content.style.display = isOpen ? 'none' : 'block';
+    actionRow.style.display = isOpen ? 'none' : 'block';
+    commentWrap.style.display = isOpen ? 'none' : 'block';
+
+    if(!isOpen){
+      const updated = updatePostById(post.id, (p)=>{
+        p.views = (p.views || 0) + 1;
+        return p;
+      });
+
+      meta.textContent = `작성일: ${formatDate(updated.date)} | 조회수: ${updated.views || 0} | 좋아요: ${updated.likes || 0}`;
+      renderComments(updated);
+    }
+  };
+
+  wrap.append(title, meta, content, actionRow, commentWrap);
+
+  // 관리자 기능(수정/삭제)
+  if(isAdmin){
+    const edit = document.createElement('button');
+    edit.textContent = '수정';
+    edit.onclick = ()=>{
+      editingPostId = post.id;
+      postTitle.value = post.title;
+      postContent.value = post.content;
+      writeModal.style.display = 'flex';
+    };
+
+    const del = document.createElement('button');
+    del.textContent = '삭제';
+    del.onclick = ()=>{
+      removePost(post.id);
+      renderPostsForTab(currentTabId);
+    };
+
+    wrap.append(edit, del);
+  }
+
+  postsEl.appendChild(wrap);
+}
+
+// ===============================
+// 삭제
+// ===============================
+function removePost(id){
+  const saved = loadPosts().filter(p => p.id !== id);
+  savePosts(saved);
+}
+
+// ===============================
+// 글쓰기
+// ===============================
+function openWrite(){
+  if(!isAdmin) return alert('관리자만 가능');
+  writeModal.style.display = 'flex';
+}
+
+function closeWrite(){
+  writeModal.style.display = 'none';
+  editingPostId = null;
+}
+
+function savePost(){
+  const title = postTitle.value.trim();
+  const content = postContent.value.trim();
+  if(!title || !content) return alert('입력하세요');
+
+  const saved = loadPosts();
+
+  if(editingPostId){
+    const idx = saved.findIndex(p => p.id === editingPostId);
+    if(idx !== -1){
+      saved[idx].title = title;
+      saved[idx].content = content;
+      // ✅ 수정해도 작성일은 유지(원하면 갱신 가능)
+      saved[idx].date = saved[idx].date || Date.now();
+    }
+    editingPostId = null;
+  }else{
+    saved.push({
+      id: Date.now(),
+      title,
+      content,
+      tabId: currentTabId,
+      date: Date.now(),      // ✅ 작성일 반드시 저장
+      views: 0,
+      likes: 0,
+      comments: []
+    });
+  }
+
+  savePosts(saved);
+
+  closeWrite();
+  postTitle.value = '';
+  postContent.value = '';
+  renderPostsForTab(currentTabId);
+}
+
+// ===============================
+// 초기화
+// ===============================
+document.addEventListener('DOMContentLoaded', ()=>{
+  bumpVisitorStats(); // 일단 집계는 하고
+
+  isAdmin = localStorage.getItem('isAdmin')==='true';
+  applyAdminUI();
+
+  currentTabId = document.querySelector('.content.active')?.id || 'home';
+  renderPostsForTab(currentTabId);
+
+  renderStats(); // ✅ 관리자면 보이고 아니면 숨김
+});
+
+// ===============================
+// 공통 유틸
+// ===============================
+function cells(n){
+  return '<textarea></textarea>'.repeat(n);
+}
+
+// 블록(지식·이해 / 과정·기능) 행 생성
+function makeBlockRows(title, rows){
+  return rows.map((r,i)=>`
+    <tr>
+      ${i===0 ? `<td rowspan="${rows.length}">${title}</td>` : ``}
+
+      <td>
+        ${r.input ? '<textarea></textarea>' : r.label}
+      </td>
+
+      <td>${cells(r.cells[0])}</td>
+      <td>${cells(r.cells[1])}</td>
+      <td>${cells(r.cells[2])}</td>
+    </tr>
+  `).join('');
+}
+
+// ===============================
+// 표 하나 생성
+// ===============================
+// ===============================
+// 표 하나 생성 (핵심아이디어 입력칸 제거 + 문장 고정)
+// ===============================
+function makeKoreanTable(title, data){
+
+  // (1)~(6) 번호 뽑기
+  const n = (title.match(/^\((\d)\)/)?.[1]) || "";
+
+  // ✅ 핵심아이디어 문장 고정 데이터
+  const ideaMap = {
+    "1": `⋅ 듣기⋅말하기는 언어, 준언어, 비언어, 매체 등을 활용하여 서로의 생각과 감정을 주고받는 행위이다.<br>
+         ⋅ 화자와 청자는 상황 맥락 및 사회⋅문화적 맥락 속에서 의사소통 목적을 달성하기 위하여 다양한 유형의 담화를 듣고 말한다.<br>
+         ⋅ 화자와 청자는 의사소통 과정에 협력적으로 참여하고 듣기⋅말하기 과정에서의 문제를 해결하기 위해 적절한 전략을 사용하여 듣고 말한다.<br>
+         ⋅ 화자와 청자는 듣기⋅말하기에 흥미를 가지고 적극적으로 참여하면서 담화 공동체 구성원으로 성장하고, 상호 존중하고 공감하는 소통 문화를 만들어 간다.`,
+    "2": `⋅ 읽기는 독자가 자신의 배경지식이나 경험을 활용하여 언어를 비롯한 다양한 기호나 매체로 표현된 글의 의미를 능동적으로 구성하는 행위이다.<br>
+         ⋅ 독자는 다양한 상황 맥락과 사회⋅문화적 맥락 속에서 자신의 읽기 목적을 달성하기 위하여 다양한 유형의 글을 읽는다.<br>
+         ⋅ 독자는 읽기 과정을 점검⋅조정하며 읽기 과정에서 부딪히는 문제를 해결하기 위해 적절한 읽기 전략을 사용하여 글을 읽는다.<br>
+         ⋅ 독자는 읽기 경험을 통해 읽기에 대한 긍정적 정서를 형성하고 삶과 공동체의 문제 해결을 위해 공동체 구성원과 함께 독서를 통해 소통함으로써 사회적 독서 문화를 만들어 간다.`,
+    "3": `⋅ 쓰기는 언어를 비롯한 다양한 기호나 매체를 활용하여 인간의 생각과 감정을 글로 표현함으로써 의미를 구성하는 행위이다.<br>
+         ⋅ 필자는 상황 맥락 및 사회⋅문화적 맥락 속에서 자신의 의사소통 목적을 달성하기 위하여 다양한 유형의 글을 쓴다.<br>
+         ⋅ 필자는 쓰기 과정에서 부딪히는 문제를 해결하기 위하여 적절한 쓰기 전략을 사용하여 글을 쓴다.<br>
+         ⋅ 필자는 쓰기 경험을 통해 언어 공동체의 구성원으로 성장하고, 쓰기 윤리를 갖추어 독자와 소통함으로써 바람직한 의사소통 문화를 만들어 간다.`,
+    "4": `⋅ 문법은 국어의 형식과 내용을 이루는 틀로서 규칙과 원리로 구성⋅운영되며, 문법 탐구는 문법에 대해 사고하는 활동으로 국어에 대한 총체적 앎을 이끈다.<br>
+         ⋅ 국어는 체계와 구조를 갖춘 의미 생성 자원이자, 사회적으로 구성된 관습적 규약이며, 공동체의 사고와 가치를 표상하는 문화적 산물이다.<br>
+         ⋅ 국어 자료는 다양한 맥락에서 만들어지는 의사소통의 결과물로서, 국어 현상을 파악하고 국어 문제를 발견할 수 있는 문법 탐구의 대상이다.<br>
+         ⋅ 국어 사용자는 일상생활에서 국어 현상과 국어 문제를 탐구하고 성찰하면서 언어 주체로서의 정체성과 국어 의식을 형성한다.`,
+    "5": `⋅ 문학은 인간의 삶을 언어로 형상화한 작품을 통해 즐거움과 깨달음을 얻고 타자와 소통하는 행위이다.<br>
+         ⋅ 문학 작품을 통한 소통은 작품의 갈래, 작가와 독자, 사회와 문화, 문학사의 영향 등을 고려하며 이루어진다.<br>
+         ⋅ 문학 수용⋅생산 능력은 문학의 해석, 감상, 비평, 창작 활동을 통해 향상된다.<br>
+         ⋅ 인간은 문학을 향유하면서 자아를 성찰하고 타자를 이해하며 공동체의 일원으로 성장한다.`,
+    "6": `⋅ 매체는 소통을 매개하는 도구, 기술, 환경으로 당대 사회의 소통 방식과 소통 문화에 영향을 미친다.<br>
+         ⋅ 매체 이용자는 매체 자료의 주체적인 수용과 생산을 통해 정체성을 형성하고 사회적 의미 구성 과정에 관여한다.<br>
+         ⋅ 매체 이용자는 매체 및 매체 소통의 영향력에 대한 이해와 자신과 타인의 권리를 지키기 위한 적극적인 노력을 통해 건강한 소통 공동체를 형성한다.`
+  };
+
+  const ideaHTML = ideaMap[n] || "";
+
+  return `
+  <div class="nt-title">${title}</div>
+
+  <table class="subject-table">
+
+    <!-- ✅ 핵심 아이디어: 입력칸 제거 + 문장 고정 -->
+    <tr>
+      <th>핵심 아이디어</th>
+      <td colspan="4" class="idea-block">${ideaHTML}</td>
+    </tr>
+
+    <!-- 범주 / 학년군 -->
+    <tr>
+      <th rowspan="2" colspan="2">범주</th>
+      <th colspan="3">내용요소</th>
+    </tr>
+    <tr>
+      <th>1~2학년</th>
+      <th>3~4학년</th>
+      <th>5~6학년</th>
+    </tr>
+
+    <!-- 지식·이해 -->
+    ${makeBlockRows('지식 · 이해', data.knowledge)}
+
+    <!-- 과정·기능 -->
+    ${makeBlockRows('과정 · 기능', data.process)}
+
+    <!-- 가치·태도 -->
+    <tr>
+      <td colspan="2">가치 · 태도</td>
+      <td>${cells(data.value[0])}</td>
+      <td>${cells(data.value[1])}</td>
+      <td>${cells(data.value[2])}</td>
+    </tr>
+
+  </table>
+
+  <div class="actions-bar">
+    <button class="grade">채점</button>
+    <button class="grade">정답</button>
+    <button class="clear">지우기</button>
+    <div class="score">정답률 : 0%</div>
+  </div>
+  `;
+}
+
+// ===============================
+// 실제 출력
+// ===============================
+const koreanWrap = document.getElementById('koreanTables');
+
+koreanWrap.innerHTML = `
+${makeKoreanTable('(1) 듣기·말하기',{
+  knowledge:[
+    {label:'듣기 • 말하기 맥락', cells:[1,1,2]},
+    {label:'담화 유형', cells:[2,3,5]}
+  ],
+  process:[
+    {label:'내용 확인·추론·평가', cells:[3,4,2]},
+    {label:'내용 생성·조직·표현·전달', cells:[4,5,5]},
+    {label:'상호 작용', cells:[2,3,4]},
+    {label:'점검과 조정', cells:[0,1,1]}
+  ],
+  value:[1,1,1]
+})}
+
+${makeKoreanTable('(2) 읽기',{
+  knowledge:[
+    {label:'읽기 맥락', cells:[0,1,2]},
+    {label:'글의 유형', cells:[3,4,4]}
+  ],
+  process:[
+    {label:'읽기의 기초', cells:[3,1,0]},
+    {label:'내용 확인과 추론', input:true, cells:[2,3,4]},
+    {label:'평가와 창의', input:true, cells:[1,3,2]},
+    {label:'점검과 조정', cells:[0,1,1]}
+  ],
+  value:[1,1,2]
+})}
+
+${makeKoreanTable('(3) 쓰기',{
+  knowledge:[
+    {label:'쓰기 맥락', cells:[0,1,2]},
+    {label:'글의 유형', cells:[2,3,3]}
+  ],
+  process:[
+    {label:'쓰기의 기초', cells:[3,1,0]},
+    {label:'계획하기', input:true, cells:[0,1,1]},
+    {label:'내용 생성하기', cells:[1,1,1]},
+    {label:'내용 조직하기', cells:[0,1,1]},
+    {label:'표현하기', cells:[1,1,1]},
+    {label:'고쳐쓰기', cells:[0,1,1]},
+    {label:'공유하기', input:true, cells:[1,1,1]},
+    {label:'점검·조정', cells:[0,1,1]}
+  ],
+  value:[1,1,2]
+})}
+
+${makeKoreanTable('(4) 문법',{
+  knowledge:[
+    {label:'언어의 본질과 맥락', cells:[0,2,2]},
+    {label:'언어 단위', cells:[1,4,4]},
+    {label:'한글의 기초와 언어 규범', cells:[3,1,1]}
+  ],
+  process:[
+    {label:'국어의 분석과 활용', cells:[1,3,2]},
+    {label:'국어 실천의 성찰과 비판', cells:[1,1,2]}
+  ],
+  value:[1,1,2]
+})}
+
+${makeKoreanTable('(5) 문학',{
+  knowledge:[
+    {label:'갈래', cells:[2,3,4]},
+    {label:'맥락', cells:[0,1,2]}
+  ],
+  process:[
+    {label:'작품 읽기와 이해', cells:[2,2,2]},
+    {label:'해석과 감상', input:true, cells:[2,2,2]},
+    {label:'비평', input:true, cells:[0,1,1]},
+    {label:'창작', input:true, cells:[1,1,1]}
+  ],
+  value:[1,1,2]
+})}
+
+${makeKoreanTable('(6) 매체',{
+  knowledge:[
+  {label:'메체 소통 맥락', cells:[0,1,2]},
+    {label:'매체 자료 유형', input:true, cells:[1,1,1]}
+  ],
+  process:[
+    {label:'접근과 선택', cells:[1,1,1]},
+    {label:'해석과 평가', input:true, cells:[0,1,1]},
+    {label:'제작과 공유', cells:[1,2,1]},
+    {label:'점검과 조정', cells:[0,1,1]}
+  ],
+  value:[1,1,1]
+})}
+`;
+/* ======================================================
+   ✅ 국어 내체표 (1)~(6) 전체 정답/채점/지우기 + 정답률
+   - "+"는 셀 분리
+   - 셀 개수보다 부족하면: 콤마(,)로 추가 분리(‘ ’ 안은 보호)
+   - 셀 개수보다 많으면: 남는 건 버림
+   - 채점은 "정답이 있는 칸만" 카운트
+   - ⭐ input:true(범주 빈칸)도 정답/채점/지우기 포함
+====================================================== */
+
+(function () {
+  // 공백/기호 무시 정규화
+  function norm(t) {
+    return (t || "")
+      .replace(/[\s·⋅•,/’‘"'“”()\-\u00b7]/g, "")
+      .trim();
+  }
+
+  // ‘ ’ 안에서는 + / , 분리 무시
+  function splitOutsideQuotes(text, delimiter) {
+    const s = (text || "").trim();
+    const out = [];
+    let cur = "";
+    let inQuote = false;
+
+    for (let i = 0; i < s.length; i++) {
+      const ch = s[i];
+      if (ch === "‘" || ch === "’") {
+        inQuote = !inQuote;
+        cur += ch;
+        continue;
+      }
+      if (!inQuote && ch === delimiter) {
+        out.push(cur.trim());
+        cur = "";
+        continue;
+      }
+      cur += ch;
+    }
+    out.push(cur.trim());
+    return out.filter(v => v !== "");
+  }
+
+  // + 먼저 분리, 부족하면 콤마로 추가 분리
+  function splitToCount(text, expectedCount) {
+    let parts = splitOutsideQuotes(text, "+").map(v => v.trim());
+
+    if (!expectedCount) return parts;
+
+    while (parts.length < expectedCount && parts.length > 0) {
+      const last = parts.pop();
+      const more = splitOutsideQuotes(last, ",").map(v => v.trim());
+      if (more.length <= 1) {
+        parts.push(last);
+        break;
+      }
+      parts.push(...more);
+    }
+
+    return parts.slice(0, expectedCount);
+  }
+
+  function clearMark(el) {
+    el.classList.remove("correct", "wrong");
+    el.style.color = "";
+    el.style.background = "";
+  }
+
+  function setScore(bar, correct, total) {
+    const score = bar.querySelector(".score");
+    const pct = total ? Math.round((correct / total) * 100) : 0;
+    if (score) score.textContent = `정답률 : ${correct} / ${total} (${pct}%)`;
+  }
+
+  /* ===============================
+     ✅ input:true(범주 빈칸) 정답
+     - 표(1)~(6) 순서로, "범주 빈칸이 나타나는 순서대로" 적어둠
+     - (읽기) 내용확인과추론, 평가와창의
+     - (쓰기) 계획하기, 공유하기
+     - (문학) 해석과감상, 비평, 창작
+     - (매체) 매체자료유형, 해석과평가
+  =============================== */
+  const CATEGORY_INPUT_ANS = [
+    [], // (1) 듣기말하기
+    ["내용확인과 추론", "평가와 창의"], // (2) 읽기
+    ["계획하기", "공유하기"], // (3) 쓰기
+    [], // (4) 문법
+    ["해석과 감상", "비평", "창작"], // (5) 문학
+    ["매체 자료 유형", "해석과 평가"] // (6) 매체
+  ];
+
+  /* ===============================
+     ✅ 정답 데이터 (표 6개)
+     - 순서: (1)듣말 (2)읽기 (3)쓰기 (4)문법 (5)문학 (6)매체
+  =============================== */
+  const KOR_ANS = [
+    // (1) 듣기·말하기
+    {
+      knowledge: [
+        { g12: "상황맥락", g34: "상황맥락", g56: "상황맥락+사회문화적맥락" },
+        { g12: "대화+발표", g34: "대화+발표+토의", g56: "대화+면담+발표+토의+토론" }
+      ],
+      process: [
+        {
+          g12: "집중하기+중요한 내용 확인하기+일이 일어난 순서 파악하기",
+          g34: "중요한 내용과 주제 파악하기+내용 요약하기+원인과 결과 파악하기+내용 예측하기",
+          g56: "생략된 내용 추론하기+주장, 이유, 근거가 타당한지 평가하기"
+        },
+        {
+          g12: "경험과 배경지식 활용하기+일이 일어난 순서에 따라 조직하기+바르고 고운 말로 표현하기+바른 자세로 말하기",
+          g34: "목적과 주제 고려하기+자료 정리하기+원인과 결과 구조에 따라 조직하기+주제에 적절한 의견과 이유 제시하기+준언적 비언어적 표현 활용하기",
+          g56: "청자와 매체 고려하기+자료 선별하기+핵심 정보 중심으로 내용 구성하기+주장, 이유, 근거로 내용 구성하기+매체 활용하여 전달하기"
+        },
+        {
+          g12: "말차례 지키기+감정 나누기",
+          g34: "상황과 상대의 입장 이해하기+예의를 지키며 듣고 말하기, 의견 교환하기",
+          g56: "궁금한 내용 질문하기+절차와 규칙 준수하기+협력적으로 참여하기+의견 비교하기 및 조정하기"
+        },
+        {
+          g12: "",
+          g34: "듣기+말하기 과정과 전략에 대해 점검 조정하기",
+          g56: "듣기+말하기 과정과 전략에 대해 점검 조정하기"
+        }
+      ],
+      value: { g12: "듣기 말하기에 대한 흥미", g34: "듣기 말하기 효능감", g56: "듣기 말하기에 적극적 참여" }
+    },
+
+    // (2) 읽기
+    {
+      knowledge: [
+        { g12: "", g34: "상황 맥락", g56: "상황 맥락+사회 문화적 맥락" },
+        {
+          g12: "친숙한 화제의 글+설명 대상과 주제가 명시적인 글+생각이나 감정이 명시적으로 제시된 글",
+          g34: "친숙한 화제의 글+설명 대상과 주제가 명시적인 글+주장, 이유, 근거가 명시적인 글+생각이나 감정이 명시적으로 제시된 글",
+          g56: "일상적 화제나 사회 문화적 화제의 글+다양한 설명 방법을 활용하여 주제를 제시한 글+주장이 명시적이고 다양한 이유와 근거가 제시된 글+생각이나 감정이 함축적으로 제시된 글"
+        }
+      ],
+      process: [
+        {
+          g12: "‘글자, 단어 읽기’+문장, 짧은 글 소리 내어 읽기+알맞게 띄어 읽기",
+          g34: "유창하게 읽기",
+          g56: ""
+        },
+        {
+          g12: "글의 중심 내용 확인하기, 인물의 마음이나 생각 짐작하기",
+          g34: "중심 생각 파악하기+내용 요약하기+단어의 의미나 내용 예측하기",
+          g56: "글의 구조를 파악하기+글의 주장이나 주제 파악하기+글의 구조 고려하며 내용 요약하기+생략된 내용과 함축된 의미 추론하기"
+        },
+        {
+          g12: "인물과 자신의 마음이나 생각 비교하기",
+          g34: "사실과 의견 구별하기+글이나 자료의 출처 신뢰성 평가하기+필자와 자신의 의견 비교하기",
+          g56: "글이나 자료의 내용과 표현 평가하기+다양한 글이나 자료 읽기를 통해 문제 해결하기"
+        },
+        {
+          g12: "",
+          g34: "읽기 과정과 전략에 대해 점검 조정하기",
+          g56: "읽기 과정과 전략에 대해 점검 조정하기"
+        }
+      ],
+      value: { g12: "읽기에 대한 흥미", g34: "읽기 효능감", g56: "긍정적 읽기 동기+읽기에 적극적 참여" }
+    },
+
+    // (3) 쓰기
+    {
+      knowledge: [
+        { g12: "", g34: "상황 맥락", g56: "상황 맥락+사회 문화적 맥락" },
+        {
+          g12: "주변 소재에 대해 소개하는 글+겪은 일을 표현하는 글",
+          g34: "절차와 결과를 보고하는 글+이유를 들어 의견을 제시하는 글+독자에게 마음을 전하는 글",
+          g56: "대상의 특성이 나타나게 설명하는 글+적절한 근거를 들어 주장하는 글+체험에 대한 감상을 나타내는 글"
+        }
+      ],
+      process: [
+        { g12: "글자 쓰기+단어 쓰기+문장 쓰기", g34: "문단 쓰기", g56: "" },
+        { g12: "", g34: "목적+주제 고려하기", g56: "독자+매체 고려하기" },
+        { g12: "일상을 소재로 내용 생성하기", g34: "목적, 주제에 따라 내용 생성하기", g56: "독자+매체를 고려하여 내용 생성하기" },
+        { g12: "", g34: "절차와 결과에 따라 내용 조직하기", g56: "통일성을 고려하여 내용 조직하기" },
+        { g12: "자유롭게 표현하기", g34: "정확하게 표현하기", g56: "독자를 고려하여 표현하기" },
+        { g12: "", g34: "문장, 문단 수준에서 고쳐쓰기", g56: "글 수준에서 고쳐쓰기" },
+        { g12: "쓴 글을 함께 읽고 반응하기", g34: "쓴 글을 함께 읽고 반응하기", g56: "쓴 글을 함께 읽고 반응하기" },
+        { g12: "", g34: "쓰기 과정과 전략에 대해 점검 조정하기", g56: "쓰기 과정과 전략에 대해 점검 조정하기" }
+      ],
+      value: { g12: "쓰기에 대한 흥미", g34: "쓰기 효능감", g56: "쓰기에 적극적 참여+쓰기 윤리 준수" }
+    },
+
+    // (4) 문법
+    {
+      knowledge: [
+        { g12: "", g34: "의사소통과 관계 형성 수단으로서의 언어+참여자 간 관계 및 장면에 따른 언어", g56: "음성 언어 및 문자 언어의 특성과 매체+지역에 따른 언어와 표준어" },
+        { g12: "글자 단어 문장", g34: "단어의 의미와 단어 간의 의미 관계+단어의 분류+문장의 기본 구조+글과 담화의 높임 표현과 지시 접속 표현", g56: "어휘 체계와 고유어+관용 표현+문장 성분과 호응+글과 담화의 시간 표현" },
+        { g12: "한글 자모의 이름과 소리+단어의 발음과 표기+문장과 문장 부호", g34: "단어의 정확한 발음과 표기", g56: "단어와 문장의 정확한 표기와 사용" }
+      ],
+      process: [
+        { g12: "언어 단위 관찰하기", g34: "언어 단위 관찰하고 분석하기+국어사전 활용하여 문제 해결하기+글과 담화에 적절한 표현 사용하기", g56: "언어 표현의 특징 분석하기+글과 담화에 적절한 표현 사용하기" },
+        { g12: "소리와 표기의 차이 인식하기", g34: "국어 규범 인지하고 수용하기", g56: "국어생활 점검하고 실천하기+언어 표현의 효과 평가하기" }
+      ],
+      value: { g12: "한글에 대한 호기심", g34: "국어의 소중함 인식", g56: "국어생활에 대한 민감성+집단 사회의 언어와 나의 언어의 관계 인식" }
+    },
+
+    // (5) 문학
+    {
+      knowledge: [
+        { g12: "‘시, 노래’+‘이야기, 그림책’", g34: "시+이야기+극", g56: "시+소설+극+수필" },
+        { g12: "", g34: "독자맥락", g56: "작가맥락+독자맥락" }
+      ],
+      process: [
+        { g12: "‘낭송하기, 말놀이하기’+말의 재미 느끼기", g34: "자신의 경험을 바탕으로 읽기+사실과 허구의 차이 이해하기", g56: "작가의 의도를 생각하며 읽기+갈래의 기본 특성 이해하기" },
+        { g12: "작품 속 인물 상상하기+작품 읽고 느낀 점 말하기", g34: "인물의 성격과 역할 파악하기+이야기의 흐름 생각하며 감상하기", g56: "인물, 사건, 배경 파악하기+비유적 표현에 유의하여 감상하기" },
+        { g12: "", g34: "마음에 드는 작품 소개하기", g56: "인상적인 부분을 중심으로 작품에 대해 의견 나누기" },
+        { g12: "시, 노래, 이야기, 그림 등 다양한 형식으로 표현하기", g34: "감각적 표현 활용하여 표현하기", g56: "갈래 특성에 따라 표현하기" }
+      ],
+      value: { g12: "문학에 대한 흥미", g34: "작품 감상의 즐거움", g56: "문학을 통한 자아성찰+문학 소통의 즐거움" }
+    },
+
+    // (6) 매체
+    {
+      knowledge: [
+        { g12: "", g34: "상황 맥락", g56: "상황 맥락+사회 문화적 맥락" },
+        { g12: "일상의 매체 자료", g34: "인터넷의 학습 자료", g56: "뉴스 및 각종 정보 매체 자료" }
+      ],
+      process: [
+        { g12: "매체 자료 접근하기", g34: "인터넷 자료 탐색 선택하기", g56: "목적에 맞는 정보 검색하기" },
+        { g12: "", g34: "매체 자료 의미 파악하기", g56: "매체 자료의 신뢰성 평가하기" },
+        { g12: "글과 그림으로 표현하기", g34: "발표 자료 만들기+매체 자료 활용 공유하기", g56: "복합양식 매체 자료 제작 공유하기" },
+        { g12: "", g34: "매체 소통의 목적 점검하기", g56: "매체 이용 양상 점검하기" }
+      ],
+      value: { g12: "매체 소통에 대한 흥미와 관심", g34: "매체 소통 윤리", g56: "매체 소통에 대한 성찰" }
+    }
+  ];
+
+  // ✅ table 안에서 input:true(범주 빈칸) textarea들을 "등장 순서대로" 모으기
+  function getCategoryInputsInTable(table){
+    const rows = Array.from(table.querySelectorAll("tr")).slice(3); // 헤더 3줄 제외
+    const midRows = rows.slice(0, -1); // 마지막 가치·태도 제외
+    const inputs = [];
+
+    midRows.forEach(r=>{
+      const tds = r.querySelectorAll("td");
+      if(!tds.length) return;
+
+      // 라벨칸(td[0])에 textarea가 있으면 = input:true 범주칸
+      const ta = tds[0].querySelector("textarea");
+      if(ta) inputs.push(ta);
+    });
+
+    return inputs;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const wrap = document.getElementById("koreanTables");
+    if (!wrap) return;
+
+    const tables = Array.from(wrap.querySelectorAll("table.subject-table"));
+    if (!tables.length) return;
+
+    tables.forEach((table, idx) => {
+      const data = KOR_ANS[idx];
+      if (!data) return;
+
+      // actions-bar는 table 바로 다음에 있음(너가 만든 구조)
+      const bar = table.nextElementSibling?.classList.contains("actions-bar")
+        ? table.nextElementSibling
+        : null;
+      if (!bar) return;
+
+      const buttons = Array.from(bar.querySelectorAll("button"));
+      const btnGrade = buttons.find(b => b.textContent.trim() === "채점");
+      const btnAnswer = buttons.find(b => b.textContent.trim() === "정답");
+      const btnClear = buttons.find(b => b.textContent.trim() === "지우기");
+
+      const rows = Array.from(table.querySelectorAll("tr")).slice(3);
+      const valueRow = rows[rows.length - 1];
+      const midRows = rows.slice(0, -1);
+
+      const kRows = midRows.slice(0, data.knowledge.length);
+      const pRows = midRows.slice(data.knowledge.length, data.knowledge.length + data.process.length);
+
+      function gradeCellsFromRow(row, ansObj, mode) {
+        const tds = Array.from(row.querySelectorAll("td"));
+        if (tds.length < 3) return { correct: 0, total: 0 };
+
+        const g12Cell = tds[tds.length - 3];
+        const g34Cell = tds[tds.length - 2];
+        const g56Cell = tds[tds.length - 1];
+
+        const g12 = Array.from(g12Cell.querySelectorAll("textarea"));
+        const g34 = Array.from(g34Cell.querySelectorAll("textarea"));
+        const g56 = Array.from(g56Cell.querySelectorAll("textarea"));
+
+        const a12 = splitToCount(ansObj.g12 || "", g12.length);
+        const a34 = splitToCount(ansObj.g34 || "", g34.length);
+        const a56 = splitToCount(ansObj.g56 || "", g56.length);
+
+        let correct = 0, total = 0;
+
+        function apply(list, answers) {
+          list.forEach((ta, i) => {
+            const ans = answers[i] || "";
+            if (mode === "answer") {
+              ta.value = ans;
+              clearMark(ta);
+              if (ans) ta.classList.add("correct");
+              return;
+            }
+            if (!ans) return; // 정답 없는 칸은 채점 제외
+            total++;
+            clearMark(ta);
+            if (norm(ta.value) === norm(ans)) { ta.classList.add("correct"); correct++; }
+            else ta.classList.add("wrong");
+          });
+        }
+
+        apply(g12, a12);
+        apply(g34, a34);
+        apply(g56, a56);
+
+        return { correct, total };
+      }
+
+      function fillValueRow(mode) {
+        const tds = valueRow.querySelectorAll("td");
+        // [라벨] [1~2] [3~4] [5~6]
+        const g12 = Array.from(tds[1]?.querySelectorAll("textarea") || []);
+        const g34 = Array.from(tds[2]?.querySelectorAll("textarea") || []);
+        const g56 = Array.from(tds[3]?.querySelectorAll("textarea") || []);
+
+        const a12 = splitToCount(data.value.g12 || "", g12.length);
+        const a34 = splitToCount(data.value.g34 || "", g34.length);
+        const a56 = splitToCount(data.value.g56 || "", g56.length);
+
+        let correct = 0, total = 0;
+
+        function apply(list, answers) {
+          list.forEach((ta, i) => {
+            const ans = answers[i] || "";
+            if (mode === "answer") {
+              ta.value = ans;
+              clearMark(ta);
+              if (ans) ta.classList.add("correct");
+              return;
+            }
+            if (!ans) return;
+            total++;
+            clearMark(ta);
+            if (norm(ta.value) === norm(ans)) { ta.classList.add("correct"); correct++; }
+            else ta.classList.add("wrong");
+          });
+        }
+
+        apply(g12, a12);
+        apply(g34, a34);
+        apply(g56, a56);
+
+        return { correct, total };
+      }
+
+      // ✅ 범주(input:true) 처리
+      function applyCategoryInputs(mode, scoreAcc){
+        const inputs = getCategoryInputsInTable(table);
+        const answers = CATEGORY_INPUT_ANS[idx] || [];
+
+        inputs.forEach((ta,i)=>{
+          const ans = answers[i] || "";
+
+          if(mode === "answer"){
+            ta.value = ans;
+            clearMark(ta);
+            if(ans) ta.classList.add("correct");
+            return;
+          }
+
+          // grade
+          if(!ans) return;
+          scoreAcc.total++;
+          clearMark(ta);
+          if(norm(ta.value) === norm(ans)){
+            ta.classList.add("correct");
+            scoreAcc.correct++;
+          }else{
+            ta.classList.add("wrong");
+          }
+        });
+      }
+
+      // ✅ 정답
+      btnAnswer?.addEventListener("click", () => {
+        table.querySelectorAll("textarea").forEach(clearMark);
+
+        kRows.forEach((row, i) => gradeCellsFromRow(row, data.knowledge[i], "answer"));
+        pRows.forEach((row, i) => gradeCellsFromRow(row, data.process[i], "answer"));
+        fillValueRow("answer");
+
+        applyCategoryInputs("answer");
+
+        const total = table.querySelectorAll("textarea").length; // 범주칸도 포함됨
+        setScore(bar, total, total);
+      });
+
+      // ✅ 채점
+      btnGrade?.addEventListener("click", () => {
+        table.querySelectorAll("textarea").forEach(clearMark);
+
+        let acc = { correct: 0, total: 0 };
+
+        kRows.forEach((row, i) => {
+          const r = gradeCellsFromRow(row, data.knowledge[i], "grade");
+          acc.correct += r.correct; acc.total += r.total;
+        });
+
+        pRows.forEach((row, i) => {
+          const r = gradeCellsFromRow(row, data.process[i], "grade");
+          acc.correct += r.correct; acc.total += r.total;
+        });
+
+        const v = fillValueRow("grade");
+        acc.correct += v.correct; acc.total += v.total;
+
+        applyCategoryInputs("grade", acc);
+
+        setScore(bar, acc.correct, acc.total);
+      });
+
+      // ✅ 지우기
+      btnClear?.addEventListener("click", () => {
+        table.querySelectorAll("textarea").forEach(t => {
+          t.value = "";
+          clearMark(t);
+        });
+        setScore(bar, 0, 0);
+      });
+    });
+  });
+})();
+/* ===============================
+   (1)번 표 정답 데이터
+=============================== */
+const answers1 = {
+  k: [
+    '아동기발달과자기이해',
+    '자립적일상생활',
+    '균형잡힌식사',
+    '옷의기능과옷차림',
+    '가정생활과가정일',
+    '진로발달과직업'
+  ],
+  p: [
+    '건강한발달을위한자기관리방법탐색하기',
+    '자립적일상생활에필요한조건살펴보기',
+    '가족원의다양한요구파악하기',
+    '바람직한식습관형성하기',
+    '건강하고적절한옷차림파악하기',
+    '가정생활을유지하는가정일의종류살펴보기',
+    '가정일수행에참여하기'
+  ],
+  v: [
+    '아동기발달에대한긍정적인수용',
+    '일상생활속올바른생활습관과예절을실천하는태도',
+    '가족간배려와돌봄의가치',
+    '협력적소통에기반한역할분담의가치수용',
+    '일과노동의가치',
+    '진로를주도적으로탐색하는태도'
+  ]
+};
+
+const answers2 = {
+  k: [
+    '생활자원의특징',
+    '생활자원의보관과활용',
+    '식재료의생산과선택',
+    '음식의마련과섭취',
+    '옷이나생활용품의구성',
+    '생활공간과정리정돈',
+    '지속가능한의식주생활'
+  ],
+  p: [
+    '생활자원의사용가치를높이는방법탐색하기',
+    '합리적인관리방법실천하기',
+    '자신의선택이공동체의삶과환경에미치는영향설명하기',
+    '음식을마련하는과정체험하기',
+    '생활용품을만드는과정경험하기',
+    '생활속의생활문제해결하기',
+    '생활공간을청결하게하는과정경험하기',
+    '일상생활에서의지속가능한행동을계획하여실천하기'
+  ],
+  v: [
+    '생활자원을소중하게여기는태도',
+    '함께하는식사의즐거움',
+    '식사예절을실천하는태도',
+    '직접만들어쓰기의가치와창의적태도',
+    '제작과정에서절차적사고를중시하는태도',
+    '안전한생활을실천하는태도',
+    '쾌적한생활공간유지를위한노력',
+    '나눔의봉사활동과기부문화의존중'
+  ]
+};
+
+const answers3 = {
+  k: [
+    '발명의의미와발명품',
+    '기술적문제해결과발명사고기법',
+    '발명과특허의개념',
+    '지식재산권의중요성',
+    '수송의의미와수송수단의발달',
+    '수송수단의구성요소'
+  ],
+  p: [
+    '생활속기술적문제확인하기',
+    '창의적인제품구상하기',
+    '발명제품의설계와제작하기',
+    '발명품의특허정보검색하기',
+    '다양한수송수단탐색하기',
+    '친환경수송수단의설계와제작하기'
+  ],
+  v: [
+    '발명과기술에대한관심과흥미',
+    '기술에대한가치인식',
+    '발명아이디어발상의실천적태도',
+    '지식재산보호에대한인식',
+    '미래수송수단에대한관심'
+  ]
+};
+
+const answers4 = {
+  k: [
+    '건설기술의개념과친환경구조물',
+    '디지털기술의특징과디지털콘텐츠의종류',
+    '로봇의개념과작동원리',
+    '로봇융합기술의이해',
+    '생활속동식물의이해',
+    '동식물자원의분류',
+    '동식물자원의친환경농업',
+    '미래생활과연관된농업활동',
+    '농업과농촌의다원적인역할'
+  ],
+  p: [
+    '생활속건설구조물탐색과체험하기',
+    '디지털콘텐츠의제작과공유하기',
+    '간단한로봇의조립과작동시키기',
+    '로봇의동작에코딩프로그램적용하기',
+    '융합적사고하기',
+    '동식물과관련된생명기술탐색하기',
+    '동식물을기르고가꾸기',
+    '생활속농업활동체험하기'
+  ],
+  v: [
+    '건설기술에대한가치인식',
+    '로봇에대한관심과흥미',
+    '건전한사이버공간의활용태도',
+    '동식물에대한생태존중감을갖는태도',
+    '지속가능한농업의순환성과중요성인식',
+    '농업에대한관심과흥미',
+    '농산업에대한올바른진로관을갖는태도'
+  ]
+};
+
+const answers5 = {
+  k: [
+    '컴퓨터의개념',
+    '문제찾기와문제해결절차',
+    '컴퓨터에게명령하는방법',
+    '데이터의종류와표현',
+    '생활속인공지능'
+  ],
+  p: [
+    '생활속에서활용되는컴퓨터의사례탐색하기',
+    '일상생활의문제를해결하기위한알고리즘구상하기',
+    '문제를해결하는기초적인프로그래밍하기',
+    '데이터간에공통되는유형이나형태탐색하기',
+    '인공지능이만들어지는과정탐색하기'
+  ],
+  v: [
+    '생활속에서컴퓨터를활용해해결가능한문제를탐색해보려는자세',
+    '프로그래밍을통해만든산출물을타인과공유하고협력하려는자세',
+    '생활속의여러가지데이터가갖는의미를파악하는자세',
+    '인공지능이사회에미치는영향을파악하는자세'
+  ]
+};
+
+/* 공백 제거 */
+function norm(t){
+  return t.replace(/\s/g,'');
+}
+
+/* ===============================
+   (1)번 표 채점
+=============================== */
+function grade1(){
+  checkRow(0, 'k', answers1.k); // 지식·이해
+  checkRow(1, 'p', answers1.p); // 과정·기능
+  checkRow(2, 'v', answers1.v); // 가치·태도
+}
+
+function checkRow(rowIndex,key,answers){
+  const table = document.querySelectorAll('#tables table')[0];
+  const textareas = table.querySelectorAll('tr')[rowIndex+2].querySelectorAll('textarea');
+
+  textareas.forEach((t,i)=>{
+    t.style.color = ''; // 초기화
+    if(!answers[i]) return;
+
+    if(norm(t.value) === answers[i]){
+      t.style.color = '#0d6efd'; // 파랑
+    }else{
+      t.style.color = '#dc3545'; // 빨강
+    }
+  });
+}
+
+/* ===============================
+   (1)번 표 정답 보기
+=============================== */
+function answer1(){
+  const table = document.querySelectorAll('#tables table')[0];
+  fillRow(table,2,answers1.k);
+  fillRow(table,3,answers1.p);
+  fillRow(table,4,answers1.v);
+}
+
+function fillRow(table,rowIndex,answers){
+  const textareas = table.querySelectorAll('tr')[rowIndex].querySelectorAll('textarea');
+  textareas.forEach((t,i)=>{
+    t.value = answers[i] ? answers[i].replace(/([가-힣])/g,'$1 ') : '';
+  });
+}
+
+/* ===============================
+   (1)번 표 지우기
+=============================== */
+function clear1(){
+  const table = document.querySelectorAll('#tables table')[0];
+  table.querySelectorAll('textarea').forEach(t=>{
+    t.value='';
+    t.classList.remove('correct','wrong');
+    t.style.color='';
+  });
+}
+/* 체크박스 */
+const subjects=[
+['국어',['핵심역량','모형','내체표']],
+['수학',['핵심역량','모형']],
+['사회',['핵심역량','모형','내체표']],
+['과학',['핵심역량','모형']],
+['영어',['핵심역량','모형']],
+['음악',['핵심역량','개체표','내체표']],
+['미술',['핵심역량','모형','내체표']],
+['체육',['핵심역량','모형','내체표']],
+['도덕',['핵심역량','모형','내체표']],
+['실과',['핵심역량','모형','내체표']],
+['바슬즐',['핵심역량','모형','내체표']],
+['총론&창체',['핵심역량','총론','영역별 활동']]
+];
+
+const wrap=document.getElementById('subjects');
+subjects.forEach((s,i)=>{
+let html=`<div class="subject"><div class="subject-title">${s[0]}</div>`;
+s[1].forEach((t,j)=>{
+html+=`<label><input type="checkbox" data-k="s${i}_${j}"> ${t}</label>`;
+});
+html+=`<div class="progress-box"><div class="progress-bar"></div></div>
+<div class="percent">0%</div></div>`;
+wrap.innerHTML+=html;
+});
+
+function updateAll(){
+let sum=0;
+document.querySelectorAll('.subject').forEach(sub=>{
+const boxes=sub.querySelectorAll('input');
+const bar=sub.querySelector('.progress-bar');
+const p=sub.querySelector('.percent');
+const c=[...boxes].filter(b=>b.checked).length;
+const percent=Math.round(c/boxes.length*100);
+bar.style.width=percent+'%';
+p.textContent=percent+'%';
+sum+=percent;
+});
+const total=Math.round(sum/subjects.length);
+totalBar.style.width=total+'%';
+totalPercent.textContent=total+'%';
+}
+
+document.querySelectorAll('input[type=checkbox]').forEach(b=>{
+b.checked=localStorage.getItem(b.dataset.k)==='1';
+b.onchange=()=>{
+localStorage.setItem(b.dataset.k,b.checked?'1':'0');
+updateAll();
+};
+});
+updateAll();
+
+/* 실과 표 5개 */
+const config=[[6,7,6],[7,8,6],[6,6,5],[9,8,7],[5,5,4]];
+const container=document.getElementById('tables');
+
+config.forEach((c,i)=>{
+container.innerHTML+=`
+<div class="nt-title">
+  (${i+1})
+  ${i===0 ? `
+    인간 <input class="blank" data-key="s1-title-1">
+    과 <input class="blank" data-key="s1-title-2"> 삶
+  ` : ``}
+
+  ${i===1 ? `
+    <input class="blank" data-key="s2-title-1">
+    과/와 <input class="blank" data-key="s2-title-2">한 선택
+  ` : ``}
+
+  ${i===2 ? `
+    <input class="blank" data-key="s3-title-1">
+    문제해결과 <input class="blank" data-key="s3-title-2">
+  ` : ``}
+  
+  ${i===3 ? `
+    <input class="blank" data-key="s4-title-1"> 기술과 융합
+  ` : ``}
+
+  ${i===4 ? `
+    디지털 사회와 <input class="blank" data-key="s5-title-1">
+  ` : ``}
+</div>
+<table class="subject-table">
+<tr>
+  <th class="row-title">핵심 아이디어</th>
+  <td class="idea-block">
+
+    ${i===0 ? `
+    ⋅ 인간 <input class="blank" data-key="s1-1">에 대한 이해는
+    <input class="blank" data-key="s1-2"> 삶을 이끌고
+    <input class="blank" data-key="s1-3">과/와의 건강한 관계를 형성하는 기초가 된다.<br>
+
+    ⋅ 일상에서 직면하는 문제에 대처할 수 있는 역량은 개인 및 가족의
+    <input class="blank" data-key="s1-4">과/와 행복한 일상의 삶을 주도적으로 이끌 수 있게 한다.<br>
+
+    ⋅ 일상에서 직면하는
+    <input class="blank" data-key="s1-5">과/와
+    <input class="blank" data-key="s1-6">에 기반한 관계맺음의 경험은
+    건강한 <input class="blank" data-key="s1-7">를/을 확장하는 밑거름이 된다.<br>
+
+    ⋅ 가정일과 <input class="blank" data-key="s1-8">는/은 변화하는 일상에서
+    개인 및 가족의 요구와 문제를 해결해 나갈 수 있게 하면서
+    <input class="blank" data-key="s1-9">과/와
+    <input class="blank" data-key="s1-10">를/을 스스로 개척하고 성장하기 위한 바탕이 된다.
+    ` : ``}
+
+    ${i===1 ? `
+    ⋅ 삶의 <input class="blank" data-key="s2-1">과/와
+    <input class="blank" data-key="s2-2">를/을 해결하는 과정에서 인간이 경험하는
+    <input class="blank" data-key="s2-3">의 제한성은 개인과 가족의 관리능력을 요구한다.<br>
+
+    ⋅ 생활의 기본 조건으로서 <input class="blank" data-key="s2-4">의 수행능력을 갖추는 일은
+    창의적이고 가치 있는 삶을 설계하고 영위할 수 있는 기초가 된다.<br>
+
+    ⋅ 변화하는 <input class="blank" data-key="s2-5">를/을 안전하고 건강하게 유지하고자 하는
+    개인과 가족의 책임 있는 행동을 통해
+    <input class="blank" data-key="s2-6">를/을 함양할 수 있다.<br>
+
+    ⋅ 일상생활에서 <input class="blank" data-key="s2-7">를/을 지향하는 것은
+    현재 <input class="blank" data-key="s2-8">과/와의 공존과 함께
+    미래 세대의 건강한 삶을 위한 책임 있는 행동이다.
+    ` : ``}
+
+    ${i===2 ? `
+    ⋅ <input class="blank" data-key="s3-1">는/은 인간의 필요와 욕구를 충족하기 위한
+    혁신적인 문제 해결 활동으로
+    <input class="blank" data-key="s3-2">를/을 주도하고
+    사회⋅<input class="blank" data-key="s3-3">⋅
+    <input class="blank" data-key="s3-4"> 등에 바람직한 영향을 끼치도록 활용되어야 한다.<br>
+
+    ⋅ 인간은 <input class="blank" data-key="s3-5"> 문제 해결 과정을 통해
+    <input class="blank" data-key="s3-6"> 문제를 창의적으로 해결하며,
+    <input class="blank" data-key="s3-7">에 대한 보호 및 발명과 혁신은 기술의 가치를 높인다.<br>
+
+    ⋅ <input class="blank" data-key="s3-8"> 제품의 개발은 기술적 문제 해결 과정을 통해 이루어지며,
+    제품을 생산하기 위해서는 <input class="blank" data-key="s3-9"> 활동 및
+    다양한 재료와 도구의 활용이 필요하다.<br>
+
+    ⋅ <input class="blank" data-key="s3-10">를/을 활용한 수송 수단은
+    <input class="blank" data-key="s3-11">과/와 환경 문제를 극복하는 대안이며,
+    혁신적 수송 수단과 물류 체제 구축은 제품의
+    <input class="blank" data-key="s3-12"> 수송을 가능하게 한다.
+    ` : ``}
+    
+    ${i===3 ? `
+    ⋅ <input class="blank" data-key="s4-1">는/은 쾌적하고 편리하며 안전한 생활을 위한 다양한 설계와 시공 및 유지관리 방법을 적용하고 있으며,
+    다른 산업의 수행을 위한 기반 요소로서 가치를 가진다.<br>
+
+    ⋅ <input class="blank" data-key="s4-2-1">는/은 기계요소, 전기전자 등의 하드웨어와 이를 제어하는
+    <input class="blank" data-key="s4-2-2">로/으로 구성되며,
+    여러 가지 기술과 지식이 적용된 첨단 융합기술의 산물로서 사회 각 분야에 활용된다.<br>
+
+    ⋅ <input class="blank" data-key="s4-3"> 기술의 발달은 시공간 극복을 통해 정보와 문화의 교류 및 세계화에 기여해왔으며,
+    다양한 기술과 융합하여 인간을 새로운 영역으로 이끈다.<br>
+
+    ⋅ <input class="blank" data-key="s4-4"> 기술은 다양한 기술과 융합하여 발달하고 있으며,
+    식량자원의 활용과 농업의 순환체험은 지속가능한 미래 생활을 위한 기초가 된다.
+    ` : ``}
+    
+    ${i===4 ? `
+    ⋅ <input class="blank" data-key="s5-1">는/은 디지털 사회에서 발생하는 다양한 문제를 해결하는 데 도움을 준다.<br>
+
+    ⋅ 컴퓨터로 처리할 수 있는 데이터는
+    <input class="blank" data-key="s5-2-1"> 데이터이며,
+    문제 해결을 위한 명령은 명확한
+    <input class="blank" data-key="s5-2-2">가/이가 필요하다.<br>
+
+    ⋅ <input class="blank" data-key="s5-3">는/은 인간의 지능을 모방하여 만든 프로그램 시스템으로
+    생활 속의 다양한 분야에 영향을 미친다.
+    ` : ``}
+
+  </td>
+</tr>
+<tr><th class="row-title">범주</th><td class="center">내용요소</td></tr>
+<tr><th class="row-title">지식·이해</th><td class="rows">${'<textarea></textarea>'.repeat(c[0])}</td></tr>
+<tr><th class="row-title">과정·기능</th><td class="rows">${'<textarea></textarea>'.repeat(c[1])}</td></tr>
+<tr><th class="row-title">가치·태도</th><td class="rows">${'<textarea></textarea>'.repeat(c[2])}</td></tr>
+</table>
+<button class="grade" onclick="grade(this, ${i})">채점</button>
+<button class="grade" onclick="showAnswer(this, ${i})">정답</button>
+<button class="clear" onclick="clearTable(this)">지우기</button>
+<div class="score" id="score${i}">정답률: 0%</div>
+`;
+});
+const answerSets=[answers1,answers2,answers3,answers4,answers5];
+const silgwaAnswers = {
+  // (1) 제목
+  "s1-title-1":"발달",
+  "s1-title-2":"주도적",
+
+  // (1) 핵심 아이디어
+  "s1-1":"발달","s1-2":"자립적인","s1-3":"타인",
+  "s1-4":"긍정적발달",
+  "s1-5":"상호존중","s1-6":"협력적소통","s1-7":"대인관계",
+  "s1-8":"생활습관","s1-9":"생활방식","s1-10":"진로",
+
+  // (2) 제목
+  "s2-title-1":"생활환경",
+  "s2-title-2":"지속가능",
+
+  // (2) 핵심 아이디어
+  "s2-1":"욕구","s2-2":"문제","s2-3":"생활자원",
+  "s2-4":"의식주생활",
+  "s2-5":"생활환경","s2-6":"소비자시민성",
+  "s2-7":"지속가능한선택","s2-8":"생활공동체",
+
+  // (3) 제목
+  "s3-title-1":"기술적",
+  "s3-title-2":"혁신",
+
+  // (3) 핵심 아이디어
+  "s3-1":"기술","s3-2":"인류문명","s3-3":"문화","s3-4":"경제",
+  "s3-5":"기술적","s3-6":"발명","s3-7":"지식재산",
+  "s3-8":"창의적인","s3-9":"설계",
+  "s3-10":"친환경에너지","s3-11":"자원의고갈","s3-12":"효율적인",
+  
+  // (4)
+  "s4-title-1":"지속가능한",
+  "s4-1":"건설기술",
+  "s4-2-1":"로봇",
+  "s4-2-2":"소프트웨어",
+  "s4-3":"정보통신",
+  "s4-4":"생명",
+
+  // (5)
+  "s5-title-1":"인공지능",
+  "s5-1":"프로그래밍",
+  "s5-2-1":"디지털",
+  "s5-2-2":"절차",
+  "s5-3":"인공지능"
+};
+function getTableFromBtn(btn){
+  let el = btn.previousElementSibling;
+  while (el && el.tagName !== 'TABLE') {
+    el = el.previousElementSibling;
+  }
+  return el;
+}
+
+/* ===============================
+   ✅ 실과 내체표: correct/wrong 클래스 버전 (정상 작동)
+   - textarea + 핵심아이디어 빈칸(.blank) 모두 배경색 적용
+   - 정답/채점/지우기 + 정답률 정상 표시
+=============================== */
+
+function getTableFromBtn(btn){
+  let el = btn.previousElementSibling;
+  while(el && el.tagName !== 'TABLE') el = el.previousElementSibling;
+  return el;
+}
+
+// ✅ 마크 제거
+function clearMark(el){
+  el.classList.remove('correct','wrong');
+  el.style.color = '';
+  el.style.background = '';
+}
+
+// ✅ 점수 박스 찾기(버튼 다음에 score가 있음)
+function setScoreFromBtn(btn, correct, total){
+  let el = btn.nextElementSibling;
+  while(el && !el.classList.contains('score')){
+    el = el.nextElementSibling;
+  }
+  if(!el) return;
+
+  const percent = total ? Math.round(correct/total*100) : 0;
+  el.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+}
+
+function grade(btn,index){
+  const table = getTableFromBtn(btn);
+  const a = answerSets[index];
+  if(!table || !a) return;
+
+  let correct=0, total=0;
+
+  // ① textarea 채점
+  [a.k,a.p,a.v].forEach((arr,rowIdx)=>{
+    const row = table.querySelectorAll('tr')[rowIdx+2];
+    const textareas = row.querySelectorAll('textarea');
+
+    textareas.forEach((t,i)=>{
+      const ans = arr[i];
+      if(!ans) return;
+
+      total++;
+      clearMark(t);
+
+      if(norm(t.value) === norm(ans)){
+        t.classList.add('correct');
+        correct++;
+      }else{
+        t.classList.add('wrong');
+      }
+    });
+  });
+
+  // ② 빈칸(.blank) 채점 (표 안 + 제목 nt-title까지)
+  const title = table.previousElementSibling;
+  const blanks = [
+    ...table.querySelectorAll('.blank'),
+    ...(title ? title.querySelectorAll('.blank') : [])
+  ];
+
+  blanks.forEach(b=>{
+    const key = b.dataset.key;
+    if(!silgwaAnswers[key]) return;
+
+    total++;
+    clearMark(b);
+
+    if(norm(b.value) === norm(silgwaAnswers[key])){
+      b.classList.add('correct');
+      correct++;
+    }else{
+      b.classList.add('wrong');
+    }
+  });
+
+  setScoreFromBtn(btn, correct, total);
+}
+
+function showAnswer(btn,index){
+  const table = getTableFromBtn(btn);
+  const a = answerSets[index];
+  if(!table || !a) return;
+
+  // ① textarea 정답 채우기
+  [a.k,a.p,a.v].forEach((arr,rowIdx)=>{
+    const row = table.querySelectorAll('tr')[rowIdx+2];
+    row.querySelectorAll('textarea').forEach((t,i)=>{
+      t.value = arr[i] || '';
+      clearMark(t);
+      if(arr[i]) t.classList.add('correct');
+    });
+  });
+
+  // ② 빈칸(.blank) 정답 채우기 (표 안 + 제목)
+  const title = table.previousElementSibling;
+  const blanks = [
+    ...table.querySelectorAll('.blank'),
+    ...(title ? title.querySelectorAll('.blank') : [])
+  ];
+
+  blanks.forEach(b=>{
+    const key = b.dataset.key;
+    if(!silgwaAnswers[key]) return;
+
+    b.value = silgwaAnswers[key];
+    clearMark(b);
+    b.classList.add('correct');
+  });
+
+  // ③ 100% 표시(정답 있는 개수 기준)
+  let total = 0;
+  total += a.k.filter(Boolean).length;
+  total += a.p.filter(Boolean).length;
+  total += a.v.filter(Boolean).length;
+
+  blanks.forEach(b=>{
+    const key = b.dataset.key;
+    if(silgwaAnswers[key]) total++;
+  });
+
+  setScoreFromBtn(btn, total, total);
+}
+
+function clearTable(btn){
+  const table = getTableFromBtn(btn);
+  if(!table) return;
+
+  // ① textarea 초기화
+  table.querySelectorAll('textarea').forEach(t=>{
+    t.value = '';
+    clearMark(t);
+  });
+
+  // ② 빈칸(.blank) 초기화 (표 안 + 제목)
+  const title = table.previousElementSibling;
+  const blanks = [
+    ...table.querySelectorAll('.blank'),
+    ...(title ? title.querySelectorAll('.blank') : [])
+  ];
+
+  blanks.forEach(b=>{
+    b.value = '';
+    clearMark(b);
+  });
+
+  // ③ 점수 초기화
+  setScoreFromBtn(btn, 0, 0);
+}
+/* ===============================
+   도덕 내체표 전용 (이름 충돌 방지 버전)
+   - 함수명: moralNT_*
+=============================== */
+
+/* 공통 유틸 (여기서만 씀) */
+function moralNT_norm(t){
+  return (t || '').replace(/\s+/g,'').trim();
+}
+
+/* ===== 정답 데이터 (먼저 있어야 함) ===== */
+const moralBlankAnswers = {
+  // 제목 옆
+  "m1-title":"자신",
+  "m2-title":"타인",
+  "m3-title":"사회공동체",
+  "m4-title":"자연",
+
+  // (1)
+  "m1-1":"성실",
+  "m1-2":"도덕적",
+  "m1-3":"자아",
+
+  // (2)
+  "m2-1":"배려",
+  "m2-2":"공감",
+  "m2-3":"차이",
+  "m2-4":"갈등",
+
+  // (3)
+  "m3-1":"사회정의",
+  "m3-2":"도덕공동체",
+  "m3-3":"세계시민",
+  "m3-4":"세계평화",
+
+  // (4) 새로 추가한 핵심아이디어 빈칸
+  "m4-1":"성실",   // ( )는/은
+  "m4-2":"탐구",   // 자아에 대한 ( )
+  "m4-3":"성찰"    // 과/와 ( )
+};
+
+const moralAnswers = [
+  // (1)
+  {
+    k:{ g34:[
+          '나는왜소중한사람인가',
+          '어떤사람을정직한사람이라고하는가',
+          '자신에게정성을다하는삶을살아야하는이유는무엇인가',
+          '도덕적으로행동하는일은왜필요할까'
+        ],
+        g56:[
+          '자주적으로살아야하는이유는무엇일까',
+          '자신의생활을반성하는일은왜중요할까',
+          '자신이하고싶은일을선택할때어떤것을고려해야할까'
+        ]},
+    p:{ g34:[
+          '자신을탐구하여자기감정의소중함설명하기',
+          '정직한행동찾아보기',
+          '성실한생활의모범정하기',
+          '다른사람의관점에서문제바라보기'
+        ],
+        g56:[
+          '자주의의미를살펴보고자신의생활에반영하기',
+          '자신의생활점검하여성찰하기',
+          '자신의적성을도덕적으로탐색하기'
+        ]},
+    v:{ g34:[
+          '자기를소중히하는태도',
+          '정직하게행동하려는자세',
+          '성실한태도',
+          '도덕적으로행동하려는자세'
+        ],
+        g56:[
+          '주체적인삶의태도',
+          '반성하는태도',
+          '도덕적성장을지향하는자세'
+        ]}
+  },
+
+  // (2)
+  {
+    k:{ g34:[
+          '가족의행복을위해무엇을해야할까',
+          '친구끼리배려해야하는이유는무엇일까',
+          '타인에대한공감은왜필요할까'
+        ],
+        g56:[
+          '타인을왜도와야하며어떻게도울수있을까',
+          '서로의다름을존중해야하는이유는무엇일까',
+          '인공지능로봇과친구'
+        ]},
+    p:{ g34:[
+          '효우애의의미설명하기',
+          '친구를서로배려하는방법탐색하기',
+          '타인의감정함께나누기'
+        ],
+        g56:[
+          '타인의상황을주의깊게관찰하고다양한도움방안탐색하기',
+          '편견사례를찾고수정방안제안하기',
+          '인공지능로봇과관계맺을때필요한윤리적원칙점검하기'
+        ]},
+    v:{ g34:[
+          '가족을사랑하는태도',
+          '친구를배려하는자세',
+          '타인에공감하는태도'
+        ],
+        g56:[
+          '타인을위하는자세',
+          '다양성을존중하는태도',
+          '인공지능로봇과의바른관계형성의지함양'
+        ]}
+  },
+
+  // (3)
+  {
+    k:{ g34:[
+          '공정한사회를위해서내가할일은무엇일까',
+          '디지털사회에서발생하는문제를어떻게해결할까',
+          '통일은왜필요할까'
+        ],
+        g56:[
+          '인권을존중해야하는이유는무엇일까',
+          '정의로운공동체를위해어떻게행동해야하는가',
+          '통일과정과통일이후사회는어떤모습이어야할까',
+          '다른나라의사람들까지사랑해야하는이유는무엇일까'
+        ]},
+    p:{ g34:[
+          '불공정한사례분석을통해공정사회를위해내가할일탐색하기',
+          '디지털사회에서발생하는문제알아보고해결방안탐색하기',
+          '통일의필요성설명하기'
+        ],
+        g56:[
+          '인권관련문제사례조사하기',
+          '정의로운공동체를위한규칙고안하기',
+          '통일과정과통일이후바람직한사회모습탐색하기',
+          '다른나라의사람들이겪는문제살펴보고해결방안생각하기'
+        ]},
+    v:{ g34:[
+          '공정을실천하려는태도',
+          '정보통신윤리의식함양',
+          '통일감수성함양'
+        ],
+        g56:[
+          '인권감수성함양',
+          '정의로운공동체형성의지함양',
+          '통일을추구하는태도와의지함양',
+          '인류를사랑하는태도'
+        ]}
+  },
+
+  // (4)
+  {
+    k:{ g34:[
+          '생명은왜소중할까',
+          '인간과자연이함께살아야하는이유는무엇일까'
+        ],
+        g56:[
+          '환경위기를극복하기위해어떻게해야하는가',
+          '지속가능한삶이란무엇일까'
+        ]},
+    p:{ g34:[
+          '생명경시사례조사하기',
+          '자연과공생하기위해자신이할수있는일탐색하기'
+        ],
+        g56:[
+          '환경위기를극복하기위한방안살펴보기',
+          '미래세대의권리를지키기위한계획세우기'
+        ]},
+    v:{ g34:[
+          '생명에대한존중',
+          '생태감수성함양'
+        ],
+        g56:[
+          '환경위기를극복하는자세',
+          '미래세대에대한책임의식함양'
+        ]}
+  }
+];
+
+/* ===============================
+   도덕 표 생성
+=============================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const moralContainer = document.getElementById('moralTables');
+  if(!moralContainer) return;
+
+  moralContainer.innerHTML = '';
+
+  moralAnswers.forEach((a,i)=>{
+    moralContainer.innerHTML += `
+      <div class="moral-block">
+        <div class="nt-title">
+          (${i+1})
+          <input class="blank moral-title" data-key="m${i+1}-title">
+          과/와의 관계
+        </div>
+
+        <table class="subject-table">
+          <tr><td colspan="3">
+            ${i===0 ? `
+              ⋅ <input class="blank" data-key="m1-1">는/은 도덕적 가치와 덕목을 일관되게 추구하도록 하여
+              <input class="blank" data-key="m1-2"> 삶으로 이끈다.<br>
+              ⋅ <input class="blank" data-key="m1-3">에 대한 탐구와 성찰은 자신을 존중하는 마음을 기르는 도덕 공부의 기초이다.
+            ` : ``}
+
+            ${i===1 ? `
+              ⋅ <input class="blank" data-key="m2-1">는/은 타인에 대한 관심과
+              <input class="blank" data-key="m2-2">을/를 기반으로 타인의 삶을 개선한다.<br>
+              ⋅ <input class="blank" data-key="m2-3">의 존중은
+              <input class="blank" data-key="m2-4">를/을 평화적으로 해결하고 타인과 더불어 사는 삶으로 이끈다.
+            ` : ``}
+
+            ${i===2 ? `
+              ⋅ <input class="blank" data-key="m3-1">는/은 시민의 인간다운 삶을 보장하는
+              <input class="blank" data-key="m3-2">의 토대가 된다.<br>
+              ⋅ <input class="blank" data-key="m3-3">는/은 인류의 문제를 이해하고 공감하여
+              인류 번영과 <input class="blank" data-key="m3-4">에 기여한다.
+            ` : ``}
+
+            ${i===3 ? `
+              ⋅ <input class="blank" data-key="m4-1">는/은 도덕적 가치와 덕목을 일관되게 추구하도록 하여 도덕적 삶으로 이끈다.<br>
+              ⋅ 자아에 대한 <input class="blank" data-key="m4-2">과/와 <input class="blank" data-key="m4-3">는/은 자신을 존중하는 마음을 기르는 도덕 공부의 기초이다.
+            ` : ``}
+          </td></tr>
+
+          <tr>
+            <th rowspan="2">범주</th>
+            <th>3-4학년군</th>
+            <th>5-6학년군</th>
+          </tr>
+          <tr>
+            <th>내용요소</th>
+            <th>내용요소</th>
+          </tr>
+
+          <tr>
+            <th>지식·이해</th>
+            <td>${'<textarea></textarea>'.repeat(a.k.g34.length)}</td>
+            <td>${'<textarea></textarea>'.repeat(a.k.g56.length)}</td>
+          </tr>
+
+          <tr>
+            <th>과정·기능</th>
+            <td>${'<textarea></textarea>'.repeat(a.p.g34.length)}</td>
+            <td>${'<textarea></textarea>'.repeat(a.p.g56.length)}</td>
+          </tr>
+
+          <tr>
+            <th>가치·태도</th>
+            <td>${'<textarea></textarea>'.repeat(a.v.g34.length)}</td>
+            <td>${'<textarea></textarea>'.repeat(a.v.g56.length)}</td>
+          </tr>
+        </table>
+
+        <div class="moral-btns">
+          <button onclick="moralNT_grade(this, ${i})">채점</button>
+          <button onclick="moralNT_show(this, ${i})">정답</button>
+          <button onclick="moralNT_clear(this)">지우기</button>
+        </div>
+
+        <div class="score">정답률 : 0%</div>
+      </div>
+    `;
+  });
+});
+
+/* ===============================
+   ✅ 도덕 내체표: correct/wrong 클래스 버전
+   - textarea + input.blank 전부 배경색 적용
+   - 정답/채점/지우기 + 정답률 유지
+=============================== */
+
+function moralNT_clearMark(el){
+  el.classList.remove('correct','wrong');
+  el.style.color = '';
+  el.style.background = '';
+}
+
+function moralNT_grade(btn, idx){
+  const block = btn.closest('.moral-block');
+  const table = block.querySelector('table');
+  const a = moralAnswers[idx];
+
+  let correct = 0, total = 0;
+  const rows = table.querySelectorAll('tr');
+  const rowMap = { k:3, p:4, v:5 };
+
+  // 1) 내용요소(textarea) 채점
+  ['k','p','v'].forEach(key=>{
+    const row = rows[rowMap[key]];
+    const left = row.children[1].querySelectorAll('textarea');
+    const right = row.children[2].querySelectorAll('textarea');
+
+    a[key].g34.forEach((ans,i)=>{
+      const ta = left[i];
+      if(!ta) return;
+      total++;
+      moralNT_clearMark(ta);
+
+      if(moralNT_norm(ta.value) === moralNT_norm(ans)){
+        ta.classList.add('correct');
+        correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+
+    a[key].g56.forEach((ans,i)=>{
+      const ta = right[i];
+      if(!ta) return;
+      total++;
+      moralNT_clearMark(ta);
+
+      if(moralNT_norm(ta.value) === moralNT_norm(ans)){
+        ta.classList.add('correct');
+        correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+  });
+
+  // 2) 제목+핵심아이디어 빈칸(input.blank) 채점
+  block.querySelectorAll('.blank').forEach(b=>{
+    const key = b.dataset.key;
+    const ans = moralBlankAnswers[key];
+    if(!ans) return;
+
+    total++;
+    moralNT_clearMark(b);
+
+    if(moralNT_norm(b.value) === moralNT_norm(ans)){
+      b.classList.add('correct');
+      correct++;
+    }else{
+      b.classList.add('wrong');
+    }
+  });
+
+  const percent = total ? Math.round(correct/total*100) : 0;
+  block.querySelector('.score').textContent = `정답률 : ${percent}% (${correct}/${total})`;
+}
+
+function moralNT_show(btn, idx){
+  const block = btn.closest('.moral-block');
+  const table = block.querySelector('table');
+  const a = moralAnswers[idx];
+
+  const rows = table.querySelectorAll('tr');
+  const rowMap = { k:3, p:4, v:5 };
+
+  // 1) 내용요소(textarea) 정답 채우기
+  ['k','p','v'].forEach(key=>{
+    const row = rows[rowMap[key]];
+    const left = row.children[1].querySelectorAll('textarea');
+    const right = row.children[2].querySelectorAll('textarea');
+
+    a[key].g34.forEach((ans,i)=>{
+      const ta = left[i];
+      if(!ta) return;
+      ta.value = ans;
+      moralNT_clearMark(ta);
+      ta.classList.add('correct');
+    });
+
+    a[key].g56.forEach((ans,i)=>{
+      const ta = right[i];
+      if(!ta) return;
+      ta.value = ans;
+      moralNT_clearMark(ta);
+      ta.classList.add('correct');
+    });
+  });
+
+  // 2) 제목+핵심아이디어 빈칸 정답 채우기
+  let blankCount = 0;
+  block.querySelectorAll('.blank').forEach(b=>{
+    const key = b.dataset.key;
+    const ans = moralBlankAnswers[key];
+    if(!ans) return;
+
+    b.value = ans;
+    moralNT_clearMark(b);
+    b.classList.add('correct');
+    blankCount++;
+  });
+
+  // 3) 정답률 100% (정답 있는 개수 기준)
+  let total = 0;
+  total += a.k.g34.length + a.k.g56.length;
+  total += a.p.g34.length + a.p.g56.length;
+  total += a.v.g34.length + a.v.g56.length;
+  total += blankCount;
+
+  block.querySelector('.score').textContent = `정답률 : 100% (${total}/${total})`;
+}
+
+function moralNT_clear(btn){
+  const block = btn.closest('.moral-block');
+
+  block.querySelectorAll('textarea').forEach(t=>{
+    t.value = '';
+    moralNT_clearMark(t);
+  });
+
+  block.querySelectorAll('.blank').forEach(b=>{
+    b.value = '';
+    moralNT_clearMark(b);
+  });
+
+  block.querySelector('.score').textContent = '정답률 : 0%';
+}
+/* ===============================
+   체육 내체표 정답 데이터
+=============================== */
+/* ===============================
+   체육 핵심 아이디어 빈칸 정답
+=============================== */
+const peBlankAnswers = {
+  // (1) 운동
+  pe1_1_1: ['체력'],
+  pe1_1_2: ['건강'],
+
+  pe1_2_1: ['체력'],
+  pe1_2_2: ['건강'],
+  pe1_2_3: ['신체적'],
+  pe1_2_4: ['생활습관','생활 습관'],
+
+  pe1_3_1: ['인간'],
+  pe1_3_2: ['심신'],
+
+  // (2) 스포츠
+  pe2_1_1: ['스포츠'],
+  pe2_1_2: ['움직임기술','움직임 기술'],
+
+  pe2_2_1: ['환경'],
+  pe2_2_2: ['전략'],
+
+  pe2_3_1: ['움직임'],
+  pe2_3_2: ['활동적'],
+
+  // (3) 표현
+  pe3_1_1: ['생각'],
+  pe3_1_2: ['감정'],
+  pe3_1_3: ['심미적'],
+  pe3_1_4: ['창의적'],
+  pe3_1_5: ['신체활동','신체 활동'],
+
+  pe3_2_1: ['기본움직임','기본 움직임'],
+
+  pe3_3_1: ['심미적가치','심미적 가치'],
+  pe3_3_2: ['주체적']
+};
+const peAnswers = [
+  /* (1) 운동 */
+  {
+    k: {
+      g34: [
+        '운동과체력',
+        '기본체력운동방법',
+        '운동과건강',
+        '건강한생활습관'
+      ],
+      g56: [
+        '건강체력과운동체력',
+        '체력종류별운동방법',
+        '운동과성장발달',
+        '안전한생활습관'
+      ]
+    },
+    p: {
+      g34: [
+        '운동과체력의관계파악하기',
+        '기본체력운동시도하기',
+        '운동과건강의관계파악하기',
+        '건강한생활습관시도하기',
+        '안전하게활동하기'
+      ],
+      g56: [
+        '건강체력과운동체력의의미와요소파악하기',
+        '체력을측정하고다양한운동시도하기',
+        '운동과성장발달의관계파악하기',
+        '운동과생활속안전사고예방방법탐색하며대처하기',
+        '안전하게활동하기'
+      ]
+    },
+    v: {
+      g34: [
+        '긍정적신체인식',
+        '운동및건강에관한관심',
+        '운동및건강습관실천의지'
+      ],
+      g56: [
+        '체력운동참여의근면성',
+        '체력증진을위한끈기',
+        '성장발달의차이공감',
+        '안전사고에서의침착성'
+      ]
+    }
+  },
+
+  /* (2) 스포츠 */
+  {
+    k: {
+      g34: [
+        '스포츠와움직임기술',
+        '기본움직임기술의종류와수행방법',
+        '스포츠에서의기본움직임기술수행방법'
+      ],
+      g56: [
+        '기술형전략형생태형스포츠의유형',
+        '기술형전략형생태형스포츠의유형별움직임기술응용방법',
+        '기술형전략형생태형스포츠의활동방법과기본전략'
+      ]
+    },
+    p: {
+      g34: [
+        '스포츠의의미와유형이해하기',
+        '기본움직임기술과스포츠의관계파악하기',
+        '기본움직임기술의종류파악하고시도하기',
+        '스포츠유형별움직임기술종류파악하기',
+        '스포츠유형별움직임기술시도하기',
+        '안전하게움직이기'
+      ],
+      g56: [
+        '기술형전략형생태형스포츠의유형파악하기',
+        '기술형전략형생태형스포츠의유형별움직임기술응용방법활용하기',
+        '기술형전략형생태형스포츠의기본전략적용하기',
+        '안전하게활동하기'
+      ]
+    },
+    v: {
+      g34: [
+        '움직임수행의자신감과적극성',
+        '최선을다하는태도',
+        '게임규칙준수',
+        '스포츠환경에대한개방성',
+        '스포츠활동참여의적극성'
+      ],
+      g56: [
+        '목표달성의지',
+        '상대기술인정',
+        '팀원과의협력',
+        '구성원배려',
+        '스포츠환경을아끼는태도',
+        '스포츠환경에감사하는태도'
+      ]
+    }
+  },
+
+  /* (3) 표현 */
+  {
+    k: {
+      g34: [
+        '표현활동과움직임기술',
+        '기본움직임기술의표현방법'
+      ],
+      g56: [
+        '표현활동의유형',
+        '표현활동의유형별움직임기술응용방법',
+        '표현활동의유형별움직임기술구성'
+      ]
+    },
+    p: {
+      g34: [
+        '표현활동의움직임기술파악하고시도하기',
+        '다양한방법으로움직임기술표현하기'
+      ],
+      g56: [
+        '표현활동의유형파악하기',
+        '표현활동의유형별움직임기술응용방법활용하기',
+        '표현활동의유형별움직임기술구성하고발표하기'
+      ]
+    },
+    v: {
+      g34: [
+        '움직임표현에대한호기심',
+        '움직임표현에대한감수성'
+      ],
+      g56: [
+        '다양한표현활동유형에대한수용적태도',
+        '움직임표현의심미성추구'
+      ]
+    }
+  }
+];
+/* ===============================
+   🎵 음악 개체표 (correct / wrong 배경 버전) - 수정본(리듬 56 줄수 -1)
+   ✅ 56학년 정답 15개 "전부" 반영:
+   - 리듬(5칸)까지만 리듬에 넣고,
+   - 남는 1개(음이름 계이름 율명)는 가락 첫 칸으로 이동
+=============================== */
+document.addEventListener("DOMContentLoaded", function(){
+
+  const musicWrap = document.getElementById('music-objectTables');
+  if(!musicWrap) return;
+
+  musicWrap.innerHTML = `
+  <div class="nt-title"></div>
+
+  <table class="subject-table">
+    <tr>
+      <th rowspan="2">범주</th>
+      <th colspan="2">내용요소</th>
+    </tr>
+    <tr>
+      <th>3~4학년</th>
+      <th>5~6학년</th>
+    </tr>
+
+    <tr>
+      <td>리듬</td>
+      <td>${'<textarea></textarea>'.repeat(6)}</td>
+      <td>${'<textarea></textarea>'.repeat(5)}</td> <!-- ✅ 6 → 5 -->
+    </tr>
+
+    <tr>
+      <td>가락</td>
+      <td>${'<textarea></textarea>'.repeat(3)}</td>
+      <td>${'<textarea></textarea>'.repeat(4)}</td>
+    </tr>
+
+    <tr>
+      <td>화성</td>
+      <td><textarea></textarea></td>
+      <td>${'<textarea></textarea>'.repeat(2)}</td>
+    </tr>
+
+    <tr>
+      <td>형식</td>
+      <td><textarea></textarea></td>
+      <td><textarea></textarea></td>
+    </tr>
+
+    <tr>
+      <td>셈여림</td>
+      <td><textarea></textarea></td>
+      <td><textarea></textarea></td>
+    </tr>
+
+    <tr>
+      <td>빠르기</td>
+      <td><textarea></textarea></td>
+      <td><textarea></textarea></td>
+    </tr>
+
+    <tr>
+      <td>음색</td>
+      <td><textarea></textarea></td>
+      <td><textarea></textarea></td>
+    </tr>
+  </table>
+
+  <div class="actions-bar">
+    <button class="grade btn-grade">채점</button>
+    <button class="grade btn-answer">정답</button>
+    <button class="clear btn-clear">지우기</button>
+    <div class="score">정답률 : 0%</div>
+  </div>
+  `;
+
+  /* ===== ✅ 정답 데이터 ===== */
+  const musicObjectAnswers = {
+    // 3~4학년(14칸) = 리듬6 + 가락3 + 화성1 + 형식1 + 셈여림1 + 빠르기1 + 음색1
+    g34: [
+      "박 박자",
+      "장단 장단의 세",
+      "음의 길고 짧음",
+      "간단한 리듬꼴",
+      "장단꼴",
+      "말붙임새",
+      "음의 높고 낮음",
+      "차례가기와 뛰어가기",
+      "시김새",
+      "소리의 어울림",
+      "형식(메기고 받는 형식, ab등)",
+      "셈여림",
+      "빠르기, 한배",
+      "목소리, 물체 소리, 타악기의 음색"
+    ],
+
+    // 5~6학년(15칸) = 리듬5 + 가락4 + 화성2 + 형식1 + 셈여림1 + 빠르기1 + 음색1
+    // ✅ 네가 준 15개를 모두 넣기 위해 "음이름 계이름 율명"을 가락 첫 칸으로 배치
+    g56: [
+      // 리듬(5칸)
+      "박 박자",
+      "장단 장단의세",
+      "여러가지 리듬꼴",
+      "장단꼴",
+      "말붙임새",
+
+      // 가락(4칸)  ← 여기 첫 칸에 "음이름 계이름 율명" 들어감
+      "음이름 계이름 율명",
+      "장음계 단음계",
+      "여러지역의 토리",
+      "시김새",
+
+      // 화성(2칸)
+      "주요 3화음",
+      "다양한 소리의 어울림",
+
+      // 형식(1칸)
+      "형식(긴자진 형식, 시조 형식, aba, AB등)",
+
+      // 셈여림(1칸)
+      "셈여림의 변화",
+
+      // 빠르기(1칸)
+      "빠르기의 변화, 한배의 변화",
+
+      // 음색(1칸)
+      "관악기, 현악기의 음색"
+    ]
+  };
+
+  const table = musicWrap.querySelector('table');
+  const scoreBox = musicWrap.querySelector('.score');
+
+  const btnGrade  = musicWrap.querySelector('.btn-grade');
+  const btnAnswer = musicWrap.querySelector('.btn-answer');
+  const btnClear  = musicWrap.querySelector('.btn-clear');
+
+  function norm(t){
+    return (t || '').replace(/\s+/g,'').trim();
+  }
+  function clearMark(el){
+    el.classList.remove('correct','wrong');
+  }
+  function setScore(correct, total){
+    const pct = total ? Math.round(correct/total*100) : 0;
+    scoreBox.textContent = `정답률 : ${correct} / ${total} (${pct}%)`;
+  }
+
+  // ✅ 왼쪽(3~4), 오른쪽(5~6) textarea를 "따로" 모으기
+  function getSideTextareas(){
+    const rows = Array.from(table.querySelectorAll('tr')).slice(2); // 헤더 2줄 제외
+    const left = [];
+    const right = [];
+
+    rows.forEach(r=>{
+      const tds = r.querySelectorAll('td');
+      if(tds.length < 3) return;
+      left.push(...tds[1].querySelectorAll('textarea'));
+      right.push(...tds[2].querySelectorAll('textarea'));
+    });
+
+    return { left, right };
+  }
+
+  /* 🔵 채점 */
+  btnGrade.onclick = function(){
+    const { left, right } = getSideTextareas();
+
+    let correct = 0;
+    let total = 0;
+
+    left.forEach((ta,i)=>{
+      clearMark(ta);
+      const ans = musicObjectAnswers.g34[i] || '';
+      if(!ans) return;
+      total++;
+      if(norm(ta.value) === norm(ans)){
+        ta.classList.add('correct'); correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+
+    right.forEach((ta,i)=>{
+      clearMark(ta);
+      const ans = musicObjectAnswers.g56[i] || '';
+      if(!ans) return;
+      total++;
+      if(norm(ta.value) === norm(ans)){
+        ta.classList.add('correct'); correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+
+    setScore(correct, total);
+  };
+
+  /* 🟢 정답 */
+  btnAnswer.onclick = function(){
+    const { left, right } = getSideTextareas();
+
+    left.forEach((ta,i)=>{
+      clearMark(ta);
+      const ans = musicObjectAnswers.g34[i] || '';
+      ta.value = ans;
+      if(ans) ta.classList.add('correct');
+    });
+
+    right.forEach((ta,i)=>{
+      clearMark(ta);
+      const ans = musicObjectAnswers.g56[i] || '';
+      ta.value = ans;
+      if(ans) ta.classList.add('correct');
+    });
+
+    const total = musicObjectAnswers.g34.length + musicObjectAnswers.g56.length;
+    scoreBox.textContent = `정답률 : ${total} / ${total} (100%)`;
+  };
+
+  /* ⚪ 지우기 */
+  btnClear.onclick = function(){
+    const { left, right } = getSideTextareas();
+
+    [...left, ...right].forEach(ta=>{
+      ta.value = '';
+      clearMark(ta);
+    });
+
+    scoreBox.textContent = '정답률 : 0%';
+  };
+
+});
+/* ===============================
+   음악 내체표 (3개)
+=============================== */
+const musicConfig = [
+  { title:'표현', k:4, p:3, v:2 },
+  { title:'감상', k:5, p:3, v:2 },
+  { title:'창작', k:4, p:3, v:2 }
+];
+
+let musicBuilt = false;
+
+function buildMusicTables(){
+  if(musicBuilt) return;
+  musicBuilt = true;
+
+  const container = document.getElementById('musicTables');
+  if(!container) return;
+
+  container.innerHTML = '';
+
+  musicConfig.forEach((c,i)=>{
+    container.innerHTML += `
+  <div class="music-block">
+    <div class="nt-title">(${i+1}) ${c.title}</div>
+
+    <table class="subject-table">
+      <tr>
+        <th>핵심 아이디어</th>
+        <td class="idea-block"></td>
+      </tr>
+      <tr>
+        <th rowspan="2">범주</th>
+        <td class="center">내용요소</td>
+      </tr>
+      <tr>
+        <td class="center sub-head">
+          <span>3~4학년군</span>
+          <span>5~6학년군</span>
+        </td>
+      </tr>
+      <tr>
+        <th>지식·이해</th>
+        <td class="rows two-col">
+          <div class="col g34">${'<textarea></textarea>'.repeat(c.k)}</div>
+          <div class="col g56">${'<textarea></textarea>'.repeat(c.k)}</div>
+        </td>
+      </tr>
+      <tr>
+        <th>과정·기능</th>
+        <td class="rows two-col">
+          <div class="col g34">${'<textarea></textarea>'.repeat(c.p)}</div>
+          <div class="col g56">${'<textarea></textarea>'.repeat(c.p)}</div>
+        </td>
+      </tr>
+      <tr>
+        <th>가치·태도</th>
+        <td class="rows two-col">
+          <div class="col g34">${'<textarea></textarea>'.repeat(c.v)}</div>
+          <div class="col g56">${'<textarea></textarea>'.repeat(c.v)}</div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="music-btns">
+      <button onclick="gradeMusic(this)">채점</button>
+      <button onclick="showMusicAnswer(this, ${i})">정답</button>
+      <button onclick="clearMusic(this)">지우기</button>
+    </div>
+
+    <div class="score">정답률 : 0%</div>
+  </div>
+  `;
+});
+}
+
+/* ===============================
+   🎵 음악 내체표 정답 데이터
+=============================== */
+
+const musicAnswers = [
+
+  /* (1) 표현 */
+  {
+    k:{
+      g34: "생활 속의 음악/기초적인 음악 요소/자세와 주법/느낌, 여러소리",
+      g56: "간단한 악곡의 연주 형태/음악 요소/주법과 표현기법/어울림, 여러 악기"
+    },
+    p:{
+      g34: "노래부르거나 악기 연주하기/신체로 표현하고 놀이하기/발표하고 이야기하기",
+      g56: "노래부르거나 악기 연주하기/다양한 방법으로 표현하기/발표하고 돌아보기"
+    },
+    v:{
+      g34: "연주를 즐기는 태도/연주에 대한 관심",
+      g56: "음악으로 함께하는 태도/음악 준비와 참여"
+    }
+  },
+
+  /* (2) 감상 */
+  {
+    k:{
+      g34: "다양한 종류의 음악/지역의 음악 국가유산/기초적인 음악요소/음악적 특징/느낌 분위기 쓰임",
+      g56: "다양한 종류와 문화권의 음악/우리나라 음악 국가유산/음악요소/음악적 특징 음악의 간단한 구성/느낌 배경 활용"
+    },
+    p:{
+      g34: "반응하며 듣기/탐색하고 발견하기/묘사하거나 이야기하기",
+      g56: "감지하며 듣기/인식하고 구별하기/설명하기"
+    },
+    v:{
+      g34: "소리와 음악을 즐기는 태도/음악에 대한 호기심",
+      g56: "음악의 아름다움에 대한 인식/음악에 대한 공감"
+    }
+  },
+
+  /* (3) 창작 */
+  {
+    k:{
+      g34: "소리와 음악/기초적인 음악요소/간단한 악보/느낌 상상",
+      g56: "간단한 음악/음악요소/기초적인 기보 음악 매체/느낌 아이디어"
+    },
+    p:{
+      g34: "즉흥적으로 표현하기/부분적으로 바꾸기/모방하여 나타내기",
+      g56: "떠올리며 표현하기/간단한 조건에 따라 바꾸기/활용하여 만들기"
+    },
+    v:{
+      g34: "음악에 대한 흥미/음악의 새로움을 즐기는 태도",
+      g56: "음악에 대한 자신감/음악에 대한 열린 태도"
+    }
+  }
+
+];
+
+/* 🔥 음악 내체표 탭 클릭 시 생성 */
+const _show = show;
+show = function(id){
+  _show(id);
+  if(id === 'music'){
+    buildMusicTables();
+  }
+};
+function getMusicTable(btn){
+  return btn.closest('.music-block').querySelector('table');
+}
+function fillAnswers(textareas, answerStr){
+  const answers = answerStr.split('/').map(s => s.trim());
+  textareas.forEach((ta, i) => {
+    ta.value = answers[i] || '';
+  });
+}
+
+function showMusicAnswer(btn, idx){
+  const table = getMusicTable(btn);
+  const ans = musicAnswers[idx];
+  const rows = table.querySelectorAll('tr');
+
+  // ✅ 정확한 행 번호
+  const KNOW = 3; // 지식·이해
+  const PROC = 4; // 과정·기능
+  const VAL  = 5; // 가치·태도
+
+  // 지식·이해
+  fillAnswers(rows[KNOW].querySelectorAll('.g34 textarea'), ans.k.g34);
+  fillAnswers(rows[KNOW].querySelectorAll('.g56 textarea'), ans.k.g56);
+
+  // 과정·기능
+  fillAnswers(rows[PROC].querySelectorAll('.g34 textarea'), ans.p.g34);
+  fillAnswers(rows[PROC].querySelectorAll('.g56 textarea'), ans.p.g56);
+
+  // 가치·태도
+  fillAnswers(rows[VAL].querySelectorAll('.g34 textarea'), ans.v.g34);
+  fillAnswers(rows[VAL].querySelectorAll('.g56 textarea'), ans.v.g56);
+}
+function clearMusic(btn){
+  const block = btn.closest('.music-block');
+  const table = block.querySelector('table');
+
+  table.querySelectorAll('textarea').forEach(t=>{
+    t.value = '';
+    t.classList.remove('correct','wrong');
+  });
+
+  block.querySelector('.score').textContent = '정답률 : 0%';
+}
+function checkAnswers(textareas, answerStr){
+  const answers = answerStr.split('/').map(s => s.trim());
+  let correct = 0;
+
+  textareas.forEach((ta, i)=>{
+    const user = ta.value.trim();
+    const answer = answers[i] || '';
+
+    ta.classList.remove('correct','wrong');
+
+    if(!user) return;
+
+    if(user === answer){
+      ta.classList.add('correct');
+      correct++;
+    }else{
+      ta.classList.add('wrong');
+    }
+  });
+
+  return {
+    correct,
+    total: answers.length
+  };
+}
+function gradeMusic(btn){
+  const block = btn.closest('.music-block');
+  const table = block.querySelector('table');
+  const idx = [...document.querySelectorAll('.music-block')].indexOf(block);
+  const ans = musicAnswers[idx];
+  const rows = table.querySelectorAll('tr');
+
+  const KNOW = 3;
+  const PROC = 4;
+  const VAL  = 5;
+
+  let total = 0;
+  let correct = 0;
+
+  // 지식·이해
+  let r;
+  r = checkAnswers(rows[KNOW].querySelectorAll('.g34 textarea'), ans.k.g34);
+  correct += r.correct; total += r.total;
+  r = checkAnswers(rows[KNOW].querySelectorAll('.g56 textarea'), ans.k.g56);
+  correct += r.correct; total += r.total;
+
+  // 과정·기능
+  r = checkAnswers(rows[PROC].querySelectorAll('.g34 textarea'), ans.p.g34);
+  correct += r.correct; total += r.total;
+  r = checkAnswers(rows[PROC].querySelectorAll('.g56 textarea'), ans.p.g56);
+  correct += r.correct; total += r.total;
+
+  // 가치·태도
+  r = checkAnswers(rows[VAL].querySelectorAll('.g34 textarea'), ans.v.g34);
+  correct += r.correct; total += r.total;
+  r = checkAnswers(rows[VAL].querySelectorAll('.g56 textarea'), ans.v.g56);
+  correct += r.correct; total += r.total;
+
+  block.querySelector('.score').textContent =
+    `정답률 : ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
+}
+/* ===============================
+   ✅ 체육 내체표: correct/wrong 클래스 버전
+   - textarea + 핵심아이디어 빈칸(input.blank) 모두 배경색 적용
+   - 정답/채점/지우기 + 정답률 유지
+=============================== */
+
+function getPETableFromBtn(btn){
+  let el = btn.previousElementSibling;
+  while (el && el.tagName !== 'TABLE') el = el.previousElementSibling;
+  return el;
+}
+
+function peClearMark(el){
+  el.classList.remove('correct','wrong');
+  el.style.color = '';
+  el.style.background = '';
+}
+
+function peSetScoreFromBtn(btn, correct, total){
+  // 버튼들 뒤에 있는 .score 찾기
+  let el = btn.nextElementSibling;
+  while(el && !el.classList.contains('score')) el = el.nextElementSibling;
+  if(!el) return;
+
+  const percent = total ? Math.round(correct/total*100) : 0;
+  el.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+}
+
+function gradePE(btn, idx){
+  const table = getPETableFromBtn(btn);
+  const a = peAnswers[idx];
+  if(!table || !a) return;
+
+  let correct = 0, total = 0;
+
+  // ✅ 행 위치: 0=핵심아이디어, 1=범주헤더, 2=내용요소헤더, 3=지식, 4=과정, 5=가치
+  const rows = table.querySelectorAll('tr');
+  const rowMap = { k:3, p:4, v:5 };
+
+  ['k','p','v'].forEach(key=>{
+    const row = rows[rowMap[key]];
+    if(!row) return;
+
+    const left = row.children[1].querySelectorAll('textarea');  // 3-4
+    const right = row.children[2].querySelectorAll('textarea'); // 5-6
+
+    a[key].g34.forEach((ans,i)=>{
+      const ta = left[i];
+      if(!ta) return;
+      total++;
+      peClearMark(ta);
+
+      if(norm(ta.value) === norm(ans)){
+        ta.classList.add('correct');
+        correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+
+    a[key].g56.forEach((ans,i)=>{
+      const ta = right[i];
+      if(!ta) return;
+      total++;
+      peClearMark(ta);
+
+      if(norm(ta.value) === norm(ans)){
+        ta.classList.add('correct');
+        correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+  });
+
+  // ✅ 핵심 아이디어 빈칸(.blank) 채점
+  table.querySelectorAll('.blank').forEach(b=>{
+    const key = b.dataset.key;
+    const list = peBlankAnswers[key];
+    if(!list) return;
+
+    total++;
+    peClearMark(b);
+
+    const ok = list.some(ans => norm(ans) === norm(b.value));
+    if(ok){
+      b.classList.add('correct');
+      correct++;
+    }else{
+      b.classList.add('wrong');
+    }
+  });
+
+  peSetScoreFromBtn(btn, correct, total);
+}
+
+function showPEAnswer(btn, idx){
+  const table = getPETableFromBtn(btn);
+  const a = peAnswers[idx];
+  if(!table || !a) return;
+
+  const rows = table.querySelectorAll('tr');
+  const rowMap = { k:3, p:4, v:5 };
+
+  // ① 내용요소 정답 채우기
+  ['k','p','v'].forEach(key=>{
+    const row = rows[rowMap[key]];
+    if(!row) return;
+
+    const left = row.children[1].querySelectorAll('textarea');
+    const right = row.children[2].querySelectorAll('textarea');
+
+    a[key].g34.forEach((ans,i)=>{
+      const ta = left[i];
+      if(!ta) return;
+      ta.value = ans;
+      peClearMark(ta);
+      ta.classList.add('correct');
+    });
+
+    a[key].g56.forEach((ans,i)=>{
+      const ta = right[i];
+      if(!ta) return;
+      ta.value = ans;
+      peClearMark(ta);
+      ta.classList.add('correct');
+    });
+  });
+
+  // ② 핵심 아이디어 빈칸 정답 채우기(첫 번째 정답으로)
+  let blankCount = 0;
+  table.querySelectorAll('.blank').forEach(b=>{
+    const key = b.dataset.key;
+    const list = peBlankAnswers[key];
+    if(!list) return;
+
+    b.value = list[0];
+    peClearMark(b);
+    b.classList.add('correct');
+    blankCount++;
+  });
+
+  // ③ 100% 표시(정답 개수 기준)
+  let total = 0;
+  total += a.k.g34.length + a.k.g56.length;
+  total += a.p.g34.length + a.p.g56.length;
+  total += a.v.g34.length + a.v.g56.length;
+  total += blankCount;
+
+  peSetScoreFromBtn(btn, total, total);
+}
+
+function clearPE(btn){
+  const table = getPETableFromBtn(btn);
+  if(!table) return;
+
+  table.querySelectorAll('textarea').forEach(t=>{
+    t.value = '';
+    peClearMark(t);
+  });
+
+  table.querySelectorAll('.blank').forEach(b=>{
+    b.value = '';
+    peClearMark(b);
+  });
+
+  peSetScoreFromBtn(btn, 0, 0);
+}
+/* =========================================================
+   ✅ 미술 내체표: 표 생성 + 정답데이터 + 채점/정답/지우기 (충돌방지)
+========================================================= */
+
+/* 1) 설정(줄 수) */
+const artNTConfig = [
+  { title: '(1) 미적 체험', k:[3,3], p:[3,3], v:[2,2] },
+  { title: '(2) 표현',     k:[3,3], p:[4,4], v:[2,2] },
+  { title: '(3) 감상',     k:[3,3], p:[3,3], v:[2,2] }
+];
+
+/* 2) 핵심 아이디어(빈칸 포함 HTML) */
+function artNTIdeaHTML(i){
+  if(i === 0){
+    return `
+      ⋅ 미적 체험은 감각을 깨워
+      <input class="blank artNT-blank" data-key="art1-1">를/을 풍부하게 하며 미적 가치를 발견하도록 한다.<br>
+      ⋅ <input class="blank artNT-blank" data-key="art1-2">과/와
+      <input class="blank artNT-blank" data-key="art1-3">를/을 관찰하고 지각하는 경험은 앎을 확장하고 자신을 성찰하게 한다.<br>
+      ⋅ 이미지에 대한 비판적 이해는
+      <input class="blank artNT-blank" data-key="art1-4">과/와
+      <input class="blank artNT-blank" data-key="art1-5">의 토대가 된다.
+    `;
+  }
+  if(i === 1){
+    return `
+      ⋅ 표현은 자신의 느낌과 생각을 시각화하는
+      <input class="blank artNT-blank" data-key="art2-1">과/와
+      <input class="blank artNT-blank" data-key="art2-2">의 순환 과정으로 이루어진다.<br>
+      ⋅ <input class="blank artNT-blank" data-key="art2-3">는/은 아이디어와 주제를 발전시키고 표현의 토대가 된다.<br>
+      ⋅ 작품 제작은 표현 재료와 방법, 조형 요소와 원리 등을 선택하고 활용하여 창의적으로 문제를 해결하는 과정을 통해
+      <input class="blank artNT-blank" data-key="art2-4">를/을 경험하게 한다.
+    `;
+  }
+  return `
+    ⋅ 감상은 다양한 삶과 문화가 반영된 미술과의 만남으로
+    <input class="blank artNT-blank" data-key="art3-1">과/와
+    <input class="blank artNT-blank" data-key="art3-2">를/을 이해하게 한다.<br>
+    ⋅ 작품의 내용과 형식에 관한
+    <input class="blank artNT-blank" data-key="art3-3">과/와
+    <input class="blank artNT-blank" data-key="art3-4">는/은 미적 판단 능력을 높인다.<br>
+    ⋅ 감상은 서로 다른 관점을 이해하여 삶에서 미술 문화의
+    <input class="blank artNT-blank" data-key="art3-5">를/을 존중하도록 한다.
+  `;
+}
+
+/* 3) 정답 데이터 */
+// (A) 핵심 아이디어 빈칸
+const artNTBlankAnswers = {
+  "art1-1": "미적 감수성",
+  "art1-2": "대상",
+  "art1-3": "현상",
+  "art1-4": "시각적 소통",
+  "art1-5": "문화적 참여",
+  "art2-1": "창의적 사고",
+  "art2-2": "성찰",
+  "art2-3": "다양한 발상",
+  "art2-4": "예술적 성취",
+  "art3-1": "자신",
+  "art3-2": "공동체의 문화",
+  "art3-3": "맥락적 이해",
+  "art3-4": "비평",
+  "art3-5": "다원적 가치"
+};
+
+// (B) 내용요소(3~4 / 5~6)
+const artNTAnswers = [
+  {
+    k:{ g34:["자신의 감각","대상의 특징","생활 속 미술"],
+        g56:["감각과 매체의 역할","자신과 환경의 관계","이미지와 의미"] },
+    p:{ g34:["감각을 활용하여 탐색하기","대상에 반응하여 느낌과 생각을 나타내기","미술의 특징과 역할을 발견하기"],
+        g56:["감각과 매체를 활용하여 탐색하기","대상과 상호작용하며 의미 발견하기","이미지를 해석하고 활용하기"] },
+    v:{ g34:["미적 탐색에 대한 호기심","미술의 역할에 관한 관심"],
+        g56:["주변 환경에 대한 민감성","비판적으로 이해하는 태도"] }
+  },
+  {
+    k:{ g34:["표현 주제","기본적인 표현 재료와 용구","조형 요소의 특징"],
+        g56:["표현 주제와 발상","표현 재료와 용구 디지털 매체","조형 요소와 원리의 관계"] },
+    p:{ g34:["관찰과 상상으로 아이디어를 떠올리기","표현 방법을 익히기","의도를 가지고 작품을 제작하기","타 교과와 관련짓기"],
+        g56:["다양한 방법으로 아이디어를 연결하기","표현 방법을 탐색하여 활용하기","과정을 돌아보며 작품을 발전시키기","타 교과와 융합하기"] },
+    v:{ g34:["표현에 대한 흥미","자기 작품을 소중히 여기는 태도"],
+        g56:["주제 표현의 의지","자유롭게 시도하는 태도"] }
+  },
+  {
+    k:{ g34:["미술 작품과 미술가","미술 작품의 특징","미술 전시"],
+        g56:["미술 작품의 배경","미술 작품의 내용과 형식","공동체의 미술 문화"] },
+    p:{ g34:["자세히 보고 질문하기","미술 작품에 관한 느낌과 생각을 설명하기","미술 전시 및 행사에 참여하기"],
+        g56:["작품과 배경을 연결하기","다양한 방법으로 분석하기","미술 문화 활동을 경험하고 공유하기"] },
+    v:{ g34:["자신의 감상 관점 존중","미술 문화에 관한 관심"],
+        g56:["서로 다른 관점의 존중","공동체 문화에 참여"] }
+  }
+];
+
+/* 유틸 */
+function artNTNorm(t){ return (t||"").replace(/\s+/g,'').trim(); }
+function artNTClearMark(el){
+  el.classList.remove('correct','wrong');
+  el.style.color = '';
+  el.style.background = '';
+}
+
+/* 버튼 기준 블록 찾기 */
+function getArtNTBlock(btn){
+  const block = btn.closest('.artNT-block');
+  return {
+    block,
+    table: block ? block.querySelector('table') : null,
+    score: block ? block.querySelector('.score') : null
+  };
+}
+
+/* 채점 */
+function gradeArtNT(btn, idx){
+  const { table, score } = getArtNTBlock(btn);
+  if(!table) return;
+
+  const ans = artNTAnswers[idx];
+  const rows = table.querySelectorAll('tr');
+  const rowMap = { k:3, p:4, v:5 };
+
+  let correct = 0, total = 0;
+
+  // 0) 기존 표시 싹 제거
+  table.querySelectorAll('textarea, .artNT-blank').forEach(artNTClearMark);
+
+  // 1) 내용요소(textarea) 채점
+  ['k','p','v'].forEach(key=>{
+    const r = rows[rowMap[key]];
+    if(!r) return;
+
+    const left  = r.children[1].querySelectorAll('textarea');  // 3-4
+    const right = r.children[2].querySelectorAll('textarea');  // 5-6
+
+    ans[key].g34.forEach((a,i)=>{
+      const ta = left[i]; if(!ta) return;
+      total++;
+      if(artNTNorm(ta.value) === artNTNorm(a)){
+        ta.classList.add('correct');
+        correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+
+    ans[key].g56.forEach((a,i)=>{
+      const ta = right[i]; if(!ta) return;
+      total++;
+      if(artNTNorm(ta.value) === artNTNorm(a)){
+        ta.classList.add('correct');
+        correct++;
+      }else{
+        ta.classList.add('wrong');
+      }
+    });
+  });
+
+  // 2) 핵심아이디어 빈칸(input) 채점
+  table.querySelectorAll('.artNT-blank').forEach(b=>{
+    const a = artNTBlankAnswers[b.dataset.key];
+    if(!a) return;
+
+    total++;
+    if(artNTNorm(b.value) === artNTNorm(a)){
+      b.classList.add('correct');
+      correct++;
+    }else{
+      b.classList.add('wrong');
+    }
+  });
+
+  const percent = total ? Math.round(correct/total*100) : 0;
+  if(score) score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+}
+
+/* 정답 */
+function showArtNT(btn, idx){
+  const { table, score } = getArtNTBlock(btn);
+  if(!table) return;
+
+  const ans = artNTAnswers[idx];
+  const rows = table.querySelectorAll('tr');
+  const rowMap = { k:3, p:4, v:5 };
+
+  // 기존 표시 제거
+  table.querySelectorAll('textarea, .artNT-blank').forEach(artNTClearMark);
+
+  // 내용요소 채우기
+  ['k','p','v'].forEach(key=>{
+    const r = rows[rowMap[key]];
+    if(!r) return;
+
+    const left  = r.children[1].querySelectorAll('textarea');
+    const right = r.children[2].querySelectorAll('textarea');
+
+    ans[key].g34.forEach((a,i)=>{
+      if(left[i]){
+        left[i].value = a;
+        left[i].classList.add('correct');
+      }
+    });
+    ans[key].g56.forEach((a,i)=>{
+      if(right[i]){
+        right[i].value = a;
+        right[i].classList.add('correct');
+      }
+    });
+  });
+
+  // 핵심아이디어 빈칸 채우기
+  let blankCount = 0;
+  table.querySelectorAll('.artNT-blank').forEach(b=>{
+    const a = artNTBlankAnswers[b.dataset.key];
+    if(!a) return;
+    b.value = a;
+    b.classList.add('correct');
+    blankCount++;
+  });
+
+  // 총 문항수(정답 있는 것만)
+  let total = 0;
+  ['k','p','v'].forEach(k => total += ans[k].g34.length + ans[k].g56.length);
+  total += blankCount;
+
+  if(score) score.textContent = `정답률 : ${total} / ${total} (100%)`;
+}
+
+/* 지우기 */
+function clearArtNT(btn){
+  const { table, score } = getArtNTBlock(btn);
+  if(!table) return;
+
+  table.querySelectorAll('textarea').forEach(t=>{
+    t.value = '';
+    artNTClearMark(t);
+  });
+
+  table.querySelectorAll('.artNT-blank').forEach(b=>{
+    b.value = '';
+    artNTClearMark(b);
+  });
+
+  if(score) score.textContent = '정답률 : 0%';
+}
+/* 표 생성 */
+document.addEventListener("DOMContentLoaded", function(){
+  const container = document.getElementById('artTables');
+  if(!container) return;
+
+  // 중복 생성 방지
+  if(container.dataset.built === "1") return;
+  container.dataset.built = "1";
+
+  container.innerHTML = '';
+
+  artNTConfig.forEach((c,i)=>{
+    container.innerHTML += `
+      <div class="artNT-block">
+        <div class="nt-title">${c.title}</div>
+
+        <table class="subject-table">
+          <tr>
+            <th>핵심 아이디어</th>
+            <td colspan="2" class="idea-block">${artNTIdeaHTML(i)}</td>
+          </tr>
+
+          <tr>
+            <th rowspan="2">범주</th>
+            <th class="center">3-4학년군</th>
+            <th class="center">5-6학년군</th>
+          </tr>
+          <tr>
+            <th>내용요소</th>
+            <th>내용요소</th>
+          </tr>
+
+          <tr>
+            <th>지식·이해</th>
+            <td class="rows">${'<textarea></textarea>'.repeat(c.k[0])}</td>
+            <td class="rows">${'<textarea></textarea>'.repeat(c.k[1])}</td>
+          </tr>
+
+          <tr>
+            <th>과정·기능</th>
+            <td class="rows">${'<textarea></textarea>'.repeat(c.p[0])}</td>
+            <td class="rows">${'<textarea></textarea>'.repeat(c.p[1])}</td>
+          </tr>
+
+          <tr>
+            <th>가치·태도</th>
+            <td class="rows">${'<textarea></textarea>'.repeat(c.v[0])}</td>
+            <td class="rows">${'<textarea></textarea>'.repeat(c.v[1])}</td>
+          </tr>
+        </table>
+
+        <button class="grade" onclick="gradeArtNT(this, ${i})">채점</button>
+        <button class="grade" onclick="showArtNT(this, ${i})">정답</button>
+        <button class="clear" onclick="clearArtNT(this)">지우기</button>
+        <div class="score">정답률 : 0%</div>
+      </div>
+    `;
+  });
+});
+/* ===============================
+   체육 내체표 (미술 양식 그대로)
+=============================== */
+
+const peConfig = [
+  { title: '(1) 운동', 
+    k:[4,4], 
+    p:[5,5], 
+    v:[3,4] 
+  },
+  { title: '(2) 스포츠', 
+    k:[3,3], 
+    p:[6,4], 
+    v:[5,6] 
+  },
+  { title: '(3) 표현', 
+    k:[2,3], 
+    p:[2,3], 
+    v:[2,2] 
+  }
+];
+
+const peContainer = document.getElementById('peTables');
+
+peConfig.forEach((c,i)=>{
+  peContainer.innerHTML += `
+  <div class="nt-title">${c.title}</div>
+  <table class="subject-table">
+    <tr>
+      <th>핵심 아이디어</th>
+      <td colspan="2">
+        ⋅ 운동은 <input class="blank" data-key="pe1_1_1">과/와
+<input class="blank" data-key="pe1_1_2">를/을 관리하는 주요 방법으로, 생애 전반에 걸쳐 건강한 삶의 토대가 된다.<br>
+⋅ <input class="blank" data-key="pe1_2_1">는/은 건강의 기초가 되며,
+<input class="blank" data-key="pe1_2_2">는/은
+<input class="blank" data-key="pe1_2_3"> 특성에 맞는 운동과
+<input class="blank" data-key="pe1_2_4">를/을 계획하고 관리함으로써 증진 된다.<br>
+⋅ <input class="blank" data-key="pe1_3_1">는/은 생활 속에서 운동을 즐기고,
+<input class="blank" data-key="pe1_3_2">의 건강을 유지하며, 행복한 삶을 영위한다.
+⋅ <input class="blank" data-key="pe2_1_1">는/은 인간이 제도화된 규범과
+<input class="blank" data-key="pe2_1_2">를/을 바탕으로 타인 및 주변 세계와 소통하며 바람직한 구성원으로 성장하는 데 이바지한다.<br>
+⋅ 스포츠는 인간이 <input class="blank" data-key="pe2_2_1">과/와 상호작용하고
+다양한 기술과 창의적인 <input class="blank" data-key="pe2_2_2">를/을 발휘하며 한계를 극복하는 과정에서 발달한다.<br>
+⋅ 인간은 스포츠를 다양한 방식으로 체험함으로써
+<input class="blank" data-key="pe2_3_1">의 즐거움을 느끼고
+<input class="blank" data-key="pe2_3_2">인 삶의 태도를 배운다.
+⋅ 표현 활동은 인간이 신체 움직임에
+<input class="blank" data-key="pe3_1_1">과/와
+<input class="blank" data-key="pe3_1_2">를/을 담아
+<input class="blank" data-key="pe3_1_3">으로 표현하는 과정에서
+<input class="blank" data-key="pe3_1_4">인 삶의 태도를 형성하고,
+예술적 <input class="blank" data-key="pe3_1_5"> 문화를 향유할 수 있도록 한다.<br>
+⋅ 표현 활동은 <input class="blank" data-key="pe3_2_1">에 표현 원리가 적용되어
+다양한 유형으로 구현되며, 구성 및 창작의 과정을 통해 발달한다.<br>
+⋅ 인간은 다양한 표현 활동을 체험함으로써 움직임의
+<input class="blank" data-key="pe3_3_1">를/을 내면화하며
+자유롭고 <input class="blank" data-key="pe3_3_2">으로 사는 방법을 터득한다.
+      </td>
+    </tr>
+
+    <tr>
+      <th rowspan="2">범주</th>
+      <th class="center">3-4학년군</th>
+      <th class="center">5-6학년군</th>
+    </tr>
+    <tr>
+      <th>내용요소</th>
+      <th>내용요소</th>
+    </tr>
+
+    <tr>
+      <th>지식·이해</th>
+      <td class="rows">${'<textarea></textarea>'.repeat(c.k[0])}</td>
+      <td class="rows">${'<textarea></textarea>'.repeat(c.k[1])}</td>
+    </tr>
+
+    <tr>
+      <th>과정·기능</th>
+      <td class="rows">${'<textarea></textarea>'.repeat(c.p[0])}</td>
+      <td class="rows">${'<textarea></textarea>'.repeat(c.p[1])}</td>
+    </tr>
+
+    <tr>
+      <th>가치·태도</th>
+      <td class="rows">${'<textarea></textarea>'.repeat(c.v[0])}</td>
+      <td class="rows">${'<textarea></textarea>'.repeat(c.v[1])}</td>
+    </tr>
+  </table>
+
+  <button class="grade" onclick="gradePE(this, ${i})">채점</button>
+<button class="grade" onclick="showPEAnswer(this, ${i})">정답</button>
+<button class="clear" onclick="clearPE(this)">지우기</button>
+  <div class="score">정답률 : 0%</div>
+  `;
+});
+/* ===============================
+   역량 탭 (다중 입력 / 카드별 채점)
+=============================== */
+
+const competencyTitles = [
+  '총론','국어','수학','사회','과학','영어',
+  '음악','미술','체육','도덕','실과'
+];
+
+/* 카드별 입력 줄 수 */
+const competencyRows = [
+  6,6,5,5,2,1,5,5,3,5,6
+];
+
+const competencyWrap = document.getElementById('competencyWrap');
+
+/* 카드 생성 */
+competencyTitles.forEach((title, i) => {
+
+  let textareas = '';
+  for(let r=0; r<competencyRows[i]; r++){
+    textareas += `
+      <textarea 
+        class="blank" 
+        data-key="c${i}" 
+        data-index="${r}"
+        rows="1"
+        style="line-height:1.6; resize:none; overflow:hidden;"
+      ></textarea>`;
+  }
+
+  competencyWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="input-group">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button onclick="gradeCompetency(this)">채점</button>
+        <button onclick="showCompetencyAnswer(this)">정답</button>
+        <button onclick="clearCompetency(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   정답 데이터
+=============================== */
+
+const competencyAnswers = {
+
+  c0: [
+    '공동체 역량','심미적 역량','자기관리 역량',
+    '지식정보처리 역량','창의적 사고 역량','협력적 소통 역량'
+  ],
+
+  c1: [
+    '공동체 대인 관계 역량','디지털 미디어 역량','문화 향유 역량',
+    '비판적 창의적 사고 역량','의사소통 역량','자기 성찰 계발 역량'
+  ],
+
+  c2: [
+    '문제 해결','연결','의사소통','정보 처리','추론'
+  ],
+
+  c3: [
+    '문제 해결력 및 의사 결정력','비판적 사고력',
+    '의사소통 및 협업 능력','정보 활용 능력','창의적 사고력'
+  ],
+
+  c4: [
+    '과학적 의사결정 능력','과학적 탐구와 문제해결 능력'
+  ],
+
+  c5: [
+    '영어 의사소통 역량'
+  ],
+
+  c6: [
+    '감성 역량','공동체 역량','소통 역량',
+    '자기주도성 역량','창의성 역량'
+  ],
+
+  c7: [
+    '공동체 역량','시각적 소통 역량',
+    '심미적 감성 역량','정체성 역량','창의 융합 역량'
+  ],
+
+  c8: [
+    '건강 관리 역량','신체활동 문화 향유 역량','움직임 수행 역량'
+  ],
+
+  c9: [
+    '도덕공동체 의식','도덕적 상상력',
+    '도덕 판단 능력','비판적 배려적 사고력',
+    '인공지능 및 디지털 윤리'
+  ],
+
+  c10: [
+    '관계형성','기술적 문제해결능력','기술적 실천 능력',
+    '기술학적 지식의 이해 능력','생활자립','실천적 문제해결'
+  ]
+};
+
+
+/* ===============================
+   공통 정규화 (띄워쓰기 제거)
+=============================== */
+
+function norm(v){
+  return v.replace(/\s+/g,'').trim();
+}
+
+
+/* ===============================
+   textarea 자동 높이 조절
+=============================== */
+
+document.addEventListener('input', function(e){
+  if(e.target.tagName.toLowerCase() === 'textarea'){
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
+  }
+});
+
+
+/* ===============================
+   채점 (배경색 correct/wrong 적용)
+=============================== */
+function gradeCompetency(btn){
+
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+  const key = inputs[0].dataset.key;
+  const answers = competencyAnswers[key];
+
+  let correct = 0;
+  let total = 0;
+
+  inputs.forEach((input, i) => {
+    // 기존 표시 제거
+    input.classList.remove('correct','wrong');
+    input.style.color = '';
+
+    const ans = answers[i];
+    if(!ans) return; // 혹시 정답이 비어있으면 제외
+
+    total++;
+
+    if(norm(input.value) === norm(ans)){
+      input.classList.add('correct');
+      correct++;
+    }else{
+      input.classList.add('wrong');
+    }
+  });
+
+  const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
+  box.querySelector('.score').textContent =
+    `정답률 : ${percent}% (${correct}/${total})`;
+}
+
+/* ===============================
+   정답 보기 (전부 correct 배경)
+=============================== */
+function showCompetencyAnswer(btn){
+
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+  const key = inputs[0].dataset.key;
+  const answers = competencyAnswers[key];
+
+  inputs.forEach((input, i)=>{
+    input.value = answers[i] || '';
+
+    input.classList.remove('wrong');
+    input.classList.add('correct'); // 정답은 전부 초록 처리
+    input.style.color = '';
+
+    input.style.height = 'auto';
+    input.style.height = input.scrollHeight + 'px';
+  });
+
+  box.querySelector('.score').textContent =
+    `정답률 : 100% (${answers.length}/${answers.length})`;
+}
+
+/* ===============================
+   지우기 (값 + 색 전부 초기화)
+=============================== */
+function clearCompetency(btn){
+
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+
+  inputs.forEach(input=>{
+    input.value = '';
+    input.classList.remove('correct','wrong');
+    input.style.color = '';
+    input.style.height = 'auto';
+  });
+
+  box.querySelector('.score').textContent = '정답률 : 0%';
+}
+/* ===============================
+   모형 탭 > 국어 카드 (줄 수 적용 버전)
+=============================== */
+
+const koreanModelTitles = [
+  '국어 모형 이름','직접 교수 모형','문제 해결 학습 모형','창의성 계발 학습 모형','지식 탐구 학습 모형',
+  '반응 중심 학습 모형','가치 탐구 학습 모형','전문가 협동 학습 모형','토의·토론 학습 모형','역할 수행 학습 모형'
+];
+
+/* 🔹 카드별 줄 수 */
+const koreanLineCounts = [9,4,4,4,4,4,4,4,4,4];
+
+const koreanModelWrap = document.getElementById('modelKoreanWrap');
+
+koreanModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<koreanLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="k${i}-${j}"></textarea>`;
+  }
+
+  koreanModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button class="grade" onclick="gradeModel(this, koreanModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, koreanModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+/* ===============================
+   정답 데이터 (국어 모형 탭)
+   - 9줄/4줄 각각 "한 칸에 하나씩" 들어가도록 키를 쪼갬
+=============================== */
+
+const koreanModelAnswers = {
+  /* (0) 국어 모형 이름 (9줄) */
+  "k0-0": "가치 탐구 학습 모형",
+  "k0-1": "문제 해결 학습 모형",
+  "k0-2": "반응 중심 학습 모형",
+  "k0-3": "역할 수행 학습 모형",
+  "k0-4": "전문가 협동 학습 모형",
+  "k0-5": "지식 탐구 학습 모형",
+  "k0-6": "직접 교수 모형",
+  "k0-7": "창의성 계발 학습 모형",
+  "k0-8": "토의 토론 학습 모형",
+
+  /* (1) 직접 교수 모형 (4줄) */
+  "k1-0": "설명하기",
+  "k1-1": "시범보이기",
+  "k1-2": "질문하기",
+  "k1-3": "활동하기",
+
+  /* (2) 문제 해결 학습 모형 (4줄) */
+  "k2-0": "문제 확인하기",
+  "k2-1": "문제 해결 방법 찾기",
+  "k2-2": "문제 해결하기",
+  "k2-3": "일반화하기",
+
+  /* (3) 창의성 계발 학습 모형 (4줄) */
+  "k3-0": "문제 발견하기",
+  "k3-1": "아이디어 생성하기",
+  "k3-2": "아이디어 선택하기",
+  "k3-3": "아이디어 적용하기",
+
+  /* (4) 지식 탐구 학습 모형 (4줄) */
+  "k4-0": "문제 확인하기",
+  "k4-1": "자료 탐색하기",
+  "k4-2": "지식 발견하기",
+  "k4-3": "지식 적용하기",
+
+  /* (5) 반응 중심 학습 모형 (4줄) */
+  "k5-0": "반응 준비하기",
+  "k5-1": "반응 형성하기",
+  "k5-2": "반응 명료화하기",
+  "k5-3": "반응 심화하기",
+
+  /* (6) 가치 탐구 학습 모형 (4줄) */
+  "k6-0": "문제 분석하기",
+  "k6-1": "가치 확인하기",
+  "k6-2": "가치 평가하기",
+  "k6-3": "가치 일반화하기",
+
+  /* (7) 전문가 협동 학습 모형 (4줄) */
+  "k7-0": "계획하기",
+  "k7-1": "탐구하기",
+  "k7-2": "서로 가르치기",
+  "k7-3": "발표 및 정리하기",
+
+  /* (8) 토의·토론 학습 모형 (4줄) */
+  "k8-0": "주제 확인하기",
+  "k8-1": "토의 토론 준비하기",
+  "k8-2": "토의 토론하기",
+  "k8-3": "정리 및 평가하기",
+
+  /* (9) 역할 수행 학습 모형 (4줄) */
+  "k9-0": "상황 설정하기",
+  "k9-1": "준비 및 연습하기",
+  "k9-2": "실연하기",
+  "k9-3": "평가하기"
+};
+/* ===============================
+   모형 탭 > 수학 카드 (줄 수 적용)
+=============================== */
+
+const mathModelTitles = [
+  '수학 모형 이름',
+  '개념 학습 모형 (개념 형성 모형)',
+  '개념 학습 모형 (속성 모형)',
+  '원리 탐구 학습 모형',
+  '귀납 추론 학습 모형',
+  '문제 해결 학습 모형'
+];
+
+/* 🔹 카드별 줄 수 */
+const mathLineCounts = [5,4,4,5,4,4];
+
+const mathModelWrap = document.getElementById('modelMathWrap');
+
+mathModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<mathLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="m${i}-${j}"></textarea>`;
+  }
+
+  mathModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button class="grade" onclick="gradeModel(this, mathModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, mathModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   정답 데이터 (수학 모형 탭)
+=============================== */
+
+const mathModelAnswers = {
+
+  /* (0) 수학 모형 이름 (5줄) */
+  "m0-0": "개념 학습 모형 (개념 형성 모형)",
+  "m0-1": "개념 학습 모형 (속성 모형)",
+  "m0-2": "귀납 추론 학습 모형",
+  "m0-3": "문제 해결 학습 모형",
+  "m0-4": "원리 탐구 학습 모형",
+
+  /* (1) 개념 학습 모형 (개념 형성 모형) */
+  "m1-0": "범례 제시 및 범례 분류하기",
+  "m1-1": "공통의 성질 추상화하기",
+  "m1-2": "개념 정의하기",
+  "m1-3": "개념 익히기",
+
+  /* (2) 개념 학습 모형 (속성 모형) */
+  "m2-0": "개념의 정의",
+  "m2-1": "속성의 제시",
+  "m2-2": "예와 비예의 검토",
+  "m2-3": "개념 분석 및 익히기",
+
+  /* (3) 원리 탐구 학습 모형 (5줄) */
+  "m3-0": "새로운 문제 상황 제시",
+  "m3-1": "수학적 원리의 필요성 인식",
+  "m3-2": "수학적 원리가 내재된 조작 활동",
+  "m3-3": "수학적 원리의 형식화",
+  "m3-4": "수학적 원리 익히기 및 적용하기",
+
+  /* (4) 귀납 추론 학습 모형 */
+  "m4-0": "사례 수집 및 관찰 실험",
+  "m4-1": "추측하기",
+  "m4-2": "추측의 검증",
+  "m4-3": "일반화 및 정당화",
+
+  /* (5) 문제 해결 학습 모형 */
+  "m5-0": "문제의 이해",
+  "m5-1": "해결 계획의 수립",
+  "m5-2": "해결 계획의 실행",
+  "m5-3": "반성"
+};
+/* ===============================
+   모형 탭 > 사회 카드 (줄 수 적용)
+=============================== */
+
+const socialModelTitles = [
+ '사회 모형 이름',
+ '개념 학습 모형(속성 모형)',
+ '개념 학습 모형(원형 모형)',
+ '개념 학습 모형(상황 모형)',
+ '문제 해결 학습 모형',
+ '탐구 학습 모형 (마시알라스·콕스)',
+ '탐구 학습 모형(뱅크스·올리버·스콧)',
+ '의사결정 매트릭스 모형',
+ '합리적 의사 결정 학습 모형',
+ '가치 명료화 모형',
+ '가치 분석 모형',
+ '논쟁문제 학습 모형(5단계)',
+ '논쟁문제 학습 모형(8단계)',
+ '협동 학습 모형(STAD)',
+ '협동 학습 모형(직소 1)',
+ '협동 학습 모형(직소 2)'
+];
+
+/* 🔹 카드별 줄 수 */
+const socialLineCounts = [
+ 15, // 사회 모형 이름
+ 8,  // 속성 모형
+ 7,  // 원형 모형
+ 7,  // 상황 모형
+ 5,  // 문제 해결
+ 5,  // 마시알라스 콕스
+ 6,  // 뱅크스 올리버 스콧
+ 5,  // 의사결정 매트릭스
+ 12, // 합리적 의사결정
+ 10, // 가치 명료화
+ 4,  // 가치 분석
+ 5,  // 논쟁 5단계
+ 8,  // 논쟁 8단계
+ 5,  // STAD
+ 6,  // 직소1
+ 6   // 직소2
+];
+
+const socialModelWrap = document.getElementById('modelSocialWrap');
+
+socialModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<socialLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="s${i}-${j}"></textarea>`;
+  }
+
+  socialModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button class="grade" onclick="gradeModel(this, socialModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, socialModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   사회 모형 탭 정답 데이터
+=============================== */
+
+const socialModelAnswers = {
+
+  /* (0) 사회 모형 이름 (15줄) */
+  "s0-0":"가치 명료화 모형",
+  "s0-1":"가치 분석 모형",
+  "s0-2":"개념 학습 모형(상황 모형)",
+  "s0-3":"개념 학습 모형(속성 모형)",
+  "s0-4":"개념 학습 모형(원형 모형)",
+  "s0-5":"논쟁문제 학습 모형(5단계)",
+  "s0-6":"논쟁문제 학습 모형(8단계)",
+  "s0-7":"문제 해결 학습 모형",
+  "s0-8":"의사결정 매트릭스 모형",
+  "s0-9":"탐구 학습 모형 (마시알라스·콕스)",
+  "s0-10":"탐구 학습 모형(뱅크스·올리버·스콧)",
+  "s0-11":"합리적 의사 결정 학습 모형",
+  "s0-12":"협동 학습 모형(직소 1)",
+  "s0-13":"협동 학습 모형(직소 2)",
+  "s0-14":"협동 학습 모형(STAD)",
+
+  /* (1) 속성 모형 */
+  "s1-0":"문제 제기",
+  "s1-1":"속성 제시와 정의",
+  "s1-2":"속성 검토",
+  "s1-3":"사례 검토",
+  "s1-4":"가설 검증",
+  "s1-5":"개념 분석",
+  "s1-6":"관련 문제 검토",
+  "s1-7":"평가",
+
+  /* (2) 원형 모형 */
+  "s2-0":"문제 제기",
+  "s2-1":"개념의 원형과 정의 제시",
+  "s2-2":"비례 제시",
+  "s2-3":"속성 검토",
+  "s2-4":"개념 분석",
+  "s2-5":"관련 문제 검토",
+  "s2-6":"평가",
+
+  /* (3) 상황 모형 */
+  "s3-0":"문제 제기",
+  "s3-1":"상황 및 경험의 제시",
+  "s3-2":"사례 검토",
+  "s3-3":"속성 검토",
+  "s3-4":"개념 분석",
+  "s3-5":"관련 문제 검토",
+  "s3-6":"평가",
+
+  /* (4) 문제 해결 모형 */
+  "s4-0":"문제 확인",
+  "s4-1":"문제 발생 원인 파악",
+  "s4-2":"문제 해결 방안 탐색",
+  "s4-3":"문제 해결 방안 결정",
+  "s4-4":"문제 해결 방안 실천",
+
+  /* (5) 마시알라스·콕스 */
+  "s5-0":"탐구 문제 파악",
+  "s5-1":"가설 설정",
+  "s5-2":"탐색",
+  "s5-3":"증거 제시",
+  "s5-4":"일반화",
+
+  /* (6) 뱅크스·올리버·스콧 */
+  "s6-0":"문제 제기",
+  "s6-1":"가설 설정",
+  "s6-2":"용어 정의 및 개념화",
+  "s6-3":"자료 수집",
+  "s6-4":"자료 분석",
+  "s6-5":"가설 검증 및 일반화",
+
+  /* (7) 의사결정 매트릭스 */
+  "s7-0":"문제 정의",
+  "s7-1":"대안 나열",
+  "s7-2":"선택 기준 작성",
+  "s7-3":"대안 평가",
+  "s7-4":"의사 결정",
+
+  /* (8) 합리적 의사결정 */
+  "s8-0":"문제 제기",
+  "s8-1":"사회 탐구",
+  "s8-2":"가설 설정",
+  "s8-3":"자료 수집",
+  "s8-4":"자료 분석",
+  "s8-5":"가설 검증",
+  "s8-6":"가치 탐구",
+  "s8-7":"가치 문제 및 가치 갈등 확인",
+  "s8-8":"대안의 검토와 결과 예측",
+  "s8-9":"가치 선택",
+  "s8-10":"의사 결정",
+  "s8-11":"행동",
+
+  /* (9) 가치 명료화 */
+  "s9-0":"선택",
+  "s9-1":"자유롭게 선택하기",
+  "s9-2":"다양한 대안 중에서 선택하기",
+  "s9-3":"각 대안의 결과에 대해 충분히 검토하기",
+  "s9-4":"선택을 소중히 여기기",
+  "s9-5":"자신이 선택한 것을 소중히 여기고 기쁘게 생각하기",
+  "s9-6":"선택한 것을 다른 사람에게 기쁘게 발표하기",
+  "s9-7":"행동하기",
+  "s9-8":"선택한 대안에 따라 행동하기",
+  "s9-9":"삶의 유형이 되도록 지속해서 반복하기",
+
+  /* (10) 가치 분석 */
+  "s10-0":"문제 제기",
+  "s10-1":"가치 문제 및 가치 갈등의 확인",
+  "s10-2":"대안의 검토와 예측",
+  "s10-3":"가치의 선택과 행동",
+
+  /* (11) 논쟁 5단계 */
+  "s11-0":"문제 제기",
+  "s11-1":"개념의 명확화",
+  "s11-2":"사실의 경험적 확인",
+  "s11-3":"가치 갈등의 해결",
+  "s11-4":"대안 모색 및 결론",
+
+  /* (12) 논쟁 8단계 */
+  "s12-0":"문제 제기",
+  "s12-1":"가치 문제 확인",
+  "s12-2":"개념의 명확화",
+  "s12-3":"사실의 경험적 확인",
+  "s12-4":"가치 갈등의 해결",
+  "s12-5":"비슷한 다른 경우와의 비교",
+  "s12-6":"대안 모색과 결과의 예측",
+  "s12-7":"선택 및 결론",
+
+  /* (13) STAD */
+  "s13-0":"집단 구성",
+  "s13-1":"교사의 수업 안내와 학습지 배부",
+  "s13-2":"집단 학습",
+  "s13-3":"학습지 작성 및 정답지 확인",
+  "s13-4":"개별평가 및 집단보상",
+
+  /* (14) 직소1 */
+  "s14-0":"소집단 구성",
+  "s14-1":"전문가 학습지 배부",
+  "s14-2":"전문가 집단 학습",
+  "s14-3":"소집단 학습",
+  "s14-4":"전체 학습지 작성 및 정답지 확인",
+  "s14-5":"개별평가 및 개별보상",
+
+  /* (15) 직소2 */
+  "s15-0":"소집단 구성",
+  "s15-1":"전체 학습지와 자료 배부",
+  "s15-2":"전문가 집단 학습",
+  "s15-3":"소집단 학습",
+  "s15-4":"전체 학습지 작성 및 정답지 확인",
+  "s15-5":"개별 평가 및 집단 보상"
+};
+/* ===============================
+   모형 탭 > 과학 카드 (줄 수 적용)
+=============================== */
+
+const scienceModelTitles = [
+ '과학 모형 이름',
+ '경험 학습 모형',
+ '발견 학습 모형',
+ '5E 모형',
+ '순환 학습 모형',
+ '개념 변화 학습 모형',
+ '탐구 학습 모형',
+ 'POE',
+ 'STS',
+ 'STEAM'
+];
+
+/* 🔹 카드별 줄 수 */
+const scienceLineCounts = [
+ 9, // 과학 모형 이름
+ 4, // 경험 학습
+ 5, // 발견 학습
+ 5, // 5E
+ 3, // 순환
+ 8, // 개념 변화
+ 6, // 탐구 학습
+ 3, // POE
+ 4, // STS
+ 3  // STEAM
+];
+
+const scienceModelWrap = document.getElementById('modelScienceWrap');
+
+scienceModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<scienceLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="sc${i}-${j}"></textarea>`;
+  }
+
+  scienceModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button class="grade" onclick="gradeModel(this,scienceModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, scienceModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   과학 모형 탭 정답 데이터
+=============================== */
+
+const scienceModelAnswers = {
+
+  /* (0) 과학 모형 이름 */
+  "sc0-0":"경험 학습 모형",
+  "sc0-1":"개념 변화 학습 모형",
+  "sc0-2":"발견 학습 모형",
+  "sc0-3":"순환 학습 모형",
+  "sc0-4":"탐구 학습 모형",
+  "sc0-5":"STEAM 모형",
+  "sc0-6":"STS 모형",
+  "sc0-7":"POE 모형",
+  "sc0-8":"5E 모형",
+
+  /* (1) 경험 학습 */
+  "sc1-0":"자유 탐색",
+  "sc1-1":"탐색 결과 발표",
+  "sc1-2":"교사의 안내에 따른 탐색",
+  "sc1-3":"탐색 결과 정리",
+
+  /* (2) 발견 학습 */
+  "sc2-0":"탐색 및 문제 파악",
+  "sc2-1":"자료 제시 및 관찰 탐색",
+  "sc2-2":"추가 자료 제시 및 관찰 탐색",
+  "sc2-3":"규칙성 발견 및 개념 정리",
+  "sc2-4":"적용 및 응용",
+
+  /* (3) 5E */
+  "sc3-0":"참여",
+  "sc3-1":"탐색",
+  "sc3-2":"설명",
+  "sc3-3":"정교화",
+  "sc3-4":"평가",
+
+  /* (4) 순환 학습 */
+  "sc4-0":"탐색",
+  "sc4-1":"개념 도입",
+  "sc4-2":"개념 적용",
+
+  /* (5) 개념 변화 */
+  "sc5-0":"개념 표현",
+  "sc5-1":"개념 재구성",
+  "sc5-2":"명료화 교환",
+  "sc5-3":"갈등 상황 경험",
+  "sc5-4":"새로운 개념 구성",
+  "sc5-5":"새로운 개념 평가",
+  "sc5-6":"개념 응용",
+  "sc5-7":"개념 변화 검토",
+
+  /* (6) 탐구 학습 */
+  "sc6-0":"탐색 및 문제 파악",
+  "sc6-1":"가설 설정",
+  "sc6-2":"실험 설계",
+  "sc6-3":"실험",
+  "sc6-4":"가설 검증",
+  "sc6-5":"적용 및 새로운 문제 발견",
+
+  /* (7) POE */
+  "sc7-0":"예상",
+  "sc7-1":"관찰",
+  "sc7-2":"설명",
+
+  /* (8) STS */
+  "sc8-0":"문제 소개",
+  "sc8-1":"탐색",
+  "sc8-2":"설명 및 해결방안 제시",
+  "sc8-3":"실행",
+
+  /* (9) STEAM */
+  "sc9-0":"상황 제시",
+  "sc9-1":"창의적 설계",
+  "sc9-2":"감성적 체험"
+};
+/* ===============================
+   모형 탭 > 미술 카드 (줄 수 적용)
+=============================== */
+
+const artModelTitles = [
+ '미술 모형 이름',
+ '귀납적 사고법',
+ '직접 교수법',
+ '반응 중심 학습법',
+ '창의적 문제해결법'
+];
+
+/* 🔹 카드별 줄 수 */
+const artLineCounts = [
+ 4, // 미술 모형 이름
+ 5, // 귀납적 사고법
+ 6, // 직접 교수법
+ 4, // 반응 중심
+ 5  // 창의적 문제해결
+];
+
+const artModelWrap = document.getElementById('modelArtWrap');
+
+artModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<artLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="a${i}-${j}"></textarea>`;
+  }
+
+  artModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button class="grade" onclick="gradeModel(this, artModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, artModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   정답 데이터
+=============================== */
+
+const artModelAnswers = {
+
+  /* (0) 미술 모형 이름 */
+  "a0-0":"귀납적 사고법",
+  "a0-1":"반응 중심 학습법",
+  "a0-2":"직접 교수법",
+  "a0-3":"창의적 문제해결법",
+
+  /* (1) 귀납적 사고법 */
+  "a1-0":"문제 인식",
+  "a1-1":"관계 탐색",
+  "a1-2":"개념 발견",
+  "a1-3":"개념 적용",
+  "a1-4":"정리 및 발전",
+
+  /* (2) 직접 교수법 */
+  "a2-0":"문제 인식",
+  "a2-1":"설명 및 시범",
+  "a2-2":"질의응답",
+  "a2-3":"연습 활동(구조화된 연습)",
+  "a2-4":"작품 제작(독립적인 연습)",
+  "a2-5":"정리 및 발전",
+
+  /* (3) 반응 중심 */
+  "a3-0":"반응 형성",
+  "a3-1":"반응 명료화",
+  "a3-2":"반응 심화",
+  "a3-3":"반응 내면화(정리 및 발전)",
+
+  /* (4) 창의적 문제해결 */
+  "a4-0":"문제 인식",
+  "a4-1":"아이디어 탐색",
+  "a4-2":"아이디어 정교화",
+  "a4-3":"아이디어 적용",
+  "a4-4":"종합 및 재검토"
+};
+/* ===============================
+   모형 탭 > 체육 카드 (줄 수 적용)
+=============================== */
+
+const peModelTitles = [
+ '체육 모형 이름',
+ '직접 교수 모형',
+ '이해 중심 게임 모형',
+ '동료 교수 모형',
+ '학생-팀 성취 배분(STAD)',
+ '팀 게임 토너먼트(TGT)',
+ '팀-보조 수업(TAI)',
+ '개인적·사회적 책임감 모형',
+ '스포츠 교육 모형',
+ '탐구 수업 모형',
+ '모스톤 수업 스펙트럼'
+];
+
+/* 🔹 카드별 줄 수 */
+const peLineCounts = [
+ 10, // 체육 모형 이름
+ 6,  // 직접 교수
+ 6,  // 이해 중심 게임
+ 6,  // 동료 교수
+ 5,  // STAD
+ 6,  // TGT
+ 5,  // TAI
+ 5,  // 책임감 모형
+ 6,  // 스포츠 교육
+ 5,  // 탐구 수업
+ 11  // 모스톤
+];
+
+const peModelWrap = document.getElementById('modelPeWrap');
+
+peModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<peLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="p${i}-${j}"></textarea>`;
+  }
+
+  peModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+<button class="grade" onclick="gradeModel(this, peModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, peModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   정답 데이터
+=============================== */
+
+const peModelAnswers = {
+
+  /* (0) 체육 모형 이름 */
+  "p0-0":"개인적·사회적 책임감 모형",
+  "p0-1":"동료 교수 모형",
+  "p0-2":"모스톤 수업 스펙트럼",
+  "p0-3":"스포츠 교육 모형",
+  "p0-4":"이해 중심 게임 모형",
+  "p0-5":"직접 교수 모형",
+  "p0-6":"탐구 수업 모형",
+  "p0-7":"팀 게임 토너먼트(TGT)",
+  "p0-8":"팀-보조 수업(TAI)",
+  "p0-9":"학생-팀 성취 배분(STAD)",
+
+  /* (1) 직접 교수 */
+  "p1-0":"전시 과제 복습",
+  "p1-1":"새로운 과제 제시",
+  "p1-2":"초기 과제 연습",
+  "p1-3":"피드백 및 교정",
+  "p1-4":"독자적인 연습",
+  "p1-5":"본시 학습 복습",
+
+  /* (2) 이해 중심 게임 */
+  "p2-0":"게임 소개",
+  "p2-1":"게임 이해",
+  "p2-2":"전술 이해",
+  "p2-3":"의사 결정",
+  "p2-4":"기술연습",
+  "p2-5":"실제 게임 수행",
+
+  /* (3) 동료 교수 */
+  "p3-0":"준비 운동 및 학습 문제 확인",
+  "p3-1":"기본 기능 이해하기",
+  "p3-2":"짝 정하기 및 역할 배정하기",
+  "p3-3":"과제 제시 및 동료 교수 학습",
+  "p3-4":"역할 바꾸기",
+  "p3-5":"정리운동",
+
+  /* (4) STAD */
+  "p4-0":"팀 편성",
+  "p4-1":"학습 과제 제시 및 1차 연습",
+  "p4-2":"1차 평가 및 팀 점수 발표",
+  "p4-3":"2차 연습",
+  "p4-4":"2차 평가 및 팀 점수 발표",
+
+  /* (5) TGT */
+  "p5-0":"팀 편성",
+  "p5-1":"학습 과제 제시 및 1차 연습",
+  "p5-2":"1차 평가 및 같은 등위끼리의 점수 비교",
+  "p5-3":"2차 연습",
+  "p5-4":"2차 평가 및 같은 등위끼리의 점수 비교",
+  "p5-5":"팀 성적 발표",
+
+  /* (6) TAI */
+  "p6-0":"팀 편성",
+  "p6-1":"수행 기준 및 팀별 학습 과제 제시",
+  "p6-2":"팀별 과제 수행",
+  "p6-3":"과제 완수 체크 및 다음 과제로 이동",
+  "p6-4":"평가",
+
+  /* (7) 개인적·사회적 책임감 */
+  "p7-0":"타인의 권리와 감정 존중",
+  "p7-1":"참여와 노력",
+  "p7-2":"자기 감독",
+  "p7-3":"타인을 배려하고 돕기",
+  "p7-4":"체육 수업 밖으로의 전이",
+
+  /* (8) 스포츠 교육 */
+  "p8-0":"축제화",
+  "p8-1":"팀 소속",
+  "p8-2":"시즌",
+  "p8-3":"공식 경기",
+  "p8-4":"결승전 행사",
+  "p8-5":"기록 보존",
+
+  /* (9) 탐구 수업 */
+  "p9-0":"문제의 규명",
+  "p9-1":"문제의 제시",
+  "p9-2":"문제에 대한 유도된 탐구",
+  "p9-3":"최종 해답의 규명 및 정교화",
+  "p9-4":"분석,평가,논의를 위한 발표",
+
+  /* (10) 모스톤 */
+  "p10-0":"명령식",
+  "p10-1":"연습식",
+  "p10-2":"교류식",
+  "p10-3":"자검식",
+  "p10-4":"포함식",
+  "p10-5":"유도 발견식",
+  "p10-6":"수렴 발견식",
+  "p10-7":"확산 생산식",
+  "p10-8":"자기 설계식",
+  "p10-9":"학생 주도식",
+  "p10-10":"자기 학습식"
+};
+/* ===============================
+   모형 탭 > 도덕 카드 (줄 수 적용)
+=============================== */
+
+const moralModelTitles = [
+  '도덕 모형 이름',
+  '개념 분석 수업 모형',
+  '가치 분석 수업 모형',
+  '철학적 탐구 공동체 수업 모형',
+  '가치갈등해결 수업 모형',
+  '합리적 의사결정 수업 모형',
+  '도덕적 토론 수업 모형',
+  '집단 탐구 수업 모형',
+  '도덕 이야기 수업 모형',
+  '경험 학습 수업 모형',
+  '역할 놀이 수업 모형',
+  '가치 명료화 수업 모형'
+];
+
+/* 🔹 카드별 줄 수 */
+const moralLineCounts = [
+ 11, // 도덕 모형 이름
+ 6,  // 개념 분석
+ 6,  // 가치 분석
+ 6,  // 철학적 탐구 공동체
+ 5,  // 가치 갈등 해결
+ 5,  // 합리적 의사결정
+ 11, // 도덕적 토론
+ 5,  // 집단 탐구
+ 5,  // 도덕 이야기
+ 5,  // 경험 학습
+ 8,  // 역할 놀이
+ 4   // 가치 명료화
+];
+
+const moralModelWrap = document.getElementById('modelMoralWrap');
+
+moralModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<moralLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="mo${i}-${j}"></textarea>`;
+  }
+
+  moralModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button class="grade" onclick="gradeModel(this,moralModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, moralModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   정답 데이터
+=============================== */
+
+const moralModelAnswers = {
+
+  /* (0) 도덕 모형 이름 (11줄) */
+  "mo0-0":"가치갈등해결 수업 모형",
+  "mo0-1":"가치 명료화 수업 모형",
+  "mo0-2":"가치 분석 수업 모형",
+  "mo0-3":"개념 분석 수업 모형",
+  "mo0-4":"경험 학습 수업 모형",
+  "mo0-5":"도덕적 토론 수업 모형",
+  "mo0-6":"도덕 이야기 수업 모형",
+  "mo0-7":"역할 놀이 수업 모형",
+  "mo0-8":"집단 탐구 수업 모형",
+  "mo0-9":"철학적 탐구 공동체 수업 모형",
+  "mo0-10":"합리적 의사결정 수업 모형",
+
+  /* (1) 개념 분석 수업 모형 (6줄) */
+  "mo1-0":"분석될 가치 개념의 확인",
+  "mo1-1":"개념의 전형적 사례와 반대되는 사례 탐구",
+  "mo1-2":"개념의 경계에 해당하는 사례 확인",
+  "mo1-3":"개념과 관련된 개념의 분석",
+  "mo1-4":"가상적인 사태에의 적용",
+  "mo1-5":"분석된 의미의 수용 여부 검토와 정리",
+
+  /* (2) 가치 분석 수업 모형 (6줄) */
+  "mo2-0":"도덕적 문제 사태의 제시",
+  "mo2-1":"가치 문제의 확인과 명료화",
+  "mo2-2":"자기 입장의 설정 및 사실적 타당성 탐색",
+  "mo2-3":"잠정적 가치 결정 및 가치 원리의 검사",
+  "mo2-4":"입장의 수정 및 의사 결정",
+  "mo2-5":"실천 동기 강화 및 일상생활에의 확대 적용",
+
+  /* (3) 철학적 탐구 공동체 수업 모형 (6줄) */
+  "mo3-0":"생각 열기",
+  "mo3-1":"교재 읽기",
+  "mo3-2":"질문 만들기",
+  "mo3-3":"대표 질문 선정하기",
+  "mo3-4":"토의 토론하기",
+  "mo3-5":"생각 정리 및 표현하기",
+
+  /* (4) 가치갈등해결 수업 모형 (5줄) */
+  "mo4-0":"도덕적 문제 사태의 제시",
+  "mo4-1":"관련 규범 확인 및 의미 파악",
+  "mo4-2":"문제 사태의 성격 분석",
+  "mo4-3":"자기 입장의 선택과 정당화",
+  "mo4-4":"자기 입장의 수정 및 대안 숙고",
+
+  /* (5) 합리적 의사결정 수업 모형 (5줄) */
+  "mo5-0":"도덕적 문제 사태의 제시와 분석",
+  "mo5-1":"관련 규범의 확인 및 그 의미와 타당성 파악",
+  "mo5-2":"여러 대안의 설정과 각 대안의 결과 검토",
+  "mo5-3":"대안의 선택 및 정당화",
+  "mo5-4":"대안 선택의 수정 및 잠정적 의사결정",
+
+  /* (6) 도덕적 토론 수업 모형 (11줄) */
+  "mo6-0":"도덕적 문제 사태의 제시",
+  "mo6-1":"도덕적 토론의 도입",
+  "mo6-2":"도덕적 문제 부각하기",
+  "mo6-3":"왜라는 질문하기",
+  "mo6-4":"상황을 복잡하게 하기",
+  "mo6-5":"도덕적 토론의 심화",
+  "mo6-6":"심층적 질문하기",
+  "mo6-7":"인접 단계의 논의 강조하기",
+  "mo6-8":"명료화와 요약하기",
+  "mo6-9":"역할 채택 강조하기",
+  "mo6-10":"실천 동기 강화 및 생활에의 확대 적용",
+
+  /* (7) 집단 탐구 수업 모형 (5줄) */
+  "mo7-0":"탐구 문제의 설정",
+  "mo7-1":"탐구 계획의 수립",
+  "mo7-2":"탐구의 실시",
+  "mo7-3":"탐구 결과 발표 및 논의",
+  "mo7-4":"종합 정리 및 평가",
+
+  /* (8) 도덕 이야기 수업 모형 (5줄) */
+  "mo8-0":"학습 문제 인식과 동기 유발",
+  "mo8-1":"도덕 이야기의 제시와 주요 내용 파악",
+  "mo8-2":"도덕 이야기의 탐구 및 자신의 도덕적 경험 발표와 공유",
+  "mo8-3":"자신의 도덕 이야기 또는 유사한 상상의 이야기 구성",
+  "mo8-4":"정리 및 확대 적용과 실천 생활화",
+
+  /* (9) 경험 학습 수업 모형 (5줄) */
+  "mo9-0":"경험 학습의 주제 설정하기",
+  "mo9-1":"경험 학습 계획 세우기",
+  "mo9-2":"경험 학습 실행하기",
+  "mo9-3":"경험의 교류와 논의를 통해 경험 공유하고 일반화하기",
+  "mo9-4":"종합 정리 및 평가하기",
+
+  /* (10) 역할 놀이 수업 모형 (8줄) */
+  "mo10-0":"역할놀이 준비",
+  "mo10-1":"역할놀이 참가자 선정",
+  "mo10-2":"무대 설치",
+  "mo10-3":"참여적 관찰자로서 청중의 준비",
+  "mo10-4":"역할놀이 시연",
+  "mo10-5":"토론 및 평가",
+  "mo10-6":"재연",
+  "mo10-7":"경험의 공유와 일반화",
+
+  /* (11) 가치 명료화 수업 모형 (4줄) */
+  "mo11-0":"도덕적 문제 사태의 제시",
+  "mo11-1":"선택",
+  "mo11-2":"존중",
+  "mo11-3":"행동"
+};
+/* ===============================
+   모형 탭 > 실과 카드 (줄 수 적용)
+=============================== */
+
+const paModelTitles = [
+  '실과 모형 이름',
+  '문제해결 교수 학습 방법',
+  '협동 학습 교수 학습 방법',
+  '모듈 학습',
+  '프로젝트 교수 학습 방법',
+  '기술적 문제해결 과정 모형',
+  '실습 중심 교수·학습 방법',
+  '실천적 문제해결 학습',
+  '홈 프로젝트 모형',
+  '문제 중심 수업',
+  '실천적 추론 교수·학습 모형'
+];
+
+/* 🔹 카드별 줄 수 */
+const paLineCounts = [
+ 10, // 실과 모형 이름
+ 5,  // 문제해결
+ 5,  // 협동 학습
+ 5,  // 모듈
+ 4,  // 프로젝트
+ 7,  // 기술적 문제해결
+ 5,  // 실습 중심
+ 5,  // 실천적 문제해결
+ 8,  // 홈프로젝트
+ 4,  // 문제 중심
+ 7   // 실천적 추론
+];
+
+const paModelWrap = document.getElementById('modelPaWrap');
+
+paModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<paLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="pa${i}-${j}"></textarea>`;
+  }
+
+  paModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+        <button class="grade" onclick="gradeModel(this,paModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, paModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   정답 데이터
+=============================== */
+
+const paModelAnswers = {
+
+  /* (0) 실과 모형 이름 (10줄) */
+  "pa0-0":"기술적 문제해결 과정 모형",
+  "pa0-1":"모듈 학습",
+  "pa0-2":"문제 중심 수업",
+  "pa0-3":"문제해결 교수 학습 방법",
+  "pa0-4":"실습 중심 교수·학습 방법",
+  "pa0-5":"실천적 문제해결 학습",
+  "pa0-6":"실천적 추론 교수·학습 모형",
+  "pa0-7":"프로젝트 교수 학습 방법",
+  "pa0-8":"협동 학습 교수 학습 방법",
+  "pa0-9":"홈 프로젝트 모형",
+
+  /* (1) 문제해결 교수 학습 방법 (5줄) */
+  "pa1-0":"문제 인식",
+  "pa1-1":"정보 수집을 통한 방안 마련과 선택의 준비",
+  "pa1-2":"문제 해결 방안 설정",
+  "pa1-3":"문제 해결 방안 적용",
+  "pa1-4":"결과에 대한 평가",
+
+  /* (2) 협동 학습 교수 학습 방법 (5줄) */
+  "pa2-0":"모둠 구성",
+  "pa2-1":"과제 제시 및 선택",
+  "pa2-2":"전문가 집단 활동",
+  "pa2-3":"모집단 활동",
+  "pa2-4":"평가",
+
+  /* (3) 모듈 학습 (5줄) */
+  "pa3-0":"진단 평가 실시",
+  "pa3-1":"개인별 능력 파악",
+  "pa3-2":"능력별 모듈 학습",
+  "pa3-3":"자기 평가",
+  "pa3-4":"총괄평가",
+
+  /* (4) 프로젝트 교수 학습 방법 (4줄) */
+  "pa4-0":"목적 설정",
+  "pa4-1":"계획",
+  "pa4-2":"실행",
+  "pa4-3":"평가",
+
+  /* (5) 기술적 문제해결 과정 모형 (7줄) */
+  "pa5-0":"문제 이해",
+  "pa5-1":"연구와 개발",
+  "pa5-2":"아이디어 구상",
+  "pa5-3":"아이디어 평가 및 선정",
+  "pa5-4":"아이디어 구체화",
+  "pa5-5":"실현",
+  "pa5-6":"평가",
+
+  /* (6) 실습 중심 교수·학습 방법 (5줄) */
+  "pa6-0":"실습 활동의 목적 및 관련 지식 이해",
+  "pa6-1":"실습 과정의 제시",
+  "pa6-2":"기본 기능 시범 관찰",
+  "pa6-3":"실습 과제 수행 과정에서 기본 기능 습득",
+  "pa6-4":"자기 평가 및 교사 평가",
+
+  /* (7) 실천적 문제해결 학습 (5줄) */
+  "pa7-0":"문제 정의",
+  "pa7-1":"문제 해결을 위한 정보 수집",
+  "pa7-2":"대안 탐색 및 최선의 대안 선택",
+  "pa7-3":"행동",
+  "pa7-4":"행동에 대한 평가",
+
+  /* (8) 홈 프로젝트 모형 (8줄) */
+  "pa8-0":"문제 제기",
+  "pa8-1":"실습 계획 수립",
+  "pa8-2":"시범 실습",
+  "pa8-3":"홈 프로젝트 과제 제시",
+  "pa8-4":"실습 준비",
+  "pa8-5":"실습",
+  "pa8-6":"반성·평가",
+  "pa8-7":"정리",
+
+  /* (9) 문제 중심 수업 (4줄) */
+  "pa9-0":"문제 파악 이해",
+  "pa9-1":"아이디어 탐색 및 개발",
+  "pa9-2":"해결책 탐색 및 실현",
+  "pa9-3":"해결책 평가",
+
+  /* (10) 실천적 추론 교수·학습 모형 (7줄) */
+  "pa10-0":"문제 정의",
+  "pa10-1":"문제의 배경 이해",
+  "pa10-2":"목표 설정",
+  "pa10-3":"정보 수집",
+  "pa10-4":"대안 탐색 및 최선의 안 선택",
+  "pa10-5":"행동",
+  "pa10-6":"평가 및 반성"
+};
+/* ===============================
+   모형 탭 > 바슬즐 카드 (줄 수 적용)
+=============================== */
+
+const bsjModelTitles = [
+  '바슬즐 모형 이름',
+  '성취기준 출발형',
+  '학생 요구형',
+  '학습 기능 수단형',
+  '문제 해결형',
+  '학교 행사형',
+  '이벤트형',
+  '장소 기반형',
+  '프로젝트형'
+];
+
+/* 🔹 카드별 줄 수 */
+const bsjLineCounts = [
+ 8, // 바슬즐 모형 이름
+ 4, // 성취기준 출발형
+ 4, // 학생 요구형
+ 4, // 학습 기능 수단형
+ 4, // 문제 해결형
+ 4, // 학교 행사형
+ 4, // 이벤트형
+ 5, // 장소 기반형
+ 4  // 프로젝트형
+];
+
+const bsjModelWrap = document.getElementById('modelBsjWrap');
+
+bsjModelTitles.forEach((title,i)=>{
+
+  let textareas = '';
+  for(let j=0; j<bsjLineCounts[i]; j++){
+    textareas += `<textarea class="blank" data-key="bsj${i}-${j}"></textarea>`;
+  }
+
+  bsjModelWrap.innerHTML += `
+    <div class="competency-box">
+      <div class="competency-title">(${i+1}) ${title}</div>
+
+      <div class="multi-input">
+        ${textareas}
+      </div>
+
+      <div class="competency-actions">
+<button class="grade" onclick="gradeModel(this, bsjModelAnswers)">채점</button>
+<button class="grade" onclick="showModelAnswer(this, bsjModelAnswers)">정답</button>
+<button class="clear" onclick="clearModel(this)">지우기</button>
+      </div>
+
+      <div class="score">정답률 : 0%</div>
+    </div>
+  `;
+});
+
+
+/* ===============================
+   정답 데이터
+=============================== */
+
+const bsjModelAnswers = {
+
+  /* (0) 바슬즐 모형 이름 (8줄) */
+  "bsj0-0":"문제 해결형",
+  "bsj0-1":"성취기준 출발형",
+  "bsj0-2":"이벤트형",
+  "bsj0-3":"장소 기반형",
+  "bsj0-4":"프로젝트형",
+  "bsj0-5":"학교 행사형",
+  "bsj0-6":"학생 요구형",
+  "bsj0-7":"학습 기능 수단형",
+
+  /* (1) 성취기준 출발형 (4줄) */
+  "bsj1-0":"성취기준 확인하기",
+  "bsj1-1":"수업의 얼개 그리기",
+  "bsj1-2":"더 자세히 개발하며 보완하기",
+  "bsj1-3":"실행하며 완성하기",
+
+  /* (2) 학생 요구형 (4줄) */
+  "bsj2-0":"학생의 요구 수용하기",
+  "bsj2-1":"학생과 단원 설계하기",
+  "bsj2-2":"선택사항을 제공하며 실행하기",
+  "bsj2-3":"성찰하기",
+
+  /* (3) 학습 기능 수단형 (4줄) */
+  "bsj3-0":"학습 기능 찾기",
+  "bsj3-1":"출발점 찾기",
+  "bsj3-2":"학습 기능으로 교과 수업 꿰기",
+  "bsj3-3":"학습 기능 평가하기",
+
+  /* (4) 문제 해결형 (4줄) */
+  "bsj4-0":"문제 찾기",
+  "bsj4-1":"문제 해결을 위한 계획 세우기",
+  "bsj4-2":"해결을 위한 과제 수행하기",
+  "bsj4-3":"문제 해결 과정 성찰하기",
+
+  /* (5) 학교 행사형 (4줄) */
+  "bsj5-0":"학교 행사 확인하기",
+  "bsj5-1":"학교 행사로 수업 설계하기",
+  "bsj5-2":"학교 행사에 참여하기",
+  "bsj5-3":"학교 행사형 수업 돌아보기",
+
+  /* (6) 이벤트형 (4줄) */
+  "bsj6-0":"특별한 날 확인하기",
+  "bsj6-1":"특별한 날 관련 학습 경험 정하기",
+  "bsj6-2":"특별한 날 경험하기",
+  "bsj6-3":"특별한 날의 학습 경험 돌아보기",
+
+  /* (7) 장소 기반형 (5줄) */
+  "bsj7-0":"장소 찾기",
+  "bsj7-1":"장소를 이해하기",
+  "bsj7-2":"장소에서 학습하기",
+  "bsj7-3":"장소에서 학습하기",
+  "bsj7-4":"장소에 대한 태도 돌아보기",
+
+  /* (8) 프로젝트형 (4줄) */
+  "bsj8-0":"최고조 활동 제안하기",
+  "bsj8-1":"최고조 활동을 위한 학습 계획하기",
+  "bsj8-2":"프로젝트 실행하기",
+  "bsj8-3":"다음 프로젝트로 연결하기"
+};
+/* ======================================================
+   ✅ 모형 카드 전체 공통 채점 시스템
+   - 맞으면 초록 배경 (.correct)
+   - 틀리면 붉은 배경 (.wrong)
+   - 모든 모형 탭에 동일 적용
+====================================================== */
+
+/* 공백 제거 */
+function norm(t){
+  return (t || "").replace(/\s+/g,'').trim();
+}
+
+/* 마킹 제거 */
+function clearMark(el){
+  el.classList.remove('correct','wrong');
+}
+
+/* ===============================
+   🔹 공통 채점 함수
+   - answers 객체만 다르게 넣으면 됨
+=============================== */
+function gradeModel(btn, answerSet){
+
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+
+  let correct = 0;
+  let total = 0;
+
+  inputs.forEach(input=>{
+    const key = input.dataset.key;
+    const answer = answerSet[key];
+
+    clearMark(input);
+
+    if(!answer) return;
+
+    total++;
+
+    if(norm(input.value) === norm(answer)){
+      input.classList.add('correct');
+      correct++;
+    }else{
+      input.classList.add('wrong');
+    }
+  });
+
+  const percent = total === 0 ? 0 : Math.round((correct/total)*100);
+
+  box.querySelector('.score').textContent =
+    `정답률 : ${percent}% (${correct}/${total})`;
+}
+
+/* ===============================
+   🔹 공통 정답보기 함수
+=============================== */
+function showModelAnswer(btn, answerSet){
+
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+
+  let total = 0;
+
+  inputs.forEach(input=>{
+    const key = input.dataset.key;
+    const answer = answerSet[key];
+
+    if(!answer) return;
+
+    total++;
+    input.value = answer;
+    clearMark(input);
+    input.classList.add('correct');
+  });
+
+  box.querySelector('.score').textContent =
+    `정답률 : 100% (${total}/${total})`;
+}
+
+/* ===============================
+   🔹 공통 지우기 함수
+=============================== */
+function clearModel(btn){
+
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+
+  inputs.forEach(input=>{
+    input.value = '';
+    clearMark(input);
+  });
+
+  box.querySelector('.score').textContent = '정답률 : 0%';
+}
+/* ===============================
+   사회 내체표 정답 데이터
+=============================== */
+const socialAnswers = [
+  // ① 지리
+  [
+    "위치와 영역","장소와 지역","공간 분석",
+    "기후환경","지형환경","자연 인간의 상호작용",
+    "인구","문화","도시와 촌락","경제와 교통",
+    "갈등과 불균등의 세계","지속가능한 환경","공존의 세계"
+  ],
+
+  // ② 일반사회
+  [
+    "민주주의","정치 과정","국제 정치",
+    "법과 생활","인권과 기본권","헌법과 국가",
+    "경제 생활","시장 경제","국가 경제",
+    "사회 생활","문화 이해","사회 변동",
+    "역사 학습의 기초"
+  ],
+
+  // ③ 역사
+  [
+    "문명의 발생과 고대 세계의 형성",
+    "국가의 형성과 발전",
+    "통일 신라와 발해",
+    "고려의 성립과 변천",
+    "조선의 성립과 변천",
+    "조선 사회의 변동",
+    "근 현대 사회로의 전환"
+  ]
+];
+
+/* ===============================
+   유틸
+=============================== */
+function normalize(text){
+  return text.replace(/\s+/g,'').trim();
+}
+
+/* ===============================
+   버튼 기능 연결 (표 기준)
+=============================== */
+document.querySelectorAll('#social .table-actions').forEach(actions => {
+
+  const table = actions.previousElementSibling; // ⭐ 바로 위 table
+  const textareas = table.querySelectorAll('textarea');
+  const scoreBox = actions.querySelector('.score');
+
+  // 이 table이 사회 내체표에서 몇 번째인지
+  const tables = Array.from(
+    document.querySelectorAll('#social table')
+  );
+  const tableIndex = tables.indexOf(table);
+  const answers = socialAnswers[tableIndex] || [];
+
+  const btnGrade  = actions.querySelector('.btn-grade');
+  const btnAnswer = actions.querySelector('.btn-answer');
+  const btnClear  = actions.querySelector('.btn-clear');
+
+/* 채점 */
+btnGrade.onclick = () => {
+  let correct = 0;
+  let total = answers.length;
+
+  textareas.forEach((ta,i)=>{
+    ta.classList.remove('correct','wrong');
+    if(!answers[i]) return;
+
+    if(normalize(ta.value) === normalize(answers[i])){
+      ta.classList.add('correct');
+      correct++;
+    }else{
+      ta.classList.add('wrong');
+    }
+  });
+
+  const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
+
+  scoreBox.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+};
+
+  /* 정답 */
+  btnAnswer.onclick = () => {
+    textareas.forEach((ta,i)=>{
+      if(answers[i]) ta.value = answers[i];
+      ta.classList.remove('correct','wrong');
+    });
+    scoreBox.textContent = '정답률 : 0 / 0';
+  };
+
+  /* 지우기 */
+  btnClear.onclick = () => {
+    textareas.forEach(ta=>{
+      ta.value = '';
+      ta.classList.remove('correct','wrong');
+    });
+    scoreBox.textContent = '정답률 : 0 / 0';
+  };
+
+});
+</script>
+</body>
+</html>
