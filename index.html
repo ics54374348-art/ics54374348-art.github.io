@@ -1539,12 +1539,13 @@ const keyIdeaHTML = [
   });
 
 });
+
 const postsEl = document.getElementById('posts');
 const statsEl = document.getElementById('siteStats');
 const ADMIN_PASSWORD = '20002026';
 
-  /* ===============================
-   ✅ Firebase 초기화 (여기 값은 네 Firebase 콘솔에서 복붙)
+/* ===============================
+   ✅ Firebase 초기화
 =============================== */
 const firebaseConfig = {
   apiKey: "여기에",
@@ -1555,16 +1556,18 @@ const firebaseConfig = {
   appId: "여기에"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
-  
+
 let isAdmin = false;
 let currentTabId = 'home';
-let editingPostId = null; // 수정 모드용
+let editingPostId = null;
 
-// ===============================
-// 방문자 통계 (localStorage 기반)
-// ===============================
+/* ===============================
+   방문자 통계 (localStorage 기반)
+=============================== */
 function loadStats(){
   return JSON.parse(localStorage.getItem('siteStats') || '{}');
 }
@@ -1592,13 +1595,12 @@ function bumpVisitorStats(){
     saveStats(stats);
   }
 
-  renderStats(); // 관리자면 보이고 아니면 숨김
+  renderStats();
 }
 
 function renderStats(){
   if(!statsEl) return;
 
-  // ✅ 관리자 아닐 땐 아예 숨김
   if(!isAdmin){
     statsEl.style.display = 'none';
     statsEl.innerHTML = '';
@@ -1629,27 +1631,25 @@ function renderStats(){
   `;
 }
 
-// ===============================
-// 탭 전환
-// ===============================
-function show(id){
+/* ===============================
+   탭 전환
+=============================== */
+async function show(id){
   currentTabId = id;
 
-  document.querySelectorAll('.content')
-    .forEach(c => c.classList.remove('active'));
-
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
   document.getElementById(id)?.classList.add('active');
 
-  renderPostsForTab(id);
+  await renderPostsForTab(id);
 }
 
 function openAdminLogin(){ adminModal.style.display = 'flex'; }
 function closeAdminLogin(){ adminModal.style.display = 'none'; }
 
-// ===============================
-// 관리자 로그인
-// ===============================
-function adminLogin(){
+/* ===============================
+   관리자 로그인
+=============================== */
+async function adminLogin(){
   const pw = adminPw.value;
 
   if(pw === ADMIN_PASSWORD){
@@ -1657,60 +1657,55 @@ function adminLogin(){
     localStorage.setItem('isAdmin','true');
     closeAdminLogin();
     applyAdminUI();
-    renderPostsForTab(currentTabId);
-    renderStats(); // ✅ 로그인하자마자 통계 표시
+    await renderPostsForTab(currentTabId);
+    renderStats();
     alert('관리자 모드 ON');
-  } else alert('비밀번호 틀림');
+  } else {
+    alert('비밀번호 틀림');
+  }
 }
 
-function adminLogout(){
+async function adminLogout(){
   isAdmin = false;
   localStorage.removeItem('isAdmin');
   applyAdminUI();
-  renderPostsForTab(currentTabId);
-  renderStats(); // ✅ 로그아웃하면 통계 숨김
+  await renderPostsForTab(currentTabId);
+  renderStats();
 }
 
 function applyAdminUI(){
   adminLoginBtn.style.display = isAdmin ? 'none' : 'inline-block';
+  adminLogoutBtn.style.display = isAdmin ? 'inline-block' : 'inline-block';
   adminLogoutBtn.style.display = isAdmin ? 'inline-block' : 'none';
 
   document.querySelectorAll('.admin-only')
     .forEach(el => el.style.display = isAdmin ? 'inline-block' : 'none');
 }
 
-// ===============================
-// ===============================
-// ✅ 글 저장/불러오기 (Firestore 버전)
-// ===============================
-
-// posts 컬렉션에서 전부 불러오기
+/* ===============================
+   Firestore 글 저장/불러오기
+=============================== */
 async function loadPosts(){
   const snap = await db.collection('posts').get();
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-// 글 1개 저장(추가)
 async function addPost(post){
-  // post: { title, content, tabId, date, views, likes, comments }
   const ref = await db.collection('posts').add(post);
   return ref.id;
 }
 
-// 글 1개 수정(부분 업데이트)
 async function updatePostById(postId, patch){
-  // patch: { views: 3 } 같은 부분 업데이트
   await db.collection('posts').doc(String(postId)).set(patch, { merge: true });
 }
 
-// 글 삭제
 async function removePost(id){
   await db.collection('posts').doc(String(id)).delete();
 }
 
-// ===============================
-// 날짜 포맷(NaN 방지)
-// ===============================
+/* ===============================
+   날짜 포맷
+=============================== */
 function formatDate(timestamp){
   const t = Number(timestamp);
   if(!t || Number.isNaN(t)) return '-';
@@ -1718,9 +1713,9 @@ function formatDate(timestamp){
   return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
-// ===============================
-// 탭별 렌더링
-// ===============================
+/* ===============================
+   탭별 렌더링
+=============================== */
 async function renderPostsForTab(tabId){
   if(!postsEl) return;
 
@@ -1730,22 +1725,24 @@ async function renderPostsForTab(tabId){
 
   const list = all
     .map(p => {
-      if(!p.date || isNaN(Number(p.date))) p.date = p.date || Date.now();
+      if(!p.date || isNaN(Number(p.date))) p.date = Date.now();
       p.views = p.views || 0;
       p.likes = p.likes || 0;
-      p.comments = p.comments || [];
+      p.comments = Array.isArray(p.comments) ? p.comments : [];
       p.tabId = p.tabId || 'home';
       return p;
     })
     .filter(p => p.tabId === tabId)
     .sort((a,b)=> (b.date||0) - (a.date||0));
 
-  list.forEach(addPostToDOM);
+  for (const post of list) {
+    addPostToDOM(post);
+  }
 }
 
-// ===============================
-// 좋아요(이 기기 1번만)
-// ===============================
+/* ===============================
+   좋아요(이 기기 1번만)
+=============================== */
 function hasLiked(postId){
   const liked = JSON.parse(localStorage.getItem('likedPosts') || '{}');
   return liked[String(postId)] === true;
@@ -1756,9 +1753,9 @@ function setLiked(postId){
   localStorage.setItem('likedPosts', JSON.stringify(liked));
 }
 
-// ===============================
-// 댓글 유틸
-// ===============================
+/* ===============================
+   댓글 유틸
+=============================== */
 function makeComment(text){
   return {
     id: Date.now() + Math.floor(Math.random()*1000),
@@ -1767,11 +1764,10 @@ function makeComment(text){
   };
 }
 
-// ===============================
-// DOM 생성
-// ===============================
-async function addPostToDOM(post){
-
+/* ===============================
+   DOM 생성
+=============================== */
+function addPostToDOM(post){
   const wrap = document.createElement('div');
 
   const title = document.createElement('div');
@@ -1783,19 +1779,14 @@ async function addPostToDOM(post){
   meta.style.fontSize = '12px';
   meta.style.color = '#888';
   meta.style.margin = '4px 0';
+  meta.textContent = `작성일: ${formatDate(post.date)} | 조회수: ${post.views || 0} | 좋아요: ${post.likes || 0}`;
 
-  const likesCount = post.likes || 0;
-  const viewsCount = post.views || 0;
-  meta.textContent = `작성일: ${formatDate(post.date)} | 조회수: ${viewsCount} | 좋아요: ${likesCount}`;
-
-  // ✅ 줄바꿈 유지: textContent 대신, whiteSpace 설정 + \n 그대로 쓰기
   const content = document.createElement('div');
   content.textContent = post.content;
-  content.style.whiteSpace = 'pre-wrap'; // 🔥 엔터/줄바꿈 그대로 표시
+  content.style.whiteSpace = 'pre-wrap';
   content.style.display = 'none';
   content.style.marginTop = '8px';
 
-  // 액션 바(좋아요)
   const actionRow = document.createElement('div');
   actionRow.style.display = 'none';
   actionRow.style.marginTop = '10px';
@@ -1803,25 +1794,23 @@ async function addPostToDOM(post){
   const likeBtn = document.createElement('button');
   likeBtn.textContent = hasLiked(post.id) ? '👍 좋아요 완료' : '👍 좋아요';
   likeBtn.disabled = hasLiked(post.id);
+
   likeBtn.onclick = async () => {
-  if(hasLiked(post.id)) return;
+    if(hasLiked(post.id)) return;
 
-  setLiked(post.id);
+    setLiked(post.id);
 
-  const updated = await updatePostById(post.id, (p)=>{
-    p.likes = (p.likes || 0) + 1;
-    return p;
-  });
+    const newLikes = (post.likes || 0) + 1;
+    await updatePostById(post.id, { likes: newLikes });
+    post.likes = newLikes;
 
-  likeBtn.textContent = '👍 좋아요 완료';
-  likeBtn.disabled = true;
-
-  meta.textContent = `작성일: ${formatDate(updated.date)} | 조회수: ${updated.views || 0} | 좋아요: ${updated.likes || 0}`;
-};
+    likeBtn.textContent = '👍 좋아요 완료';
+    likeBtn.disabled = true;
+    meta.textContent = `작성일: ${formatDate(post.date)} | 조회수: ${post.views || 0} | 좋아요: ${post.likes || 0}`;
+  };
 
   actionRow.appendChild(likeBtn);
 
-  // 댓글 영역
   const commentWrap = document.createElement('div');
   commentWrap.style.display = 'none';
   commentWrap.style.marginTop = '12px';
@@ -1849,19 +1838,20 @@ async function addPostToDOM(post){
 
   const commentBtn = document.createElement('button');
   commentBtn.textContent = '등록';
+
   commentBtn.onclick = async () => {
-  const txt = commentInput.value.trim();
-  if(!txt) return alert('댓글을 입력하세요');
+    const txt = commentInput.value.trim();
+    if(!txt) return alert('댓글을 입력하세요');
 
-  const updated = await updatePostById(post.id, (p)=>{
-    p.comments = p.comments || [];
-    p.comments.push(makeComment(txt));
-    return p;
-  });
+    const newComment = makeComment(txt);
+    const newComments = [...(post.comments || []), newComment];
 
-  commentInput.value = '';
-  renderComments(updated);
-};
+    await updatePostById(post.id, { comments: newComments });
+    post.comments = newComments;
+
+    commentInput.value = '';
+    renderComments(post);
+  };
 
   commentForm.append(commentInput, commentBtn);
   commentWrap.append(commentTitle, commentList, commentForm);
@@ -1879,7 +1869,7 @@ async function addPostToDOM(post){
       return;
     }
 
-    comments.forEach(c=>{
+    comments.forEach(c => {
       const row = document.createElement('div');
       row.style.padding = '8px 0';
       row.style.borderBottom = '1px dashed #eee';
@@ -1892,7 +1882,7 @@ async function addPostToDOM(post){
       const left = document.createElement('div');
       left.style.fontSize = '13px';
       left.style.color = '#495057';
-      left.style.whiteSpace = 'pre-wrap'; // 댓글도 엔터 되게
+      left.style.whiteSpace = 'pre-wrap';
       left.textContent = c.text;
 
       const right = document.createElement('div');
@@ -1906,15 +1896,16 @@ async function addPostToDOM(post){
         const delC = document.createElement('button');
         delC.textContent = '댓글삭제';
         delC.style.marginTop = '6px';
+
         delC.onclick = async () => {
-  const updated = await updatePostById(post.id, (pp)=>{
-    pp.comments = (pp.comments || []).filter(x => x.id !== c.id);
-    return pp;
-  });
-  renderComments(updated);
-};
+          const newComments = (post.comments || []).filter(x => x.id !== c.id);
+          await updatePostById(post.id, { comments: newComments });
+          post.comments = newComments;
+          renderComments(post);
+        };
+
         row.append(top, delC);
-      }else{
+      } else {
         row.append(top);
       }
 
@@ -1922,32 +1913,29 @@ async function addPostToDOM(post){
     });
   }
 
-  // 글 열기/닫기 + 조회수
   title.onclick = async () => {
-  const isOpen = content.style.display === 'block';
+    const isOpen = content.style.display === 'block';
 
-  content.style.display = isOpen ? 'none' : 'block';
-  actionRow.style.display = isOpen ? 'none' : 'block';
-  commentWrap.style.display = isOpen ? 'none' : 'block';
+    content.style.display = isOpen ? 'none' : 'block';
+    actionRow.style.display = isOpen ? 'none' : 'block';
+    commentWrap.style.display = isOpen ? 'none' : 'block';
 
-  if(!isOpen){
-    const updated = await updatePostById(post.id, (p)=>{
-      p.views = (p.views || 0) + 1;
-      return p;
-    });
+    if(!isOpen){
+      const newViews = (post.views || 0) + 1;
+      await updatePostById(post.id, { views: newViews });
+      post.views = newViews;
 
-    meta.textContent = `작성일: ${formatDate(updated.date)} | 조회수: ${updated.views || 0} | 좋아요: ${updated.likes || 0}`;
-    renderComments(updated);
-  }
-};
+      meta.textContent = `작성일: ${formatDate(post.date)} | 조회수: ${post.views || 0} | 좋아요: ${post.likes || 0}`;
+      renderComments(post);
+    }
+  };
 
   wrap.append(title, meta, content, actionRow, commentWrap);
 
-  // 관리자 기능(수정/삭제)
   if(isAdmin){
     const edit = document.createElement('button');
     edit.textContent = '수정';
-    edit.onclick = ()=>{
+    edit.onclick = () => {
       editingPostId = post.id;
       postTitle.value = post.title;
       postContent.value = post.content;
@@ -1956,9 +1944,9 @@ async function addPostToDOM(post){
 
     const del = document.createElement('button');
     del.textContent = '삭제';
-    del.onclick = ()=>{
-      removePost(post.id);
-      renderPostsForTab(currentTabId);
+    del.onclick = async () => {
+      await removePost(post.id);
+      await renderPostsForTab(currentTabId);
     };
 
     wrap.append(edit, del);
@@ -1967,17 +1955,9 @@ async function addPostToDOM(post){
   postsEl.appendChild(wrap);
 }
 
-// ===============================
-// 삭제
-// ===============================
-function removePost(id){
-  const saved = loadPosts().filter(p => p.id !== id);
-  savePosts(saved);
-}
-
-// ===============================
-// 글쓰기
-// ===============================
+/* ===============================
+   글쓰기
+=============================== */
 function openWrite(){
   if(!isAdmin) return alert('관리자만 가능');
   writeModal.style.display = 'flex';
@@ -1994,15 +1974,13 @@ async function savePost(){
   if(!title || !content) return alert('입력하세요');
 
   if(editingPostId){
-    // 수정
     await updatePostById(editingPostId, { title, content });
     editingPostId = null;
-  }else{
-    // 새 글
+  } else {
     await addPost({
       title,
       content,
-      tabId: currentTabId,   // 탭별 저장 유지
+      tabId: currentTabId,
       date: Date.now(),
       views: 0,
       likes: 0,
@@ -2017,29 +1995,20 @@ async function savePost(){
   await renderPostsForTab(currentTabId);
 }
 
-  savePosts(saved);
+/* ===============================
+   초기화
+=============================== */
+document.addEventListener('DOMContentLoaded', async () => {
+  bumpVisitorStats();
 
-  closeWrite();
-  postTitle.value = '';
-  postContent.value = '';
-  renderPostsForTab(currentTabId);
-}
-
-// ===============================
-// 초기화
-// ===============================
-document.addEventListener('DOMContentLoaded', ()=>{
-  bumpVisitorStats(); // 일단 집계는 하고
-
-  isAdmin = localStorage.getItem('isAdmin')==='true';
+  isAdmin = localStorage.getItem('isAdmin') === 'true';
   applyAdminUI();
 
   currentTabId = document.querySelector('.content.active')?.id || 'home';
   await renderPostsForTab(currentTabId);
 
-  renderStats(); // ✅ 관리자면 보이고 아니면 숨김
+  renderStats();
 });
-
 // ===============================
 // 공통 유틸
 // ===============================
