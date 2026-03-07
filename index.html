@@ -765,6 +765,32 @@ border-radius: 0;
   padding:0 2px;
   border-radius:4px;
 }
+  /* ===============================
+   모형 퀴즈
+=============================== */
+.model-quiz-choice{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  padding:10px 12px;
+  border:1px solid #dee2e6;
+  border-radius:10px;
+  background:#fff;
+}
+
+.model-quiz-choice.correct{
+  background:#e6f4ea;
+  border-color:#b7dfc4;
+}
+
+.model-quiz-choice.wrong{
+  background:#fde8e8;
+  border-color:#f1b9b9;
+}
+
+.model-quiz-choice input{
+  margin-top:3px;
+}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -848,6 +874,7 @@ if(window.wcs) {
   </div>
 </li>
 <li onclick="show('ch')">총론</li>
+  <li onclick="show('model-quiz')">모형 퀴즈</li>
 <li onclick="show('check')">체크박스</li>
 </ul>
 </nav>
@@ -883,6 +910,45 @@ if(window.wcs) {
 </p>
 
 </div>
+  <div id="model-quiz" class="content">
+  <div class="competency-wrap">
+    <div class="competency-box">
+      <div class="competency-title">모형 퀴즈</div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+        <select id="modelQuizSubject" style="padding:10px 12px; border:1px solid #ced4da; border-radius:8px;">
+          <option value="korean">국어</option>
+          <option value="math">수학</option>
+          <option value="social">사회</option>
+          <option value="science">과학</option>
+          <option value="art">미술</option>
+          <option value="pe">체육</option>
+          <option value="moral">도덕</option>
+          <option value="pa">실과</option>
+          <option value="bsj">바슬즐</option>
+        </select>
+
+        <button class="grade" onclick="modelQuizNew()">새 문제</button>
+        <button class="clear" onclick="modelQuizReset()">초기화</button>
+      </div>
+
+      <div id="modelQuizCard" style="display:none;">
+        <div id="modelQuizMeta" style="font-size:13px; color:#6c757d; margin-bottom:8px;"></div>
+        <div id="modelQuizQuestion" style="font-size:18px; font-weight:800; margin-bottom:12px;"></div>
+
+        <div id="modelQuizChoices" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;"></div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="grade" onclick="modelQuizCheck()">채점</button>
+          <button class="grade" onclick="modelQuizShowAnswer()">정답 보기</button>
+          <button class="grade" onclick="modelQuizNext()">다음 문제</button>
+        </div>
+
+        <div id="modelQuizResult" class="score" style="margin-top:14px;">정답률 : 0%</div>
+      </div>
+    </div>
+  </div>
+  </div>
 <div id="posts"></div>
 <div id="siteStats" style="margin:10px 0;"></div>
 <button class="admin-only" onclick="openWrite()" style="display:none;">
@@ -6901,6 +6967,264 @@ btnGrade.onclick = () => {
     }
   });
 })();
+  /* =========================================================
+   ✅ 모형 퀴즈 탭 (기존 코드 안깨지게 독립형)
+   - 기존 model answer 데이터 재사용
+   - 객관식: "이 단계들은 어떤 모형인가?"
+========================================================= */
+
+const modelQuizState = {
+  pools: {},
+  current: null,
+  total: 0,
+  correct: 0
+};
+
+function modelQuizShuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function modelQuizEscape(text){
+  return String(text || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function modelQuizExtractGroups(answerSet, labelMap){
+  const groups = {};
+  Object.entries(answerSet || {}).forEach(([key, value])=>{
+    const m = key.match(/^([a-z]+)(\d+)-\d+$/i);
+    if(!m) return;
+
+    const groupNum = Number(m[2]);
+    if(groupNum === 0) return; // "모형 이름 목록 카드"는 제외
+
+    if(!groups[groupNum]){
+      groups[groupNum] = [];
+    }
+    groups[groupNum].push(value);
+  });
+
+  return Object.keys(groups)
+    .sort((a,b)=> Number(a)-Number(b))
+    .map(num => ({
+      answer: labelMap[Number(num)] || `모형 ${num}`,
+      steps: groups[num]
+    }))
+    .filter(item => item.steps.length > 0);
+}
+
+function modelQuizBuildPools(){
+  modelQuizState.pools = {
+    korean: modelQuizExtractGroups(
+      typeof koreanModelAnswers !== 'undefined' ? koreanModelAnswers : {},
+      koreanModelTitles || []
+    ),
+    math: modelQuizExtractGroups(
+      typeof mathModelAnswers !== 'undefined' ? mathModelAnswers : {},
+      mathModelTitles || []
+    ),
+    social: modelQuizExtractGroups(
+      typeof socialModelAnswers !== 'undefined' ? socialModelAnswers : {},
+      socialModelTitles || []
+    ),
+    science: modelQuizExtractGroups(
+      typeof scienceModelAnswers !== 'undefined' ? scienceModelAnswers : {},
+      scienceModelTitles || []
+    ),
+    art: modelQuizExtractGroups(
+      typeof artModelAnswers !== 'undefined' ? artModelAnswers : {},
+      artModelTitles || []
+    ),
+    pe: modelQuizExtractGroups(
+      typeof peModelAnswers !== 'undefined' ? peModelAnswers : {},
+      peModelTitles || []
+    ),
+    moral: modelQuizExtractGroups(
+      typeof moralModelAnswers !== 'undefined' ? moralModelAnswers : {},
+      moralModelTitles || []
+    ),
+    pa: modelQuizExtractGroups(
+      typeof paModelAnswers !== 'undefined' ? paModelAnswers : {},
+      paModelTitles || []
+    ),
+    bsj: modelQuizExtractGroups(
+      typeof bsjModelAnswers !== 'undefined' ? bsjModelAnswers : {},
+      bsjModelTitles || []
+    )
+  };
+}
+
+function modelQuizGetWrongChoices(subject, correctAnswer){
+  const pool = modelQuizState.pools[subject] || [];
+  const allNames = pool.map(x => x.answer).filter(name => name !== correctAnswer);
+  return modelQuizShuffle(allNames).slice(0, 3);
+}
+
+function modelQuizRender(){
+  const card = document.getElementById('modelQuizCard');
+  const meta = document.getElementById('modelQuizMeta');
+  const q = document.getElementById('modelQuizQuestion');
+  const choices = document.getElementById('modelQuizChoices');
+  const result = document.getElementById('modelQuizResult');
+
+  if(!card || !meta || !q || !choices || !result) return;
+  if(!modelQuizState.current){
+    card.style.display = 'none';
+    return;
+  }
+
+  const cur = modelQuizState.current;
+  card.style.display = 'block';
+
+  meta.textContent = `누적 정답 : ${modelQuizState.correct} / ${modelQuizState.total}`;
+  q.textContent = '다음 단계들은 어떤 모형인가?';
+
+  const stepsHtml = cur.steps.map((step, i) => `
+    <div style="padding:8px 10px; background:#f8f9fa; border-radius:8px; margin-bottom:6px;">
+      ${i+1}. ${modelQuizEscape(step)}
+    </div>
+  `).join('');
+
+  const choicesHtml = cur.choices.map((choice, i) => `
+    <label class="model-quiz-choice" data-choice-wrap="${i}">
+      <input type="radio" name="modelQuizAnswer" value="${modelQuizEscape(choice)}">
+      <span>${modelQuizEscape(choice)}</span>
+    </label>
+  `).join('');
+
+  choices.innerHTML = `
+    <div style="margin-bottom:10px;">${stepsHtml}</div>
+    ${choicesHtml}
+  `;
+
+  result.textContent = '정답률 : 0%';
+}
+
+function modelQuizMakeQuestion(subject){
+  const pool = modelQuizState.pools[subject] || [];
+  if(pool.length < 2) return null;
+
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  const wrongs = modelQuizGetWrongChoices(subject, picked.answer);
+  const choices = modelQuizShuffle([picked.answer, ...wrongs]);
+
+  return {
+    subject,
+    answer: picked.answer,
+    steps: picked.steps,
+    choices,
+    checked: false
+  };
+}
+
+function modelQuizNew(){
+  const subject = document.getElementById('modelQuizSubject')?.value || 'korean';
+  const q = modelQuizMakeQuestion(subject);
+
+  if(!q){
+    alert('이 과목 퀴즈 데이터가 부족합니다.');
+    return;
+  }
+
+  modelQuizState.current = q;
+  modelQuizRender();
+}
+
+function modelQuizCheck(){
+  const cur = modelQuizState.current;
+  if(!cur) return;
+
+  const picked = document.querySelector('input[name="modelQuizAnswer"]:checked');
+  if(!picked){
+    alert('보기 하나를 선택하세요.');
+    return;
+  }
+
+  if(cur.checked) return;
+
+  cur.checked = true;
+  modelQuizState.total++;
+
+  const wraps = document.querySelectorAll('[data-choice-wrap]');
+  wraps.forEach((wrap)=>{
+    const input = wrap.querySelector('input');
+    const val = input?.value || '';
+    wrap.classList.remove('correct','wrong');
+
+    if(val === cur.answer){
+      wrap.classList.add('correct');
+    }
+    if(input?.checked && val !== cur.answer){
+      wrap.classList.add('wrong');
+    }
+  });
+
+  const result = document.getElementById('modelQuizResult');
+  if(picked.value === cur.answer){
+    modelQuizState.correct++;
+    result.textContent = `정답률 : ${Math.round(modelQuizState.correct / modelQuizState.total * 100)}% (${modelQuizState.correct}/${modelQuizState.total}) · 정답!`;
+  }else{
+    result.textContent = `정답률 : ${Math.round(modelQuizState.correct / modelQuizState.total * 100)}% (${modelQuizState.correct}/${modelQuizState.total}) · 오답! 정답: ${cur.answer}`;
+  }
+
+  const meta = document.getElementById('modelQuizMeta');
+  if(meta){
+    meta.textContent = `누적 정답 : ${modelQuizState.correct} / ${modelQuizState.total}`;
+  }
+}
+
+function modelQuizShowAnswer(){
+  const cur = modelQuizState.current;
+  if(!cur) return;
+
+  const wraps = document.querySelectorAll('[data-choice-wrap]');
+  wraps.forEach((wrap)=>{
+    const input = wrap.querySelector('input');
+    const val = input?.value || '';
+    wrap.classList.remove('correct','wrong');
+    if(val === cur.answer){
+      wrap.classList.add('correct');
+    }
+  });
+
+  const result = document.getElementById('modelQuizResult');
+  if(result){
+    result.textContent = `정답: ${cur.answer}`;
+  }
+}
+
+function modelQuizNext(){
+  modelQuizNew();
+}
+
+function modelQuizReset(){
+  modelQuizState.current = null;
+  modelQuizState.total = 0;
+  modelQuizState.correct = 0;
+
+  const card = document.getElementById('modelQuizCard');
+  const result = document.getElementById('modelQuizResult');
+  const meta = document.getElementById('modelQuizMeta');
+  const choices = document.getElementById('modelQuizChoices');
+
+  if(card) card.style.display = 'none';
+  if(result) result.textContent = '정답률 : 0%';
+  if(meta) meta.textContent = '';
+  if(choices) choices.innerHTML = '';
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  modelQuizBuildPools();
+});
 </script>
 </body>
 </html>
