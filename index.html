@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta name="description" content="임고AZ - 초등 임용 내체표, 개체표, 모형 정리 사이트">
+  <meta name="description" content="초등 임용고시 A부터 Z까지 - 손 쉽게 아웃풋하고 논술, 모의고사까지 임고AZ로 끝내자!">
 <meta name="robots" content="index, follow">
   <meta charset="UTF-8">
-<title>임고AZ</title>
-<meta name="description" content="임고AZ - 초등 임용 내체표, 개체표, 모형 정리 사이트">
+<title>임고AZ | 초등 임용의 모든 것</title>
+<meta name="description" content="초등 임용고시 A부터 Z까지 - 손 쉽게 아웃풋하고 논술, 모의고사까지 임고AZ로 끝내자!">
 <meta name="robots" content="index,follow">
 
 <style>
@@ -729,6 +729,42 @@ background: transparent;
 border: none;
 border-bottom: 2px solid #ced4da;
 border-radius: 0;
+  /* ===============================
+   사이트 전체 검색
+=============================== */
+.site-search-result{
+  background:#fff;
+  border:1px solid #e9ecef;
+  border-radius:12px;
+  padding:14px 16px;
+  margin-bottom:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.site-search-result-title{
+  font-size:15px;
+  font-weight:800;
+  color:#212529;
+  margin-bottom:6px;
+}
+.site-search-result-path{
+  font-size:12px;
+  color:#6c757d;
+  margin-bottom:8px;
+}
+.site-search-result-preview{
+  font-size:14px;
+  color:#495057;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+.site-search-result button{
+  margin-top:10px;
+}
+.site-search-mark{
+  background:#fff3bf;
+  padding:0 2px;
+  border-radius:4px;
+}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -816,7 +852,37 @@ if(window.wcs) {
 </ul>
 </nav>
 
-<div id="home" class="content active"><h2></h2></div>
+  <div id="siteSearchBox" style="padding:16px 20px; background:#fff; border-bottom:1px solid #e9ecef;">
+  <div style="max-width:980px; margin:0 auto;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input
+        id="siteSearchInput"
+        type="text"
+        placeholder="내체표 · 모형 · 역량 · 게시글 전체 검색"
+        style="flex:1; min-width:240px; padding:12px 14px; border:1px solid #ced4da; border-radius:10px; font-size:14px;"
+      >
+      <button id="siteSearchBtn" class="grade">검색</button>
+      <button id="siteSearchClearBtn" class="clear">초기화</button>
+    </div>
+
+    <div id="siteSearchMeta" style="margin-top:10px; font-size:13px; color:#6c757d;"></div>
+    <div id="siteSearchResults" style="margin-top:12px;"></div>
+  </div>
+  </div>
+
+<div id="home" class="content active">
+<h2>임고AZ 이용 안내</h2>
+
+<p>
+임고AZ는 초등 임용 시험 준비를 위한 정리 사이트입니다.<br>
+역량, 모형, 내체표 등을 직접 입력하며 학습할 수 있습니다.
+</p>
+
+<p>
+각 탭을 클릭하여 원하는 과목을 선택해 학습을 시작하세요.
+</p>
+
+</div>
 <div id="posts"></div>
 <div id="siteStats" style="margin:10px 0;"></div>
 <button class="admin-only" onclick="openWrite()" style="display:none;">
@@ -6537,6 +6603,304 @@ btnGrade.onclick = () => {
   };
 
 });
+    /* =========================================================
+   ✅ 사이트 전체 검색 (안전 버전 / 기존 코드 최소 침범)
+   - 정답 데이터 + 게시글 + 화면 텍스트 검색
+   - 결과 클릭 시 해당 탭으로 이동
+========================================================= */
+
+(function(){
+  const siteSearchState = {
+    index: []
+  };
+
+  function siteSearch_norm(text){
+    return String(text || '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  function siteSearch_escapeHtml(str){
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function siteSearch_highlight(text, query){
+    const safeText = siteSearch_escapeHtml(text);
+    if(!query) return safeText;
+
+    const raw = String(text || '');
+    const q = String(query || '').trim();
+    if(!q) return safeText;
+
+    const idx = raw.toLowerCase().indexOf(q.toLowerCase());
+    if(idx === -1) return safeText;
+
+    const before = siteSearch_escapeHtml(raw.slice(0, idx));
+    const match = siteSearch_escapeHtml(raw.slice(idx, idx + q.length));
+    const after = siteSearch_escapeHtml(raw.slice(idx + q.length));
+    return `${before}<span class="site-search-mark">${match}</span>${after}`;
+  }
+
+  function siteSearch_push(tabId, section, title, text){
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    if(!clean) return;
+
+    siteSearchState.index.push({
+      tabId: tabId || 'home',
+      section: section || '',
+      title: title || '',
+      text: clean
+    });
+  }
+
+  function siteSearch_pushArray(tabId, section, titlePrefix, arr){
+    if(!Array.isArray(arr)) return;
+    arr.forEach((v, i) => {
+      if(Array.isArray(v)){
+        siteSearch_pushArray(tabId, section, `${titlePrefix} ${i+1}`, v);
+      }else if(typeof v === 'object' && v !== null){
+        Object.entries(v).forEach(([k,val])=>{
+          if(Array.isArray(val)){
+            siteSearch_pushArray(tabId, section, `${titlePrefix} ${k}`, val);
+          }else{
+            siteSearch_push(tabId, section, `${titlePrefix} ${k}`, val);
+          }
+        });
+      }else{
+        siteSearch_push(tabId, section, `${titlePrefix} ${i+1}`, v);
+      }
+    });
+  }
+
+  function siteSearch_pushObject(tabId, section, titlePrefix, obj){
+    if(!obj || typeof obj !== 'object') return;
+    Object.entries(obj).forEach(([k,v])=>{
+      if(Array.isArray(v)){
+        siteSearch_pushArray(tabId, section, `${titlePrefix} ${k}`, v);
+      }else if(typeof v === 'object' && v !== null){
+        siteSearch_pushObject(tabId, section, `${titlePrefix} ${k}`, v);
+      }else{
+        siteSearch_push(tabId, section, `${titlePrefix} ${k}`, v);
+      }
+    });
+  }
+
+  function siteSearch_addKnownData(){
+    // 역량
+    if(typeof competencyAnswers !== 'undefined'){
+      siteSearch_pushObject('competency', '역량', '역량', competencyAnswers);
+    }
+
+    // 모형
+    if(typeof koreanModelAnswers !== 'undefined') siteSearch_pushObject('model-korean', '모형', '국어 모형', koreanModelAnswers);
+    if(typeof mathModelAnswers !== 'undefined') siteSearch_pushObject('model-math', '모형', '수학 모형', mathModelAnswers);
+    if(typeof socialModelAnswers !== 'undefined') siteSearch_pushObject('model-social', '모형', '사회 모형', socialModelAnswers);
+    if(typeof scienceModelAnswers !== 'undefined') siteSearch_pushObject('model-science', '모형', '과학 모형', scienceModelAnswers);
+    if(typeof artModelAnswers !== 'undefined') siteSearch_pushObject('model-art', '모형', '미술 모형', artModelAnswers);
+    if(typeof peModelAnswers !== 'undefined') siteSearch_pushObject('model-pe', '모형', '체육 모형', peModelAnswers);
+    if(typeof moralModelAnswers !== 'undefined') siteSearch_pushObject('model-moral', '모형', '도덕 모형', moralModelAnswers);
+    if(typeof paModelAnswers !== 'undefined') siteSearch_pushObject('model-pa', '모형', '실과 모형', paModelAnswers);
+    if(typeof bsjModelAnswers !== 'undefined') siteSearch_pushObject('model-bsj', '모형', '바슬즐 모형', bsjModelAnswers);
+
+    // 국어 내체표
+    if(typeof KOR_ANS !== 'undefined'){
+      siteSearch_pushArray('korean', '국어 내체표', '국어 내체표', KOR_ANS);
+    }
+
+    // 사회 내체표
+    if(typeof socialAnswers !== 'undefined'){
+      siteSearch_pushArray('social', '사회 내체표', '사회 내체표', socialAnswers);
+    }
+
+    // 실과 내체표
+    if(typeof silgwaAnswers !== 'undefined'){
+      siteSearch_pushObject('silgwa', '실과 내체표', '실과 빈칸', silgwaAnswers);
+    }
+    if(typeof answerSets !== 'undefined'){
+      siteSearch_pushArray('silgwa', '실과 내체표', '실과 내용요소', answerSets);
+    }
+
+    // 도덕 내체표
+    if(typeof moralBlankAnswers !== 'undefined'){
+      siteSearch_pushObject('moral', '도덕 내체표', '도덕 빈칸', moralBlankAnswers);
+    }
+    if(typeof moralAnswers !== 'undefined'){
+      siteSearch_pushArray('moral', '도덕 내체표', '도덕 내용요소', moralAnswers);
+    }
+
+    // 체육 내체표
+    if(typeof peBlankAnswers !== 'undefined'){
+      siteSearch_pushObject('pe', '체육 내체표', '체육 빈칸', peBlankAnswers);
+    }
+    if(typeof peAnswers !== 'undefined'){
+      siteSearch_pushArray('pe', '체육 내체표', '체육 내용요소', peAnswers);
+    }
+
+    // 미술 내체표
+    if(typeof artNTBlankAnswers !== 'undefined'){
+      siteSearch_pushObject('art', '미술 내체표', '미술 빈칸', artNTBlankAnswers);
+    }
+    if(typeof artNTAnswers !== 'undefined'){
+      siteSearch_pushArray('art', '미술 내체표', '미술 내용요소', artNTAnswers);
+    }
+
+    // 음악
+    if(typeof musicObjectAnswers !== 'undefined'){
+      siteSearch_pushObject('music-object', '음악 개체표', '음악 개체표', musicObjectAnswers);
+    }
+    if(typeof musicAnswers !== 'undefined'){
+      siteSearch_pushArray('music', '음악 내체표', '음악 내체표', musicAnswers);
+    }
+
+    // 바슬즐
+    if(typeof bsAnswers !== 'undefined'){
+      siteSearch_pushArray('basle', '바슬즐 내체표', '바슬즐 내체표', bsAnswers);
+    }
+
+    // 게시글(localStorage 버전 호환)
+    try{
+      const localPosts = JSON.parse(localStorage.getItem('posts') || '[]');
+      if(Array.isArray(localPosts)){
+        localPosts.forEach((p, i)=>{
+          siteSearch_push(p.tabId || 'home', '게시글', p.title || `게시글 ${i+1}`, p.content || '');
+        });
+      }
+    }catch(e){}
+  }
+
+  function siteSearch_addDomText(){
+    document.querySelectorAll('.content').forEach(section=>{
+      const tabId = section.id || 'home';
+
+      section.querySelectorAll('h1, h2, h3, .nt-title, .competency-title, th, td, .idea-block').forEach((el, idx)=>{
+        const text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+        if(text){
+          siteSearch_push(tabId, '화면 텍스트', `${tabId} 화면 ${idx+1}`, text);
+        }
+      });
+    });
+  }
+
+  function siteSearch_buildIndex(){
+    siteSearchState.index = [];
+    siteSearch_addKnownData();
+    siteSearch_addDomText();
+  }
+
+  function siteSearch_goTo(tabId){
+    if(typeof show === 'function'){
+      show(tabId);
+    }else{
+      document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+      document.getElementById(tabId)?.classList.add('active');
+    }
+
+    const target = document.getElementById(tabId);
+    if(target){
+      target.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+  }
+
+  function siteSearch_renderResults(query, results){
+    const resultsEl = document.getElementById('siteSearchResults');
+    const metaEl = document.getElementById('siteSearchMeta');
+    if(!resultsEl || !metaEl) return;
+
+    if(!query){
+      metaEl.textContent = '찾고 싶은 개념이나 용어를 입력하세요.';
+      resultsEl.innerHTML = '';
+      return;
+    }
+
+    metaEl.textContent = `검색어 "${query}" · ${results.length}건 찾음`;
+
+    if(results.length === 0){
+      resultsEl.innerHTML = `
+        <div class="site-search-result">
+          <div class="site-search-result-title">검색 결과가 없습니다.</div>
+          <div class="site-search-result-preview">다른 키워드로 다시 검색해보세요.</div>
+        </div>
+      `;
+      return;
+    }
+
+    resultsEl.innerHTML = results.map((item, i)=>`
+      <div class="site-search-result">
+        <div class="site-search-result-title">${siteSearch_highlight(item.title || '검색 결과', query)}</div>
+        <div class="site-search-result-path">${siteSearch_escapeHtml(item.section)} · 탭: ${siteSearch_escapeHtml(item.tabId)}</div>
+        <div class="site-search-result-preview">${siteSearch_highlight(item.text, query)}</div>
+        <button class="grade" onclick="siteSearch_openResult('${siteSearch_escapeHtml(item.tabId)}')">해당 탭으로 이동</button>
+      </div>
+    `).join('');
+  }
+
+  function siteSearch_run(){
+    const input = document.getElementById('siteSearchInput');
+    if(!input) return;
+
+    const query = input.value.trim();
+    if(!query){
+      siteSearch_renderResults('', []);
+      return;
+    }
+
+    siteSearch_buildIndex();
+
+    const q = siteSearch_norm(query);
+    const results = siteSearchState.index
+      .filter(item => {
+        return siteSearch_norm(item.title).includes(q) || siteSearch_norm(item.text).includes(q);
+      })
+      .slice(0, 100);
+
+    siteSearch_renderResults(query, results);
+  }
+
+  function siteSearch_clear(){
+    const input = document.getElementById('siteSearchInput');
+    const resultsEl = document.getElementById('siteSearchResults');
+    const metaEl = document.getElementById('siteSearchMeta');
+
+    if(input) input.value = '';
+    if(resultsEl) resultsEl.innerHTML = '';
+    if(metaEl) metaEl.textContent = '찾고 싶은 개념이나 용어를 입력하세요.';
+  }
+
+  window.siteSearch_openResult = function(tabId){
+    siteSearch_goTo(tabId);
+  };
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const input = document.getElementById('siteSearchInput');
+    const btn = document.getElementById('siteSearchBtn');
+    const clearBtn = document.getElementById('siteSearchClearBtn');
+    const metaEl = document.getElementById('siteSearchMeta');
+
+    if(metaEl) metaEl.textContent = '찾고 싶은 개념이나 용어를 입력하세요.';
+
+    if(btn){
+      btn.addEventListener('click', siteSearch_run);
+    }
+
+    if(clearBtn){
+      clearBtn.addEventListener('click', siteSearch_clear);
+    }
+
+    if(input){
+      input.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){
+          siteSearch_run();
+        }
+      });
+    }
+  });
+})();
 </script>
 </body>
 </html>
