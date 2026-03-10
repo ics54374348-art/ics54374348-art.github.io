@@ -6602,106 +6602,30 @@ const bsjModelAnswers = {
 };
 /* ======================================================
    ✅ 모형 카드 전체 공통 채점 시스템
-   - 맞으면 초록 배경 (.correct)
-   - 틀리면 붉은 배경 (.wrong)
-   - 모든 모형 탭에 동일 적용
 ====================================================== */
 
-/* 공백 제거 */
 function norm(t){
   return (t || "").replace(/\s+/g,'').trim();
 }
 
-/* 마킹 제거 */
 function clearMark(el){
   el.classList.remove('correct','wrong');
 }
 
-/* ===============================
-   🔹 공통 채점 함수
-   - answers 객체만 다르게 넣으면 됨
-=============================== */
 function gradeModel(btn, answerSet){
-
   const box = btn.closest('.competency-box');
   const inputs = [...box.querySelectorAll('.blank')];
 
   let correct = 0;
   let total = 0;
 
-  inputs.forEach(input=>{
-    clearMark(input);
-  });
-
-  // 현재 카드의 key들
-  const keys = inputs.map(input => input.dataset.key);
-
-  // ✅ 모형 이름 카드인지 판별
-  // 예: k0-0, m0-1, s0-2 ... 처럼 "중간 번호가 0"이면 모형 이름 카드
-  const isNameCard = keys.length > 0 && keys.every(key => {
-    const m = String(key).match(/^[a-zA-Z]+0-\d+$/);
-    return !!m;
-  });
-
-  if(isNameCard){
-    const answerValues = keys
-      .map(key => answerSet[key])
-      .filter(v => normalizeForCompare(v));
-
-    const userValues = inputs
-      .map(input => input.value)
-      .filter(v => normalizeForCompare(v));
-
-    total = answerValues.length;
-
-    // ✅ 모형 이름 카드는 순서 무관 전체 비교
-    const allCorrect = isSameMultiset(userValues, answerValues);
-
-    if(allCorrect){
-      inputs.forEach((input, i)=>{
-        if(answerSet[input.dataset.key]){
-          input.classList.add('correct');
-        }
-      });
-      correct = total;
-    }else{
-      // 틀리면 기존 방식대로 칸별 표시
-      inputs.forEach(input=>{
-        const key = input.dataset.key;
-        const answer = answerSet[key];
-        if(!answer) return;
-
-        total = answerValues.length;
-
-        if(normalizeForCompare(input.value) === normalizeForCompare(answer)){
-          input.classList.add('correct');
-          correct++;
-        }else{
-          input.classList.add('wrong');
-        }
-      });
-    }
-  }else{
-    // ✅ 일반 모형 단계 카드는 기존처럼 순서 맞아야 함
-    inputs.forEach(input=>{
-function gradeModel(btn, answerSet){
-
-  const box = btn.closest('.competency-box');
-  const inputs = [...box.querySelectorAll('.blank')];
-
-  let correct = 0;
-  let total = 0;
-
-  inputs.forEach(input=>{
-    clearMark(input);
-  });
+  inputs.forEach(input => clearMark(input));
 
   const keys = inputs.map(input => input.dataset.key);
 
   // 모형 이름 카드 판별
   const isNameCard = keys.length > 0 && keys.every(key => {
-    const m = String(key).match(/^[a-zA-Z]+0-\d+$/);
-    return !!m;
+    return /^[a-zA-Z]+0-\d+$/.test(String(key));
   });
 
   if(isNameCard){
@@ -6715,13 +6639,12 @@ function gradeModel(btn, answerSet){
 
     total = answerValues.length;
 
-    // ✅ 순서 무관 + 부분정답 허용
+    // 순서 무관 + 부분정답 허용
     correct = countMatchedMultiset(userValues, answerValues);
 
-    // 표시도 순서 무관 기준으로 해주기
     const remainMap = countMapFromArray(answerValues);
 
-    inputs.forEach(input=>{
+    inputs.forEach(input => {
       const val = normalizeForCompare(input.value);
       if(!val) return;
 
@@ -6733,12 +6656,11 @@ function gradeModel(btn, answerSet){
       }
     });
 
-  }else{
-    // 일반 단계형 카드는 기존처럼 순서 맞아야 함
-    inputs.forEach(input=>{
+  } else {
+    // 일반 단계형 카드는 순서대로 채점
+    inputs.forEach(input => {
       const key = input.dataset.key;
       const answer = answerSet[key];
-
       if(!answer) return;
 
       total++;
@@ -6752,10 +6674,42 @@ function gradeModel(btn, answerSet){
     });
   }
 
-  const percent = total === 0 ? 0 : Math.round((correct/total)*100);
-
+  const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
   box.querySelector('.score').textContent =
     `정답률 : ${percent}% (${correct}/${total})`;
+}
+
+function showModelAnswer(btn, answerSet){
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+
+  let total = 0;
+
+  inputs.forEach(input => {
+    const key = input.dataset.key;
+    const answer = answerSet[key];
+    if(!answer) return;
+
+    total++;
+    input.value = answer;
+    clearMark(input);
+    input.classList.add('correct');
+  });
+
+  box.querySelector('.score').textContent =
+    `정답률 : 100% (${total}/${total})`;
+}
+
+function clearModel(btn){
+  const box = btn.closest('.competency-box');
+  const inputs = box.querySelectorAll('.blank');
+
+  inputs.forEach(input => {
+    input.value = '';
+    clearMark(input);
+  });
+
+  box.querySelector('.score').textContent = '정답률 : 0%';
 }
 /* ===============================
    🔹 공통 정답보기 함수
