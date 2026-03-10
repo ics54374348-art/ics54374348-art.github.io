@@ -5064,6 +5064,39 @@ peConfig.forEach((c,i)=>{
   <div class="score">정답률 : 0%</div>
   `;
 });
+ /* ===============================
+   순서 무관 채점용 유틸
+=============================== */
+function normalizeForCompare(text){
+  return String(text || '')
+    .replace(/\s+/g, '')
+    .trim();
+}
+
+function countMapFromArray(arr){
+  const map = {};
+  arr.forEach(v=>{
+    const key = normalizeForCompare(v);
+    if(!key) return;
+    map[key] = (map[key] || 0) + 1;
+  });
+  return map;
+}
+
+function isSameMultiset(userArr, answerArr){
+  const a = countMapFromArray(userArr);
+  const b = countMapFromArray(answerArr);
+
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+
+  if(aKeys.length !== bKeys.length) return false;
+
+  for(const k of bKeys){
+    if((a[k] || 0) !== (b[k] || 0)) return false;
+  }
+  return true;
+} 
 /* ===============================
    역량 탭 (다중 입력 / 카드별 채점)
 =============================== */
@@ -5202,30 +5235,48 @@ document.addEventListener('input', function(e){
 function gradeCompetency(btn){
 
   const box = btn.closest('.competency-box');
-  const inputs = box.querySelectorAll('.blank');
+  const inputs = [...box.querySelectorAll('.blank')];
   const key = inputs[0].dataset.key;
-  const answers = competencyAnswers[key];
+  const answers = competencyAnswers[key] || [];
 
   let correct = 0;
   let total = 0;
 
-  inputs.forEach((input, i) => {
-    // 기존 표시 제거
+  // 기존 표시 제거
+  inputs.forEach(input=>{
     input.classList.remove('correct','wrong');
     input.style.color = '';
-
-    const ans = answers[i];
-    if(!ans) return; // 혹시 정답이 비어있으면 제외
-
-    total++;
-
-    if(norm(input.value) === norm(ans)){
-      input.classList.add('correct');
-      correct++;
-    }else{
-      input.classList.add('wrong');
-    }
   });
+
+  // 입력값 / 정답값 준비
+  const userValues = inputs.map(input => input.value).filter(v => normalizeForCompare(v));
+  const answerValues = answers.filter(v => normalizeForCompare(v));
+
+  total = answerValues.length;
+
+  // ✅ 역량은 순서 무관 전체 비교
+  const allCorrect = isSameMultiset(userValues, answerValues);
+
+  if(allCorrect){
+    inputs.forEach((input, i)=>{
+      if(answerValues[i]){
+        input.classList.add('correct');
+      }
+    });
+    correct = total;
+  }else{
+    inputs.forEach((input, i)=>{
+      const ans = answers[i];
+      if(!ans) return;
+
+      if(normalizeForCompare(input.value) === normalizeForCompare(ans)){
+        input.classList.add('correct');
+        correct++;
+      }else{
+        input.classList.add('wrong');
+      }
+    });
+  }
 
   const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
   box.querySelector('.score').textContent =
@@ -6558,28 +6609,81 @@ function clearMark(el){
 function gradeModel(btn, answerSet){
 
   const box = btn.closest('.competency-box');
-  const inputs = box.querySelectorAll('.blank');
+  const inputs = [...box.querySelectorAll('.blank')];
 
   let correct = 0;
   let total = 0;
 
   inputs.forEach(input=>{
-    const key = input.dataset.key;
-    const answer = answerSet[key];
-
     clearMark(input);
-
-    if(!answer) return;
-
-    total++;
-
-    if(norm(input.value) === norm(answer)){
-      input.classList.add('correct');
-      correct++;
-    }else{
-      input.classList.add('wrong');
-    }
   });
+
+  // 현재 카드의 key들
+  const keys = inputs.map(input => input.dataset.key);
+
+  // ✅ 모형 이름 카드인지 판별
+  // 예: k0-0, m0-1, s0-2 ... 처럼 "중간 번호가 0"이면 모형 이름 카드
+  const isNameCard = keys.length > 0 && keys.every(key => {
+    const m = String(key).match(/^[a-zA-Z]+0-\d+$/);
+    return !!m;
+  });
+
+  if(isNameCard){
+    const answerValues = keys
+      .map(key => answerSet[key])
+      .filter(v => normalizeForCompare(v));
+
+    const userValues = inputs
+      .map(input => input.value)
+      .filter(v => normalizeForCompare(v));
+
+    total = answerValues.length;
+
+    // ✅ 모형 이름 카드는 순서 무관 전체 비교
+    const allCorrect = isSameMultiset(userValues, answerValues);
+
+    if(allCorrect){
+      inputs.forEach((input, i)=>{
+        if(answerSet[input.dataset.key]){
+          input.classList.add('correct');
+        }
+      });
+      correct = total;
+    }else{
+      // 틀리면 기존 방식대로 칸별 표시
+      inputs.forEach(input=>{
+        const key = input.dataset.key;
+        const answer = answerSet[key];
+        if(!answer) return;
+
+        total = answerValues.length;
+
+        if(normalizeForCompare(input.value) === normalizeForCompare(answer)){
+          input.classList.add('correct');
+          correct++;
+        }else{
+          input.classList.add('wrong');
+        }
+      });
+    }
+  }else{
+    // ✅ 일반 모형 단계 카드는 기존처럼 순서 맞아야 함
+    inputs.forEach(input=>{
+      const key = input.dataset.key;
+      const answer = answerSet[key];
+
+      if(!answer) return;
+
+      total++;
+
+      if(normalizeForCompare(input.value) === normalizeForCompare(answer)){
+        input.classList.add('correct');
+        correct++;
+      }else{
+        input.classList.add('wrong');
+      }
+    });
+  }
 
   const percent = total === 0 ? 0 : Math.round((correct/total)*100);
 
