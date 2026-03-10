@@ -5097,6 +5097,22 @@ function isSameMultiset(userArr, answerArr){
   }
   return true;
 } 
+function countMatchedMultiset(userArr, answerArr){
+  const answerMap = countMapFromArray(answerArr);
+  let matched = 0;
+
+  userArr.forEach(v=>{
+    const key = normalizeForCompare(v);
+    if(!key) return;
+
+    if(answerMap[key] > 0){
+      matched++;
+      answerMap[key]--;
+    }
+  });
+
+  return matched;
+}
 /* ===============================
    역량 탭 (다중 입력 / 카드별 채점)
 =============================== */
@@ -5233,7 +5249,6 @@ document.addEventListener('input', function(e){
    채점 (배경색 correct/wrong 적용)
 =============================== */
 function gradeCompetency(btn){
-
   const box = btn.closest('.competency-box');
   const inputs = [...box.querySelectorAll('.blank')];
   const key = inputs[0].dataset.key;
@@ -5248,35 +5263,35 @@ function gradeCompetency(btn){
     input.style.color = '';
   });
 
-  // 입력값 / 정답값 준비
-  const userValues = inputs.map(input => input.value).filter(v => normalizeForCompare(v));
-  const answerValues = answers.filter(v => normalizeForCompare(v));
+  // 정답 정규화
+  const normalizedAnswers = answers
+    .map(v => normalizeForCompare(v))
+    .filter(v => v);
 
-  total = answerValues.length;
+  total = normalizedAnswers.length;
 
-  // ✅ 역량은 순서 무관 전체 비교
-  const allCorrect = isSameMultiset(userValues, answerValues);
+  // 정답 개수 카운트 맵
+  const answerCountMap = {};
+  normalizedAnswers.forEach(ans=>{
+    answerCountMap[ans] = (answerCountMap[ans] || 0) + 1;
+  });
 
-  if(allCorrect){
-    inputs.forEach((input, i)=>{
-      if(answerValues[i]){
-        input.classList.add('correct');
-      }
-    });
-    correct = total;
-  }else{
-    inputs.forEach((input, i)=>{
-      const ans = answers[i];
-      if(!ans) return;
+  // 사용한 정답 개수 카운트
+  const usedCountMap = {};
 
-      if(normalizeForCompare(input.value) === normalizeForCompare(ans)){
-        input.classList.add('correct');
-        correct++;
-      }else{
-        input.classList.add('wrong');
-      }
-    });
-  }
+  // 각 입력칸을 "위치"가 아니라 "정답 목록 안에 있는지"로 판정
+  inputs.forEach(input=>{
+    const user = normalizeForCompare(input.value);
+    if(!user) return;
+
+    if(answerCountMap[user] && (usedCountMap[user] || 0) < answerCountMap[user]){
+      input.classList.add('correct');
+      usedCountMap[user] = (usedCountMap[user] || 0) + 1;
+      correct++;
+    }else{
+      input.classList.add('wrong');
+    }
+  });
 
   const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
   box.querySelector('.score').textContent =
@@ -6669,6 +6684,58 @@ function gradeModel(btn, answerSet){
   }else{
     // ✅ 일반 모형 단계 카드는 기존처럼 순서 맞아야 함
     inputs.forEach(input=>{
+function gradeModel(btn, answerSet){
+
+  const box = btn.closest('.competency-box');
+  const inputs = [...box.querySelectorAll('.blank')];
+
+  let correct = 0;
+  let total = 0;
+
+  inputs.forEach(input=>{
+    clearMark(input);
+  });
+
+  const keys = inputs.map(input => input.dataset.key);
+
+  // 모형 이름 카드 판별
+  const isNameCard = keys.length > 0 && keys.every(key => {
+    const m = String(key).match(/^[a-zA-Z]+0-\d+$/);
+    return !!m;
+  });
+
+  if(isNameCard){
+    const answerValues = keys
+      .map(key => answerSet[key])
+      .filter(v => normalizeForCompare(v));
+
+    const userValues = inputs
+      .map(input => input.value)
+      .filter(v => normalizeForCompare(v));
+
+    total = answerValues.length;
+
+    // ✅ 순서 무관 + 부분정답 허용
+    correct = countMatchedMultiset(userValues, answerValues);
+
+    // 표시도 순서 무관 기준으로 해주기
+    const remainMap = countMapFromArray(answerValues);
+
+    inputs.forEach(input=>{
+      const val = normalizeForCompare(input.value);
+      if(!val) return;
+
+      if(remainMap[val] > 0){
+        input.classList.add('correct');
+        remainMap[val]--;
+      }else{
+        input.classList.add('wrong');
+      }
+    });
+
+  }else{
+    // 일반 단계형 카드는 기존처럼 순서 맞아야 함
+    inputs.forEach(input=>{
       const key = input.dataset.key;
       const answer = answerSet[key];
 
@@ -6690,7 +6757,6 @@ function gradeModel(btn, answerSet){
   box.querySelector('.score').textContent =
     `정답률 : ${percent}% (${correct}/${total})`;
 }
-
 /* ===============================
    🔹 공통 정답보기 함수
 =============================== */
