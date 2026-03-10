@@ -806,6 +806,21 @@ border-radius: 0;
 .model-quiz-choice input{
   margin-top:3px;
 }
+  .random-quiz-row{
+display:flex;
+align-items:center;
+gap:10px;
+background:#fff;
+border:1px solid #e9ecef;
+border-radius:10px;
+padding:10px;
+margin-bottom:6px;
+}
+
+.random-quiz-order{
+width:25px;
+font-weight:700;
+}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -890,6 +905,7 @@ if(window.wcs) {
 </li>
 <li onclick="show('ch')">총론</li>
   <li onclick="show('model-quiz')">모형 퀴즈</li>
+  <li onclick="show('model-random-quiz')">모형 순서 퀴즈</li>
 <li onclick="show('check')">체크박스</li>
 </ul>
 </nav>
@@ -957,6 +973,46 @@ if(window.wcs) {
       </div>
     </div>
   </div>
+  </div>
+  <div id="model-random-quiz" class="content">
+
+<h2>모형 순서 맞추기 테스트</h2>
+
+<div style="margin-bottom:15px;">
+<select id="randomQuizSubject">
+<option value="all">전체</option>
+<option value="korean">국어</option>
+<option value="math">수학</option>
+<option value="social">사회</option>
+<option value="science">과학</option>
+<option value="art">미술</option>
+<option value="pe">체육</option>
+<option value="moral">도덕</option>
+<option value="pa">실과</option>
+<option value="bsj">바슬즐</option>
+</select>
+
+<button class="grade" onclick="startRandomQuiz()">10문제 시작</button>
+<button class="clear" onclick="resetRandomQuiz()">초기화</button>
+</div>
+
+<div id="randomQuizStatus" class="score">테스트 시작 버튼을 누르세요.</div>
+
+<div id="randomQuizArea" style="display:none;margin-top:20px;">
+<div id="randomQuizTitle" style="font-weight:800;font-size:18px;margin-bottom:10px;"></div>
+<div id="randomQuizMeta" style="font-size:13px;color:#666;margin-bottom:15px;"></div>
+
+<div id="randomQuizList"></div>
+
+<div style="margin-top:15px;">
+<button class="grade" onclick="checkRandomQuiz()">채점</button>
+<button class="grade" onclick="showRandomQuizAnswer()">정답</button>
+<button class="grade" onclick="nextRandomQuiz()">다음</button>
+</div>
+
+<div id="randomQuizResult" class="score" style="margin-top:10px;">정답률 : 0%</div>
+</div>
+
   </div>
 <div id="posts"></div>
 <div id="siteStats" style="margin:10px 0;"></div>
@@ -7234,6 +7290,214 @@ function modelQuizReset(){
 document.addEventListener('DOMContentLoaded', ()=>{
   modelQuizBuildPools();
 });
+  /* ===============================
+모형 순서 랜덤 퀴즈
+=============================== */
+
+const randomQuizState={
+questions:[],
+index:0,
+score:0,
+current:null,
+steps:[]
+};
+
+function shuffle(a){
+return [...a].sort(()=>Math.random()-0.5);
+}
+
+function buildModelQuestions(){
+
+const arr=[];
+
+function collect(ans,titles,subject){
+
+const grouped={};
+
+Object.entries(ans).forEach(([k,v])=>{
+const m=k.match(/(\d+)-(\d+)/);
+if(!m) return;
+
+const num=Number(m[1]);
+const step=Number(m[2]);
+
+if(num===0) return;
+
+if(!grouped[num]) grouped[num]=[];
+grouped[num][step]=v;
+});
+
+Object.keys(grouped).forEach(n=>{
+const steps=(grouped[n]||[]).filter(Boolean);
+if(steps.length>=3){
+
+arr.push({
+subject,
+title:titles[n],
+steps
+});
+
+}
+});
+}
+
+if(typeof koreanModelAnswers!=="undefined")
+collect(koreanModelAnswers,koreanModelTitles,"국어");
+
+if(typeof mathModelAnswers!=="undefined")
+collect(mathModelAnswers,mathModelTitles,"수학");
+
+if(typeof socialModelAnswers!=="undefined")
+collect(socialModelAnswers,socialModelTitles,"사회");
+
+if(typeof scienceModelAnswers!=="undefined")
+collect(scienceModelAnswers,scienceModelTitles,"과학");
+
+if(typeof artModelAnswers!=="undefined")
+collect(artModelAnswers,artModelTitles,"미술");
+
+if(typeof peModelAnswers!=="undefined")
+collect(peModelAnswers,peModelTitles,"체육");
+
+if(typeof moralModelAnswers!=="undefined")
+collect(moralModelAnswers,moralModelTitles,"도덕");
+
+if(typeof paModelAnswers!=="undefined")
+collect(paModelAnswers,paModelTitles,"실과");
+
+if(typeof bsjModelAnswers!=="undefined")
+collect(bsjModelAnswers,bsjModelTitles,"바슬즐");
+
+return arr;
+}
+
+function startRandomQuiz(){
+
+const subject=document.getElementById("randomQuizSubject").value;
+
+let questions=buildModelQuestions();
+
+if(subject!=="all"){
+questions=questions.filter(q=>q.subject===subject);
+}
+
+questions=shuffle(questions).slice(0,10);
+
+randomQuizState.questions=questions;
+randomQuizState.index=0;
+randomQuizState.score=0;
+
+document.getElementById("randomQuizArea").style.display="block";
+
+renderRandomQuiz();
+}
+
+function renderRandomQuiz(){
+
+const q=randomQuizState.questions[randomQuizState.index];
+
+randomQuizState.current=q;
+randomQuizState.steps=shuffle(q.steps);
+
+document.getElementById("randomQuizTitle").textContent=
+`${q.subject} ${q.title} 순서 맞추기`;
+
+document.getElementById("randomQuizMeta").textContent=
+`${randomQuizState.index+1} / ${randomQuizState.questions.length}`;
+
+const list=document.getElementById("randomQuizList");
+list.innerHTML="";
+
+randomQuizState.steps.forEach((s,i)=>{
+
+const row=document.createElement("div");
+row.className="random-quiz-row";
+
+const order=document.createElement("div");
+order.className="random-quiz-order";
+order.textContent=i+1;
+
+const text=document.createElement("div");
+text.textContent=s;
+text.style.flex=1;
+
+const up=document.createElement("button");
+up.textContent="▲";
+up.onclick=()=>moveStep(i,-1);
+
+const down=document.createElement("button");
+down.textContent="▼";
+down.onclick=()=>moveStep(i,1);
+
+row.append(order,text,up,down);
+list.appendChild(row);
+
+});
+}
+
+function moveStep(i,d){
+
+const ni=i+d;
+
+if(ni<0||ni>=randomQuizState.steps.length) return;
+
+[randomQuizState.steps[i],randomQuizState.steps[ni]]=
+[randomQuizState.steps[ni],randomQuizState.steps[i]];
+
+renderRandomQuiz();
+}
+
+function checkRandomQuiz(){
+
+const q=randomQuizState.current;
+
+let correct=0;
+
+q.steps.forEach((s,i)=>{
+if(randomQuizState.steps[i]===s) correct++;
+});
+
+if(correct===q.steps.length){
+randomQuizState.score++;
+}
+
+document.getElementById("randomQuizResult").textContent=
+`이번 문제 : ${correct} / ${q.steps.length}`;
+}
+
+function showRandomQuizAnswer(){
+
+randomQuizState.steps=[...randomQuizState.current.steps];
+renderRandomQuiz();
+}
+
+function nextRandomQuiz(){
+
+if(randomQuizState.index>=randomQuizState.questions.length-1){
+
+document.getElementById("randomQuizArea").style.display="none";
+
+document.getElementById("randomQuizStatus").textContent=
+`최종 점수 : ${randomQuizState.score} / ${randomQuizState.questions.length}`;
+
+return;
+}
+
+randomQuizState.index++;
+renderRandomQuiz();
+}
+
+function resetRandomQuiz(){
+
+randomQuizState.questions=[];
+randomQuizState.index=0;
+randomQuizState.score=0;
+
+document.getElementById("randomQuizArea").style.display="none";
+
+document.getElementById("randomQuizStatus").textContent=
+"테스트 시작 버튼을 누르세요.";
+}
 </script>
 </body>
 </html>
