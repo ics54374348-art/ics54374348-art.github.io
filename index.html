@@ -999,6 +999,45 @@ button{
 }
 
 }
+  /* ===============================
+   태블릿/모바일용 2단 서브메뉴 바
+=============================== */
+#mobileSubmenuBar{
+  display:none;
+  background:#fff;
+  border-bottom:1px solid #dee2e6;
+  padding:10px 12px;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+#mobileSubmenuBar button{
+  margin:0;
+  padding:8px 12px;
+  border:1px solid #ced4da;
+  background:#fff;
+  color:#212529;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:600;
+  box-shadow:none;
+}
+
+#mobileSubmenuBar button.active{
+  background:#0d6efd;
+  color:#fff;
+  border-color:#0d6efd;
+}
+
+@media (max-width:1024px){
+  #mobileSubmenuBar.show{
+    display:flex;
+  }
+
+  nav .sub{
+    display:none !important; /* 태블릿/모바일에선 기존 드롭다운 숨김 */
+  }
+}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -1034,6 +1073,7 @@ if(window.wcs) {
 </header>
 
 <nav>
+  <div id="mobileSubmenuBar"></div>
 <ul>
 <li onclick="show('home')">홈</li>
 <li onclick="show('competency')">역량</li>
@@ -7968,6 +8008,86 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('nav li.open').forEach(li => {
         li.classList.remove('open');
       });
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const mobileSubmenuBar = document.getElementById('mobileSubmenuBar');
+  const navItems = document.querySelectorAll('nav > ul > li');
+
+  const isMobileLayout = () => window.innerWidth <= 1024;
+
+  function clearMobileSubmenu(){
+    if(!mobileSubmenuBar) return;
+    mobileSubmenuBar.innerHTML = '';
+    mobileSubmenuBar.classList.remove('show');
+    navItems.forEach(li => li.classList.remove('open'));
+  }
+
+  function buildMobileSubmenu(li){
+    if(!mobileSubmenuBar) return;
+
+    const sub = li.querySelector('.sub');
+    if(!sub){
+      clearMobileSubmenu();
+      return;
+    }
+
+    const items = [...sub.querySelectorAll('div')];
+    if(items.length === 0){
+      clearMobileSubmenu();
+      return;
+    }
+
+    mobileSubmenuBar.innerHTML = '';
+
+    items.forEach(item => {
+      const btn = document.createElement('button');
+      btn.textContent = item.textContent.trim();
+
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        item.click();
+
+        [...mobileSubmenuBar.querySelectorAll('button')].forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      };
+
+      mobileSubmenuBar.appendChild(btn);
+    });
+
+    mobileSubmenuBar.classList.add('show');
+
+    navItems.forEach(other => {
+      if(other !== li) other.classList.remove('open');
+    });
+    li.classList.add('open');
+  }
+
+  navItems.forEach(li => {
+    const sub = li.querySelector('.sub');
+    if(!sub) return;
+
+    li.addEventListener('click', (e) => {
+      if(!isMobileLayout()) return;
+      if(e.target.closest('.sub')) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const alreadyOpen = li.classList.contains('open');
+      if(alreadyOpen){
+        clearMobileSubmenu();
+      }else{
+        buildMobileSubmenu(li);
+      }
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    if(!isMobileLayout()){
+      clearMobileSubmenu();
     }
   });
 });
