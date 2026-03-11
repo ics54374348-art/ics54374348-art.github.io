@@ -1619,6 +1619,22 @@ if(window.wcs) {
   </div>
 </div>
 
+  <!-- ===== 문제 탭들 (빈 화면 방지) ===== -->
+
+<div id="kkorean" class="content"><h2>국어 문제</h2></div>
+<div id="mmath" class="content"><h2>수학 문제</h2></div>
+<div id="ssocial" class="content"><h2>사회 문제</h2></div>
+<div id="sscience" class="content"><h2>과학 문제</h2></div>
+<div id="eenglish" class="content"><h2>영어 문제</h2></div>
+<div id="mmusic" class="content"><h2>음악 문제</h2></div>
+<div id="aart" class="content"><h2>미술 문제</h2></div>
+<div id="ppe" class="content"><h2>체육 문제</h2></div>
+<div id="ppee" class="content"><h2>체육 신체활동</h2></div>
+<div id="mmoral" class="content"><h2>도덕 문제</h2></div>
+<div id="ppa" class="content"><h2>실과 문제</h2></div>
+<div id="bbasle" class="content"><h2>바슬즐 문제</h2></div>
+<div id="ch" class="content"><h2>총론</h2></div>
+  
 <footer class="site-footer">
   <p>
     ⬇️ 문의 및 오류 제보는 아래 링크로 부탁드립니다. ⬇️<br>
@@ -2024,19 +2040,42 @@ function renderStats(){
 }
 
 /* ===============================
-   탭 전환
+   탭 전환 (안정 버전)
 =============================== */
 async function show(id){
+
+  const target = document.getElementById(id);
+
+  // 없는 탭 방지
+  if(!target){
+    console.warn("없는 탭:", id);
+    alert("아직 준비되지 않은 탭입니다.");
+    return;
+  }
+
   currentTabId = id;
 
-  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('.content').forEach(c=>{
+    c.classList.remove('active');
+  });
 
-  await renderPostsForTab(id);
+  target.classList.add('active');
+
+  // 게시글 탭일 때만 로드
+  try{
+    if(typeof renderPostsForTab === 'function'){
+      await renderPostsForTab(id);
+    }
+  }catch(e){
+    console.error(e);
+  }
+
+  // 화면 위로 스크롤
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
 }
-
-function openAdminLogin(){ adminModal.style.display = 'flex'; }
-function closeAdminLogin(){ adminModal.style.display = 'none'; }
 
 /* ===============================
    관리자 로그인
@@ -7921,7 +7960,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelectorAll('nav .sub div').forEach(item => {
-    item.addEventListener('click', () => {
+  item.addEventListener('click', (e) => {
+
+    e.stopPropagation();
+
+    document.querySelectorAll('nav li.open').forEach(li=>{
+      li.classList.remove('open');
+    });
+
+  });
+});
       document.querySelectorAll('nav li.open').forEach(li => {
         li.classList.remove('open');
       });
