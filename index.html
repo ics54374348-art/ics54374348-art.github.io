@@ -1925,16 +1925,22 @@ async function renderPostsForTab(tabId){
       p.likes = p.likes || 0;
       p.comments = Array.isArray(p.comments) ? p.comments : [];
       p.tabId = p.tabId || 'home';
+      p.pinned = p.pinned === true;   // ✅ 공지 여부
       return p;
     })
     .filter(p => p.tabId === tabId)
-    .sort((a,b)=> (b.date||0) - (a.date||0));
+    .sort((a,b)=>{
+      const ap = a.pinned ? 1 : 0;
+      const bp = b.pinned ? 1 : 0;
+
+      if(bp !== ap) return bp - ap;   // ✅ 공지가 먼저
+      return (b.date || 0) - (a.date || 0); // 그 다음 최신순
+    });
 
   for (const post of list) {
     addPostToDOM(post);
   }
-}
-
+    }
 /* ===============================
    좋아요(이 기기 1번만)
 =============================== */
@@ -1966,7 +1972,7 @@ function addPostToDOM(post){
   const wrap = document.createElement('div');
 
   const title = document.createElement('div');
-  title.textContent = post.title;
+  title.textContent = `${post.pinned ? '📌 ' : ''}${post.title}`;
   title.style.fontWeight = '800';
   title.style.cursor = 'pointer';
 
@@ -2144,12 +2150,25 @@ function addPostToDOM(post){
       await renderPostsForTab(currentTabId);
     };
 
-    wrap.append(edit, del);
+    const pin = document.createElement('button');
+    pin.textContent = '⬆ 위로';
+    pin.onclick = async () => {
+      await updatePostById(post.id, { date: Date.now() });
+      await renderPostsForTab(currentTabId);
+    };
+
+    const notice = document.createElement('button');
+    notice.textContent = post.pinned ? '📌 공지해제' : '📌 공지고정';
+    notice.onclick = async () => {
+      await updatePostById(post.id, { pinned: !post.pinned });
+      await renderPostsForTab(currentTabId);
+    };
+
+    wrap.append(edit, del, pin, notice);
   }
 
   postsEl.appendChild(wrap);
 }
-
 /* ===============================
    글쓰기
 =============================== */
@@ -2173,14 +2192,15 @@ async function savePost(){
     editingPostId = null;
   } else {
     await addPost({
-      title,
-      content,
-      tabId: currentTabId,
-      date: Date.now(),
-      views: 0,
-      likes: 0,
-      comments: []
-    });
+  title,
+  content,
+  tabId: currentTabId,
+  date: Date.now(),
+  views: 0,
+  likes: 0,
+  comments: [],
+  pinned: false
+});
   }
 
   closeWrite();
