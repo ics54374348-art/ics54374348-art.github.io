@@ -34,10 +34,36 @@ nav{background:#f1f3f5}
 nav ul{margin:0;padding:0;list-style:none;display:flex}
 nav li{position:relative;padding:14px 18px;font-weight:600;cursor:pointer}
 nav li:hover{background:#e9ecef}
-.sub{display:none;position:absolute;top:48px;left:0;background:#fff;border:1px solid #ccc;z-index:10;min-width:140px}
-.sub div{padding:10px}
-.sub div:hover{background:#f1f3f5}
-nav li:hover .sub{display:block}
+.sub{
+  display:none;
+  position:absolute;
+  top:48px;
+  left:0;
+  background:#fff;
+  border:1px solid #ccc;
+  z-index:1000;
+  min-width:140px;
+}
+
+.sub div{
+  padding:10px;
+}
+
+.sub div:hover{
+  background:#f1f3f5;
+}
+
+/* PC */
+@media (hover:hover){
+  nav li:hover .sub{
+    display:block;
+  }
+}
+
+/* 모바일에서 열렸을 때 */
+nav li.open > .sub{
+  display:block;
+}
 
 .content{display:none;padding:30px}
 .content.active{display:block}
@@ -980,7 +1006,19 @@ if(window.wcs) {
 <ul>
 <li onclick="show('home')">홈</li>
 <li onclick="show('competency')">역량</li>
-<li>모형<div class="sub"><div onclick="show('model-korean')">국어</div><div onclick="show('model-math')">수학</div><div onclick="show('model-social')">사회</div><div onclick="show('model-science')">과학</div><div onclick="show('model-art')">미술</div><div onclick="show('model-pe')">체육</div><div onclick="show('model-moral')">도덕</div><div onclick="show('model-pa')">실과</div><div onclick="show('model-bsj')">바슬즐</div></li>
+<li>모형
+  <div class="sub">
+    <div onclick="show('model-korean')">국어</div>
+    <div onclick="show('model-math')">수학</div>
+    <div onclick="show('model-social')">사회</div>
+    <div onclick="show('model-science')">과학</div>
+    <div onclick="show('model-art')">미술</div>
+    <div onclick="show('model-pe')">체육</div>
+    <div onclick="show('model-moral')">도덕</div>
+    <div onclick="show('model-pa')">실과</div>
+    <div onclick="show('model-bsj')">바슬즐</div>
+  </div>
+</li>
 <li>국어
   <div class="sub">
     <div onclick="show('kkorean')">문제</div>
@@ -7813,6 +7851,41 @@ function resetRandomQuiz(){
   document.getElementById("randomQuizResult").textContent =
     "정답률 : 0%";
 }
+  document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('nav li').forEach(li => {
+    const sub = li.querySelector('.sub');
+    if(!sub) return;
+
+    li.addEventListener('click', function(e){
+      // 서브메뉴 있는 상위 탭은 바로 이동 막고 메뉴 먼저 열기
+      if(e.target === li || e.target.closest('.sub') === null){
+        e.preventDefault();
+        e.stopPropagation();
+
+        // 다른 메뉴 닫기
+        document.querySelectorAll('nav li.open').forEach(other => {
+          if(other !== li) other.classList.remove('open');
+        });
+
+        li.classList.toggle('open');
+      }
+    });
+  });
+
+  // 바깥 누르면 닫기
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('nav')){
+      document.querySelectorAll('nav li.open').forEach(li => li.classList.remove('open'));
+    }
+  });
+
+  // 서브메뉴 항목 누르면 닫기
+  document.querySelectorAll('nav .sub div').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('nav li.open').forEach(li => li.classList.remove('open'));
+    });
+  });
+});
 </script>
 </body>
 </html>
