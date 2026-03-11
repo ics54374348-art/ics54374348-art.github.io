@@ -2158,11 +2158,9 @@ function formatDate(timestamp){
   const d = new Date(t);
   return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
-
 /* ===============================
    탭별 렌더링
 =============================== */
-async function renderPostsForTab(tabId){
 async function renderPostsForTab(tabId){
   if(!postsEl) return;
 
@@ -2193,7 +2191,6 @@ async function renderPostsForTab(tabId){
       return (b.date || 0) - (a.date || 0);
     });
 
-  // 같은 글이 중복 append 되는 것 방지
   const seen = new Set();
   const uniqueList = list.filter(post=>{
     if(seen.has(post.id)) return false;
@@ -2207,6 +2204,7 @@ async function renderPostsForTab(tabId){
     addPostToDOM(post);
   }
 }
+
 /* ===============================
    좋아요(이 기기 1번만)
 =============================== */
