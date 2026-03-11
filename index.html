@@ -30,20 +30,73 @@ body{
   color:#212529;
 }
 header{background:#0d6efd;color:#fff;padding:18px 24px;font-size:28px;font-weight:700}
-nav{background:#f1f3f5}
-nav ul{margin:0;padding:0;list-style:none;display:flex}
-nav li{position:relative;padding:14px 18px;font-weight:600;cursor:pointer}
-nav li:hover{background:#e9ecef}
+/* ===============================
+   네비게이션 (PC + 모바일 안정 버전)
+=============================== */
+
+nav{
+  background:#f1f3f5;
+  border-bottom:1px solid #dee2e6;
+  overflow-x:auto;
+  overflow-y:visible;
+}
+
+nav ul{
+  margin:0;
+  padding:0;
+  list-style:none;
+  display:flex;
+  flex-wrap:nowrap;
+  white-space:nowrap;
+  position:relative;
+}
+
+nav li{
+  position:relative;
+  padding:14px 18px;
+  font-weight:600;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+
+nav li:hover{
+  background:#e9ecef;
+}
+
+/* 서브메뉴 */
 .sub{
   display:none;
   position:absolute;
-  top:48px;
+  top:100%;
   left:0;
   background:#fff;
   border:1px solid #ccc;
-  z-index:1000;
-  min-width:140px;
+  border-radius:8px;
+  min-width:150px;
+  z-index:9999;
+  box-shadow:0 6px 16px rgba(0,0,0,0.12);
 }
+
+.sub div{
+  padding:12px 14px;
+  font-size:14px;
+}
+
+.sub div:hover{
+  background:#f1f3f5;
+}
+
+/* PC hover */
+@media (hover:hover){
+  nav li:hover > .sub{
+    display:block;
+  }
+}
+
+/* 모바일 open */
+nav li.open > .sub{
+  display:block;
+  }
 
 .sub div{
   padding:10px;
@@ -7852,39 +7905,52 @@ function resetRandomQuiz(){
     "정답률 : 0%";
 }
   document.addEventListener('DOMContentLoaded', () => {
+  /* ===============================
+   모바일 네비게이션 안정 스크립트
+=============================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+
   document.querySelectorAll('nav li').forEach(li => {
+
     const sub = li.querySelector('.sub');
     if(!sub) return;
 
     li.addEventListener('click', function(e){
-      // 서브메뉴 있는 상위 탭은 바로 이동 막고 메뉴 먼저 열기
-      if(e.target === li || e.target.closest('.sub') === null){
-        e.preventDefault();
-        e.stopPropagation();
 
-        // 다른 메뉴 닫기
-        document.querySelectorAll('nav li.open').forEach(other => {
-          if(other !== li) other.classList.remove('open');
-        });
+      // 서브메뉴 내부 클릭이면 무시
+      if(e.target.closest('.sub')) return;
 
-        li.classList.toggle('open');
-      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      document.querySelectorAll('nav li.open').forEach(other=>{
+        if(other !== li) other.classList.remove('open');
+      });
+
+      li.classList.toggle('open');
+    });
+
+  });
+
+  // 서브메뉴 클릭시 닫기
+  document.querySelectorAll('nav .sub div').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      document.querySelectorAll('nav li.open').forEach(li=>{
+        li.classList.remove('open');
+      });
     });
   });
 
-  // 바깥 누르면 닫기
-  document.addEventListener('click', (e) => {
+  // 바깥 클릭시 닫기
+  document.addEventListener('click', (e)=>{
     if(!e.target.closest('nav')){
-      document.querySelectorAll('nav li.open').forEach(li => li.classList.remove('open'));
+      document.querySelectorAll('nav li.open').forEach(li=>{
+        li.classList.remove('open');
+      });
     }
   });
 
-  // 서브메뉴 항목 누르면 닫기
-  document.querySelectorAll('nav .sub div').forEach(item => {
-    item.addEventListener('click', () => {
-      document.querySelectorAll('nav li.open').forEach(li => li.classList.remove('open'));
-    });
-  });
 });
 </script>
 </body>
