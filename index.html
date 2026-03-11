@@ -34,7 +34,9 @@ header{background:#0d6efd;color:#fff;padding:18px 24px;font-size:28px;font-weigh
    네비게이션 (PC + 모바일 안정 버전)
 =============================== */
 
-nav{
+
+  display:block;
+  nav{
   background:#f1f3f5;
   border-bottom:1px solid #dee2e6;
   overflow-x:auto;
@@ -63,7 +65,6 @@ nav li:hover{
   background:#e9ecef;
 }
 
-/* 서브메뉴 */
 .sub{
   display:none;
   position:absolute;
@@ -78,7 +79,7 @@ nav li:hover{
 }
 
 .sub div{
-  padding:12px 14px;
+  padding:10px 14px;
   font-size:14px;
 }
 
@@ -86,40 +87,15 @@ nav li:hover{
   background:#f1f3f5;
 }
 
-/* PC hover */
 @media (hover:hover){
   nav li:hover > .sub{
     display:block;
   }
 }
 
-/* 모바일 open */
-nav li.open > .sub{
-  display:block;
-  }
-
-.sub div{
-  padding:10px;
-}
-
-.sub div:hover{
-  background:#f1f3f5;
-}
-
-/* PC */
-@media (hover:hover){
-  nav li:hover .sub{
-    display:block;
-  }
-}
-
-/* 모바일에서 열렸을 때 */
 nav li.open > .sub{
   display:block;
 }
-
-.content{display:none;padding:30px}
-.content.active{display:block}
 
 /* 체크박스 */
 .subject{margin-bottom:40px}
@@ -7940,50 +7916,53 @@ function resetRandomQuiz(){
 }
   
 document.addEventListener('DOMContentLoaded', () => {
+  const navItems = document.querySelectorAll('nav li');
 
-  document.querySelectorAll('nav li').forEach(li => {
+  navItems.forEach(li => {
     const sub = li.querySelector('.sub');
-    if(!sub) return;
+    if (!sub) return; // 하위탭 없는 일반 탭은 건드리지 않음
 
-    li.addEventListener('click', function(e){
-      if(e.target.closest('.sub')) return;
+    li.addEventListener('click', function (e) {
+      // 서브메뉴 안쪽 눌렀을 때는 여기서 막지 않음
+      if (e.target.closest('.sub')) return;
+
+      // 터치 기기에서만 서브메뉴 토글
+      const isTouchDevice =
+        window.matchMedia('(hover: none)').matches ||
+        window.matchMedia('(pointer: coarse)').matches;
+
+      if (!isTouchDevice) return;
 
       e.preventDefault();
       e.stopPropagation();
 
       document.querySelectorAll('nav li.open').forEach(other => {
-        if(other !== li) other.classList.remove('open');
+        if (other !== li) other.classList.remove('open');
       });
 
       li.classList.toggle('open');
     });
   });
 
+  // 서브메뉴 항목 클릭하면 닫기
   document.querySelectorAll('nav .sub div').forEach(item => {
-  item.addEventListener('click', (e) => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
 
-    e.stopPropagation();
-
-    document.querySelectorAll('nav li.open').forEach(li=>{
-      li.classList.remove('open');
-    });
-
-  });
-});
       document.querySelectorAll('nav li.open').forEach(li => {
         li.classList.remove('open');
       });
     });
   });
 
+  // 바깥 클릭하면 닫기
   document.addEventListener('click', (e) => {
-    if(!e.target.closest('nav')){
+    if (!e.target.closest('nav')) {
       document.querySelectorAll('nav li.open').forEach(li => {
         li.classList.remove('open');
       });
     }
   });
-
 });
 </script>
 </body>
