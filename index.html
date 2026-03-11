@@ -7932,7 +7932,8 @@ function resetRandomQuiz(){
   document.getElementById("randomQuizResult").textContent =
     "정답률 : 0%";
 }
-  document.addEventListener('DOMContentLoaded', () => {
+      
+document.addEventListener('DOMContentLoaded', () => {
   const subnav = document.getElementById('mobileSubnav');
   const navItems = document.querySelectorAll('nav > ul > li');
 
@@ -7943,6 +7944,7 @@ function resetRandomQuiz(){
   }
 
   function getShowTarget(el){
+    if(!el) return null;
     const onclick = el.getAttribute('onclick') || '';
     const match = onclick.match(/show\('([^']+)'\)/);
     return match ? match[1] : null;
@@ -7961,13 +7963,13 @@ function resetRandomQuiz(){
     const sub = li.querySelector(':scope > .sub');
     if(!sub){
       clearSubnav();
-      return;
+      return null;
     }
 
     const items = [...sub.querySelectorAll(':scope > div')];
     if(items.length === 0){
       clearSubnav();
-      return;
+      return null;
     }
 
     subnav.innerHTML = '';
@@ -7996,11 +7998,8 @@ function resetRandomQuiz(){
 
     subnav.classList.add('show');
 
-    const firstTarget = getShowTarget(items[0]);
-    if(firstTarget){
-      show(firstTarget);
-      setActiveButton(firstTarget);
-    }
+    const firstItem = items[0];
+    return firstItem ? getShowTarget(firstItem) : null;
   }
 
   const originalShow = show;
@@ -8019,7 +8018,6 @@ function resetRandomQuiz(){
     });
 
     if(foundParent){
-      buildSubnav(foundParent);
       setActiveButton(id);
     }else{
       clearSubnav();
@@ -8037,10 +8035,15 @@ function resetRandomQuiz(){
       e.stopPropagation();
 
       if(sub){
-        buildSubnav(li);
+        const firstTarget = buildSubnav(li);
+        if(firstTarget){
+          show(firstTarget);
+        }
       }else{
         clearSubnav();
-        if(directTarget) show(directTarget);
+        if(directTarget){
+          show(directTarget);
+        }
       }
     });
   });
