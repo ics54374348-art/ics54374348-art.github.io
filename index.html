@@ -31,14 +31,14 @@ body{
 }
 header{background:#0d6efd;color:#fff;padding:18px 24px;font-size:28px;font-weight:700}
 /* ===============================
-   네비게이션 (PC + 모바일 안정 버전)
+   네비게이션
 =============================== */
-
-  nav{
+nav{
   background:#f1f3f5;
   border-bottom:1px solid #dee2e6;
-  overflow-x:auto;
-  overflow-y:visible;
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
 nav ul{
@@ -47,8 +47,9 @@ nav ul{
   list-style:none;
   display:flex;
   flex-wrap:nowrap;
+  overflow-x:auto;
+  overflow-y:hidden;
   white-space:nowrap;
-  position:relative;
 }
 
 nav li{
@@ -57,6 +58,7 @@ nav li{
   font-weight:600;
   cursor:pointer;
   flex:0 0 auto;
+  background:#f1f3f5;
 }
 
 nav li:hover{
@@ -68,12 +70,12 @@ nav li:hover{
   position:absolute;
   top:100%;
   left:0;
+  min-width:160px;
   background:#fff;
-  border:1px solid #ccc;
-  border-radius:8px;
-  min-width:150px;
-  z-index:9999;
-  box-shadow:0 6px 16px rgba(0,0,0,0.12);
+  border:1px solid #dee2e6;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  z-index:2000;
 }
 
 .sub div{
@@ -82,17 +84,64 @@ nav li:hover{
 }
 
 .sub div:hover{
-  background:#f1f3f5;
+  background:#f8f9fa;
 }
 
-@media (hover:hover){
+/* PC: hover 드롭다운 */
+@media (hover:hover) and (pointer:fine){
   nav li:hover > .sub{
     display:block;
   }
 }
 
-nav li.open > .sub{
-  display:block;
+/* 모바일/태블릿: 기존 드롭다운 숨김 */
+@media (max-width:1024px){
+  nav{
+    overflow:visible;
+  }
+
+  nav ul{
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
+
+  nav .sub,
+  nav li.open > .sub,
+  nav li:hover > .sub{
+    display:none !important;
+  }
+}
+
+/* 모바일/태블릿용 하위탭 바 */
+.mobile-subtabs{
+  display:none;
+  padding:10px 12px;
+  background:#fff;
+  border-bottom:1px solid #e9ecef;
+  gap:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+.mobile-subtabs.active{
+  display:flex;
+}
+
+.mobile-subtab{
+  flex:0 0 auto;
+  padding:9px 12px;
+  border:none;
+  border-radius:999px;
+  background:#f1f3f5;
+  color:#212529;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.mobile-subtab.active{
+  background:#0d6efd;
+  color:#fff;
 }
   .content{
   display:none;
@@ -1140,6 +1189,7 @@ if(window.wcs) {
 </ul>
 </nav>
 
+  <div id="mobileSubtabs" class="mobile-subtabs"></div>
   <div id="siteSearchBox" style="padding:16px 20px; background:#fff; border-bottom:1px solid #e9ecef;">
   <div style="max-width:980px; margin:0 auto;">
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -7963,51 +8013,118 @@ function resetRandomQuiz(){
 }
   
 document.addEventListener('DOMContentLoaded', () => {
-  const navItems = document.querySelectorAll('nav li');
+  const mobileSubtabs = document.getElementById('mobileSubtabs');
+  const navItems = Array.from(document.querySelectorAll('nav > ul > li'));
 
-  navItems.forEach(li => {
+  function isMobileOrTablet(){
+    return window.innerWidth <= 1024;
+  }
+
+  function clearMobileSubtabs(){
+    if(!mobileSubtabs) return;
+    mobileSubtabs.innerHTML = '';
+    mobileSubtabs.classList.remove('active');
+  }
+
+  function setActiveMobileSubtab(tabId){
+    if(!mobileSubtabs) return;
+    mobileSubtabs.querySelectorAll('.mobile-subtab').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.target === tabId);
+    });
+  }
+
+  function buildMobileSubtabs(li){
+    if(!mobileSubtabs) return;
+
     const sub = li.querySelector('.sub');
-    if (!sub) return; // 하위탭 없는 일반 탭은 건드리지 않음
+    if(!sub){
+      clearMobileSubtabs();
+      return;
+    }
 
-    li.addEventListener('click', function (e) {
-      // 서브메뉴 안쪽 눌렀을 때는 여기서 막지 않음
-      if (e.target.closest('.sub')) return;
+    const items = Array.from(sub.querySelectorAll('div'));
+    if(items.length === 0){
+      clearMobileSubtabs();
+      return;
+    }
 
-      // 터치 기기에서만 서브메뉴 토글
-      const isTouchDevice =
-        window.matchMedia('(hover: none)').matches ||
-        window.matchMedia('(pointer: coarse)').matches;
+    mobileSubtabs.innerHTML = '';
 
-      if (!isTouchDevice) return;
+    items.forEach(item=>{
+      const btn = document.createElement('button');
+      btn.className = 'mobile-subtab';
+      btn.textContent = item.textContent.trim();
+
+      const onclickText = item.getAttribute('onclick') || '';
+      const match = onclickText.match(/show\('([^']+)'\)/);
+
+      if(match){
+        btn.dataset.target = match[1];
+      }
+
+      btn.addEventListener('click', ()=>{
+        if(btn.dataset.target){
+          show(btn.dataset.target);
+          setActiveMobileSubtab(btn.dataset.target);
+        }
+      });
+
+      mobileSubtabs.appendChild(btn);
+    });
+
+    mobileSubtabs.classList.add('active');
+  }
+
+  navItems.forEach(li=>{
+    const sub = li.querySelector('.sub');
+    if(!sub) return;
+
+    li.addEventListener('click', (e)=>{
+      if(!isMobileOrTablet()) return;
+      if(e.target.closest('.sub')) return;
 
       e.preventDefault();
       e.stopPropagation();
-
-      document.querySelectorAll('nav li.open').forEach(other => {
-        if (other !== li) other.classList.remove('open');
-      });
-
-      li.classList.toggle('open');
+      buildMobileSubtabs(li);
     });
   });
 
-  // 서브메뉴 항목 클릭하면 닫기
-  document.querySelectorAll('nav .sub div').forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.stopPropagation();
+  const originalShow = show;
+  show = async function(id){
+    await originalShow(id);
 
-      document.querySelectorAll('nav li.open').forEach(li => {
-        li.classList.remove('open');
+    if(!isMobileOrTablet()){
+      clearMobileSubtabs();
+      return;
+    }
+
+    let matched = false;
+
+    navItems.forEach(li=>{
+      const sub = li.querySelector('.sub');
+      if(!sub) return;
+
+      const items = Array.from(sub.querySelectorAll('div'));
+      const found = items.find(item=>{
+        const onclickText = item.getAttribute('onclick') || '';
+        return onclickText.includes(`show('${id}')`);
       });
+
+      if(found){
+        buildMobileSubtabs(li);
+        setActiveMobileSubtab(id);
+        matched = true;
+      }
     });
-  });
 
-  // 바깥 클릭하면 닫기
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('nav')) {
-      document.querySelectorAll('nav li.open').forEach(li => {
-        li.classList.remove('open');
-      });
+    if(!matched){
+      clearMobileSubtabs();
+    }
+  };
+
+  window.addEventListener('resize', ()=>{
+    if(!isMobileOrTablet()){
+      clearMobileSubtabs();
     }
   });
 });
