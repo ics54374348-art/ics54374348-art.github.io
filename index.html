@@ -66,83 +66,43 @@ nav li:hover{
 }
 
 .sub{
+  display:none !important;
+}
+/* ===============================
+   공통 하위탭 바
+=============================== */
+#mobileSubnav{
   display:none;
-  position:absolute;
-  top:100%;
-  left:0;
-  min-width:160px;
-  background:#fff;
-  border:1px solid #dee2e6;
-  border-radius:10px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
-  z-index:2000;
-}
-
-.sub div{
-  padding:10px 14px;
-  font-size:14px;
-}
-
-.sub div:hover{
-  background:#f8f9fa;
-}
-
-/* PC: hover 드롭다운 */
-@media (hover:hover) and (pointer:fine){
-  nav li:hover > .sub{
-    display:block;
-  }
-}
-
-/* 모바일/태블릿: 기존 드롭다운 숨김 */
-@media (max-width:1024px){
-  nav{
-    overflow:visible;
-  }
-
-  nav ul{
-    overflow-x:auto;
-    overflow-y:hidden;
-  }
-
-  nav .sub,
-  nav li.open > .sub,
-  nav li:hover > .sub{
-    display:none !important;
-  }
-}
-
-/* 모바일/태블릿용 하위탭 바 */
-.mobile-subtabs{
-  display:none;
-  padding:10px 12px;
+  padding:12px 14px;
   background:#fff;
   border-bottom:1px solid #e9ecef;
-  gap:8px;
-  overflow-x:auto;
-  white-space:nowrap;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
-.mobile-subtabs.active{
+#mobileSubnav.show{
   display:flex;
 }
 
-.mobile-subtab{
-  flex:0 0 auto;
-  padding:9px 12px;
+#mobileSubnav button{
+  padding:10px 16px;
   border:none;
-  border-radius:999px;
+  border-radius:18px;
   background:#f1f3f5;
   color:#212529;
-  font-size:14px;
+  font-size:15px;
   font-weight:700;
-  cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  margin:0;
 }
 
-.mobile-subtab.active{
+#mobileSubnav button.active{
   background:#0d6efd;
   color:#fff;
 }
+
+/* 모바일/태블릿: 기존 드롭다운 숨김 */
+
   .content{
   display:none;
   padding:30px;
@@ -1048,45 +1008,7 @@ button{
 }
 
 }
-  /* ===============================
-   태블릿/모바일용 2단 서브메뉴 바
-=============================== */
-#mobileSubmenuBar{
-  display:none;
-  background:#fff;
-  border-bottom:1px solid #dee2e6;
-  padding:10px 12px;
-  gap:8px;
-  flex-wrap:wrap;
-}
 
-#mobileSubmenuBar button{
-  margin:0;
-  padding:8px 12px;
-  border:1px solid #ced4da;
-  background:#fff;
-  color:#212529;
-  border-radius:999px;
-  font-size:14px;
-  font-weight:600;
-  box-shadow:none;
-}
-
-#mobileSubmenuBar button.active{
-  background:#0d6efd;
-  color:#fff;
-  border-color:#0d6efd;
-}
-
-@media (max-width:1024px){
-  #mobileSubmenuBar.show{
-    display:flex;
-  }
-
-  nav .sub{
-    display:none !important; /* 태블릿/모바일에선 기존 드롭다운 숨김 */
-  }
-}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -1122,7 +1044,6 @@ if(window.wcs) {
 </header>
 
 <nav>
-  <div id="mobileSubmenuBar"></div>
 <ul>
 <li onclick="show('home')">홈</li>
 <li onclick="show('competency')">역량</li>
@@ -1188,8 +1109,8 @@ if(window.wcs) {
 <li onclick="show('check')">체크박스</li>
 </ul>
 </nav>
-
-  <div id="mobileSubtabs" class="mobile-subtabs"></div>
+  
+<div id="mobileSubnav"></div>
   <div id="siteSearchBox" style="padding:16px 20px; background:#fff; border-bottom:1px solid #e9ecef;">
   <div style="max-width:980px; margin:0 auto;">
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -8011,200 +7932,122 @@ function resetRandomQuiz(){
   document.getElementById("randomQuizResult").textContent =
     "정답률 : 0%";
 }
-  
-document.addEventListener('DOMContentLoaded', () => {
-  const mobileSubtabs = document.getElementById('mobileSubtabs');
-  const navItems = Array.from(document.querySelectorAll('nav > ul > li'));
+  document.addEventListener('DOMContentLoaded', () => {
+  const subnav = document.getElementById('mobileSubnav');
+  const navItems = document.querySelectorAll('nav > ul > li');
 
-  function isMobileOrTablet(){
-    return window.innerWidth <= 1024;
+  function clearSubnav(){
+    if(!subnav) return;
+    subnav.innerHTML = '';
+    subnav.classList.remove('show');
   }
 
-  function clearMobileSubtabs(){
-    if(!mobileSubtabs) return;
-    mobileSubtabs.innerHTML = '';
-    mobileSubtabs.classList.remove('active');
+  function getShowTarget(el){
+    const onclick = el.getAttribute('onclick') || '';
+    const match = onclick.match(/show\('([^']+)'\)/);
+    return match ? match[1] : null;
   }
 
-  function setActiveMobileSubtab(tabId){
-    if(!mobileSubtabs) return;
-    mobileSubtabs.querySelectorAll('.mobile-subtab').forEach(btn=>{
-      btn.classList.toggle('active', btn.dataset.target === tabId);
+  function setActiveButton(target){
+    if(!subnav) return;
+    subnav.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.target === target);
     });
   }
 
-  function buildMobileSubtabs(li){
-    if(!mobileSubtabs) return;
+  function buildSubnav(li){
+    if(!subnav) return;
 
-    const sub = li.querySelector('.sub');
+    const sub = li.querySelector(':scope > .sub');
     if(!sub){
-      clearMobileSubtabs();
+      clearSubnav();
       return;
     }
 
-    const items = Array.from(sub.querySelectorAll('div'));
+    const items = [...sub.querySelectorAll(':scope > div')];
     if(items.length === 0){
-      clearMobileSubtabs();
+      clearSubnav();
       return;
     }
 
-    mobileSubtabs.innerHTML = '';
+    subnav.innerHTML = '';
 
-    items.forEach(item=>{
+    items.forEach((item, index) => {
       const btn = document.createElement('button');
-      btn.className = 'mobile-subtab';
+      const target = getShowTarget(item);
+
       btn.textContent = item.textContent.trim();
+      btn.dataset.target = target || '';
 
-      const onclickText = item.getAttribute('onclick') || '';
-      const match = onclickText.match(/show\('([^']+)'\)/);
-
-      if(match){
-        btn.dataset.target = match[1];
-      }
-
-      btn.addEventListener('click', ()=>{
-        if(btn.dataset.target){
-          show(btn.dataset.target);
-          setActiveMobileSubtab(btn.dataset.target);
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if(target){
+          show(target);
+          setActiveButton(target);
         }
       });
 
-      mobileSubtabs.appendChild(btn);
+      subnav.appendChild(btn);
+
+      if(index === 0 && target){
+        btn.classList.add('active');
+      }
     });
 
-    mobileSubtabs.classList.add('active');
+    subnav.classList.add('show');
+
+    const firstTarget = getShowTarget(items[0]);
+    if(firstTarget){
+      show(firstTarget);
+      setActiveButton(firstTarget);
+    }
   }
-
-  navItems.forEach(li=>{
-    const sub = li.querySelector('.sub');
-    if(!sub) return;
-
-    li.addEventListener('click', (e)=>{
-      if(!isMobileOrTablet()) return;
-      if(e.target.closest('.sub')) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-      buildMobileSubtabs(li);
-    });
-  });
 
   const originalShow = show;
   show = async function(id){
     await originalShow(id);
 
-    if(!isMobileOrTablet()){
-      clearMobileSubtabs();
-      return;
-    }
+    let foundParent = null;
 
-    let matched = false;
-
-    navItems.forEach(li=>{
-      const sub = li.querySelector('.sub');
+    navItems.forEach(li => {
+      const sub = li.querySelector(':scope > .sub');
       if(!sub) return;
 
-      const items = Array.from(sub.querySelectorAll('div'));
-      const found = items.find(item=>{
-        const onclickText = item.getAttribute('onclick') || '';
-        return onclickText.includes(`show('${id}')`);
-      });
-
-      if(found){
-        buildMobileSubtabs(li);
-        setActiveMobileSubtab(id);
-        matched = true;
-      }
+      const items = [...sub.querySelectorAll(':scope > div')];
+      const matched = items.some(item => getShowTarget(item) === id);
+      if(matched) foundParent = li;
     });
 
-    if(!matched){
-      clearMobileSubtabs();
+    if(foundParent){
+      buildSubnav(foundParent);
+      setActiveButton(id);
+    }else{
+      clearSubnav();
     }
   };
 
-  window.addEventListener('resize', ()=>{
-    if(!isMobileOrTablet()){
-      clearMobileSubtabs();
-    }
-  });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  const mobileSubmenuBar = document.getElementById('mobileSubmenuBar');
-  const navItems = document.querySelectorAll('nav > ul > li');
-
-  const isMobileLayout = () => window.innerWidth <= 1024;
-
-  function clearMobileSubmenu(){
-    if(!mobileSubmenuBar) return;
-    mobileSubmenuBar.innerHTML = '';
-    mobileSubmenuBar.classList.remove('show');
-    navItems.forEach(li => li.classList.remove('open'));
-  }
-
-  function buildMobileSubmenu(li){
-    if(!mobileSubmenuBar) return;
-
-    const sub = li.querySelector('.sub');
-    if(!sub){
-      clearMobileSubmenu();
-      return;
-    }
-
-    const items = [...sub.querySelectorAll('div')];
-    if(items.length === 0){
-      clearMobileSubmenu();
-      return;
-    }
-
-    mobileSubmenuBar.innerHTML = '';
-
-    items.forEach(item => {
-      const btn = document.createElement('button');
-      btn.textContent = item.textContent.trim();
-
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        item.click();
-
-        [...mobileSubmenuBar.querySelectorAll('button')].forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      };
-
-      mobileSubmenuBar.appendChild(btn);
-    });
-
-    mobileSubmenuBar.classList.add('show');
-
-    navItems.forEach(other => {
-      if(other !== li) other.classList.remove('open');
-    });
-    li.classList.add('open');
-  }
-
   navItems.forEach(li => {
-    const sub = li.querySelector('.sub');
-    if(!sub) return;
-
     li.addEventListener('click', (e) => {
-      if(!isMobileLayout()) return;
+      const sub = li.querySelector(':scope > .sub');
+      const directTarget = getShowTarget(li);
+
       if(e.target.closest('.sub')) return;
 
       e.preventDefault();
       e.stopPropagation();
 
-      const alreadyOpen = li.classList.contains('open');
-      if(alreadyOpen){
-        clearMobileSubmenu();
+      if(sub){
+        buildSubnav(li);
       }else{
-        buildMobileSubmenu(li);
+        clearSubnav();
+        if(directTarget) show(directTarget);
       }
     });
   });
 
-  window.addEventListener('resize', () => {
-    if(!isMobileLayout()){
-      clearMobileSubmenu();
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('nav') && !e.target.closest('#mobileSubnav')){
+      clearSubnav();
     }
   });
 });
