@@ -1135,6 +1135,12 @@ if(window.wcs) {
     임고AZ는 초등 임용 시험 준비를 위한 정리 사이트입니다.<br>
     역량, 모형, 내체표 등을 직접 입력하며 학습할 수 있습니다.
   </p>
+
+  <div id="siteStats" style="margin:10px 0;"></div>
+  <button class="admin-only" onclick="openWrite()" style="display:none;">
+    ✏️ 글쓰기
+  </button>
+  <div id="posts"></div>
 </div>
   <div id="model-quiz" class="content">
   <div class="competency-wrap">
@@ -1200,11 +1206,6 @@ if(window.wcs) {
     <div id="randomQuizResult" class="score" style="margin-top:10px;">정답률 : 0%</div>
   </div>
 </div>
-<div id="posts"></div>
-<div id="siteStats" style="margin:10px 0;"></div>
-<button class="admin-only" onclick="openWrite()" style="display:none;">
-  ✏️ 글쓰기
-</button>
 
 <!-- 역량 탭 -->
 <div id="competency" class="content">
@@ -1966,6 +1967,7 @@ const db = firebase.firestore();
 let isAdmin = false;
 let currentTabId = 'home';
 let editingPostId = null;
+let renderPostsRequestId = 0;
 
 /* ===============================
    방문자 통계 (localStorage 기반)
@@ -2070,7 +2072,18 @@ async function show(id){
     behavior:'smooth'
   });
 }
+function openAdminLogin(){
+  const modal = document.getElementById('adminModal');
+  if(modal) modal.style.display = 'flex';
+}
 
+function closeAdminLogin(){
+  const modal = document.getElementById('adminModal');
+  const pwInput = document.getElementById('adminPw');
+
+  if(modal) modal.style.display = 'none';
+  if(pwInput) pwInput.value = '';
+  }
 /* ===============================
    관리자 로그인
 =============================== */
@@ -2099,12 +2112,20 @@ async function adminLogout(){
 }
 
 function applyAdminUI(){
-  adminLoginBtn.style.display = isAdmin ? 'none' : 'inline-block';
-  adminLogoutBtn.style.display = isAdmin ? 'inline-block' : 'inline-block';
-  adminLogoutBtn.style.display = isAdmin ? 'inline-block' : 'none';
+  const loginBtn = document.getElementById('adminLoginBtn');
+  const logoutBtn = document.getElementById('adminLogoutBtn');
 
-  document.querySelectorAll('.admin-only')
-    .forEach(el => el.style.display = isAdmin ? 'inline-block' : 'none');
+  if(loginBtn){
+    loginBtn.style.display = isAdmin ? 'none' : 'inline-block';
+  }
+
+  if(logoutBtn){
+    logoutBtn.style.display = isAdmin ? 'inline-block' : 'none';
+  }
+
+  document.querySelectorAll('.admin-only').forEach(el=>{
+    el.style.display = isAdmin ? 'inline-block' : 'none';
+  });
 }
 
 /* ===============================
@@ -2142,11 +2163,16 @@ function formatDate(timestamp){
    탭별 렌더링
 =============================== */
 async function renderPostsForTab(tabId){
+async function renderPostsForTab(tabId){
   if(!postsEl) return;
 
+  const requestId = ++renderPostsRequestId;
   postsEl.innerHTML = '';
 
   const all = await loadPosts();
+
+  // 더 최신 렌더 요청이 있으면 이전 요청은 버림
+  if(requestId !== renderPostsRequestId) return;
 
   const list = all
     .map(p => {
@@ -2155,7 +2181,7 @@ async function renderPostsForTab(tabId){
       p.likes = p.likes || 0;
       p.comments = Array.isArray(p.comments) ? p.comments : [];
       p.tabId = p.tabId || 'home';
-      p.pinned = p.pinned === true;   // ✅ 공지 여부
+      p.pinned = p.pinned === true;
       return p;
     })
     .filter(p => p.tabId === tabId)
@@ -2163,14 +2189,24 @@ async function renderPostsForTab(tabId){
       const ap = a.pinned ? 1 : 0;
       const bp = b.pinned ? 1 : 0;
 
-      if(bp !== ap) return bp - ap;   // ✅ 공지가 먼저
-      return (b.date || 0) - (a.date || 0); // 그 다음 최신순
+      if(bp !== ap) return bp - ap;
+      return (b.date || 0) - (a.date || 0);
     });
 
-  for (const post of list) {
+  // 같은 글이 중복 append 되는 것 방지
+  const seen = new Set();
+  const uniqueList = list.filter(post=>{
+    if(seen.has(post.id)) return false;
+    seen.add(post.id);
+    return true;
+  });
+
+  postsEl.innerHTML = '';
+
+  for(const post of uniqueList){
     addPostToDOM(post);
   }
-    }
+}
 /* ===============================
    좋아요(이 기기 1번만)
 =============================== */
@@ -2453,6 +2489,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   await renderPostsForTab(currentTabId);
 
   renderStats();
+});
+  document.addEventListener('DOMContentLoaded', ()=>{
+  const pwInput = document.getElementById('adminPw');
+  if(pwInput){
+    pwInput.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){
+        adminLogin();
+      }
+    });
+  }
 });
 // ===============================
 // 공통 유틸
