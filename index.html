@@ -1177,6 +1177,36 @@ button{
   border-bottom:2px solid #dc3545;
   background:#fde8e8;
 }
+  .ch-blank{
+  display:inline-block;
+  width:90px;
+  min-width:90px;
+  height:30px;
+  padding:4px 8px;
+  margin:0 4px;
+  border:1px solid #ced4da;
+  border-radius:6px;
+  font-size:14px;
+  line-height:1.2;
+  vertical-align:middle;
+  box-sizing:border-box;
+}
+
+.ch-blank.correct{
+  background:#e6f4ea !important;
+  border-color:#198754 !important;
+}
+
+.ch-blank.wrong{
+  background:#fde8e8 !important;
+  border-color:#dc3545 !important;
+}
+
+.ch-text{
+  white-space:pre-wrap;
+  line-height:2.1;
+  font-size:15px;
+  }
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -1827,6 +1857,12 @@ if(window.wcs) {
 
 <div id="ppee" class="content"><h2>체육 신체활동</h2></div>
 <div id="ch" class="content">
+  <div id="chOverallScore" class="score" style="margin-bottom:16px;">
+  총론 전체 진도율 : 0 / 0 (0%)
+  </div>
+  <div id="chOverallBox" class="score" style="margin-bottom:16px;">
+  총론 전체 진도율 : 0%
+  </div>
   <div id="chPage"></div>
 
   <div id="chPagesWrap"></div>
@@ -8617,6 +8653,191 @@ const chData = [
     "학교 여건"
   ]
 }
+  {
+  title: "총론",
+  text: `2. 추구하는 인간상과 핵심역량 
+
+우리나라의 교육은 ( )의 이념 아래 모든 국민으로 하여금 ( )를/을 도야하고, ( ) 능력과 ( )으로서 필요한 자질을 갖추어 ( )를/을 영위하고, ( )의 발전과 ( )의 이상을 실현할 수 있도록 함을 목적으로 한다. 
+
+이러한 교육 이념과 교육 목적을 바탕으로, 이 교육과정이 추구하는 인간상은 다음과 같다. 
+
+가. ( )를/을 바탕으로 ( )를/을 확립하고 자신의 ( )과/와 ( )를/을 스스로 개척하는 ( )인 사람 
+
+나. 폭넓은 기초 능력을 바탕으로 ( )과/와 ( )를/을 통해 새로운 가치를 창출하는 ( )인 사람 
+
+다. ( )과/와 ( )에 대한 이해를 바탕으로 ( )를/을 향유하고 발전시키는 ( ) 있는 사람 
+
+라. ( )를/을 바탕으로 ( )를/을 이해하고 서로 존중하며 세계와 소통하는 ( )으로서 ( )과/와 ( ), ( )를/을 실천하는 ( ) 사람`,
+  answers: [
+    "홍익인간",
+    "인격",
+    "자주적 생활",
+    "민주시민",
+    "인간다운 삶",
+    "민주 국가",
+    "인류 공영",
+
+    "전인적 성장",
+    "자아정체성",
+    "진로",
+    "삶",
+    "자기 주도적",
+
+    "진취적 발상",
+    "도전",
+    "창의적",
+
+    "문화적 소양",
+    "다원적 가치",
+    "인류 문화",
+    "교양",
+
+    "공동체 의식",
+    "다양성",
+    "민주시민",
+    "배려",
+    "나눔",
+    "협력",
+    "더불어 사는"
+  ]
+}
+  {
+  title: "총론",
+  text: `이 교육과정이 추구하는 인간상을 구현하기 위해 교과 교육과 창의적 체험활동을 포함한 학교 교육 전 과정을 통해 중점적으로 기르고자 하는 핵심역량은 다음과 같다. 
+
+가. ( )과/와 ( )를/을 가지고 자신의 ( )과/와 ( )를/을 스스로 설계하며 이에 필요한 기초 능력과 자질을 갖추어 ( )로/으로 살아갈 수 있는 ( ) 역량 
+
+나. 문제를 ( )로/으로 해결하기 위하여 다양한 영역의 ( )과/와 ( )를/을 깊이 있게 이해하고 ( )로/으로 탐구하며 활용할 수 있는 ( ) 역량 
+
+다. 폭넓은 ( )를/을 바탕으로 다양한 전문 분야의 ( ), ( ), ( )를/을 ( )로/으로 활용하여 새로운 것을 창출하는 ( ) 역량 
+
+라. 인간에 대한 ( )과/와 ( )를/을 바탕으로 삶의 의미와 가치를 성찰하고 향유하는 ( ) 역량 
+
+마. 다른 사람의 ( )를/을 존중하고 경청하는 가운데 자신의 ( )과/와 ( )를/을 효과적으로 표현하며 ( )인 관계에서 공동의 목적을 구현하는 ( ) 역량 
+
+바. ( ) ⋅ ( ) ⋅ ( ) 공동체의 구성원에게 요구되는 ( ) ⋅ ( ) 가치와 태도로 지속 가능한 인류 공동체 발전에 적극적이고 책임감 있게 참여하는 ( ) 역량`,
+  answers: [
+    "자아정체성",
+    "자신감",
+    "삶",
+    "진로",
+    "자기주도적",
+    "자기관리",
+
+    "합리적",
+    "지식",
+    "정보",
+    "비판적",
+    "지식정보처리",
+
+    "기초 지식",
+    "지식",
+    "기술",
+    "경험",
+    "융합적",
+    "창의적 사고",
+
+    "공감적 이해",
+    "문화적 감수성",
+    "심미적 감성",
+
+    "관점",
+    "생각",
+    "감정",
+    "상호 협력적",
+    "협력적 소통",
+
+    "지역",
+    "국가",
+    "세계",
+    "개방적",
+    "포용적",
+    "공동체"
+  ]
+  }
+  {
+  title: "총론",
+  text: `3. 학교급별 교육 목표 
+
+가. 초등학교 교육 목표 
+
+초등학교 교육은 학생의 일상생활과 학습에 필요한 ( ) 및 ( )를/을 기르고 ( )를/을 함양하는 데 중점을 둔다. 
+
+1) 자신의 ( )를/을 알고 건강한 ( )를/을 기르며, 풍부한 ( )를/을 통해 자신의 ( )를/을 키운다. 
+
+2) 학습과 생활에서 문제를 발견하고 해결하는 ( )를/을 기르고, 이를 새롭게 경험할 수 있는 ( )를/을 키운다. 
+
+3) 다양한 ( )를/을 즐기며 자연과 생활 속에서 ( )과/와 ( )를/을 느낄 수 있는 ( )를/을 기른다. 
+
+4) 일상생활과 학습에 필요한 ( )과/와 ( )를/을 지키고 서로 돕고 배려하는 ( )를/을 기른다.`,
+  answers: [
+    "기본 습관",
+    "기초 능력",
+    "바른 인성",
+
+    "소중함",
+    "생활 습관",
+    "학습 경험",
+    "꿈",
+
+    "기초 능력",
+    "상상력",
+
+    "문화 활동",
+    "아름다움",
+    "행복",
+    "심성",
+
+    "규칙",
+    "질서",
+    "태도"
+  ]
+  }
+  {
+  title: "총론",
+  text: `Ⅱ. 학교 교육과정 설계와 운영 
+
+1. 설계의 원칙
+가. 학교는 이 교육과정을 바탕으로 학교 교육과정을 자율적으로 설계⋅운영하며, 학생의 특성과 학교 여건에 적합한 학습 경험을 제공한다.
+
+1) 학습자의 ( )에 적합한 폭넓고 균형 있는 교육과정을 통해 다양한 영역의 세계를 탐색해보는 기회를 제공하고, 학습자의 ( )인 성장 ⋅ 발달이 가능하도록 학교 교육과정을 설계하여 운영한다.
+
+2) ( ), ( ), ( ) 를/을 종합적으로 고려하여 학습자에게 적합한 학습 경험을 제공한다.
+
+3) 학교는 학생의 필요와 요구에 따라 학교의 특성을 고려하여 다양한 ( )를/을 설계하여 운영할 수 있다.
+
+4) 학교 교육 기간을 포함한 평생 학습에 필요한 ( )과/와 ( )를/을 갖출 수 있도록 지원하며 ( )를/을 줄이도록 노력한다.
+
+5) 학생들의 ( )인 참여를 원칙으로 하여 ( )과/와 ( )는/은 학생과 학부모의 요구에 따라 방과 후 활동 또는 방학 중 활동을 운영⋅지원할 수 있다.
+
+6) 학교는 ( )의 효율적인 설계와 운영을 위하여 ( )의 인적, 물적 자원을 계획적으로 활용한다.
+
+7) 학교는 ( ) 및 ( )과/와 연계하여 학생이 건전한 생활 태도와 행동 양식을 가지고 학습할 수 있도록 지도한다.`,
+  answers: [
+    "발달 수준",
+    "전인적",
+
+    "학생 실태와 요구",
+    "교원 조직과 교육 시설 설비 등 학교 실태",
+    "학부모 의견 및 지역사회 실정 등 학교 교육 여건과 환경",
+
+    "교육 활동",
+
+    "기초 소양",
+    "자기주도 학습 능력",
+    "학습 격차",
+
+    "자발적",
+    "학교",
+    "시 도 교육청",
+
+    "학교 교육과정",
+    "지역 사회",
+
+    "가정",
+    "지역"
+  ]
+  }
 ];
 
 let chCurrentPage = 0;
@@ -8827,41 +9048,53 @@ function chBuildHTMLText(text){
    렌더링
 =============================== */
 function renderChPage(){
-  const container = document.getElementById('chPage');
-  if(!container) return;
-
+function renderChPage(){
   const page = chData[chCurrentPage];
   if(!page) return;
 
-  container.innerHTML = `
-    <div class="ch-card">
-      <div class="ch-page-meta">
-        <span></span>
-        <span>${chCurrentPage + 1} / ${chData.length} 페이지</span>
+  const chPage = document.getElementById('chPage');
+  if(!chPage) return;
+
+  let blankIndex = 0;
+
+  const htmlText = String(page.text || '').replace(/\(\s*\)/g, () => {
+    const saved = localStorage.getItem(`ch_input_${chCurrentPage}_${blankIndex}`) || '';
+    const inputHtml = `<input type="text" class="ch-blank" data-blank-index="${blankIndex}" value="${saved.replace(/"/g, '&quot;')}">`;
+    blankIndex++;
+    return inputHtml;
+  });
+
+  chPage.innerHTML = `
+    <div class="competency-box">
+      <div class="competency-title">${page.title || `총론 ${chCurrentPage + 1}`}</div>
+
+      <div class="ch-text">${htmlText}</div>
+
+      <div style="margin-top:16px;">
+        <button class="grade" onclick="gradeChPage()">채점</button>
+        <button class="grade" onclick="showChAnswer()">정답</button>
+        <button class="clear" onclick="clearChPage()">지우기</button>
       </div>
 
-      <div class="ch-title">${page.title}</div>
+      <div id="chPageScore" class="score" style="margin-top:12px;">정답률 : 0%</div>
 
-      <div class="ch-text">
-        ${chBuildHTMLText(page.text)}
-      </div>
-
-      <div class="ch-actions">
-        <button class="ch-btn-grade" onclick="gradeCh()">채점</button>
-        <button class="ch-btn-answer" onclick="showChAnswer()">정답</button>
-        <button class="ch-btn-clear" onclick="clearCh()">지우기</button>
-      </div>
-
-      <div class="ch-score" id="chScore">정답률 : 0 / 0 (0%)</div>
-
-      <div class="ch-page-nav">
-        <button class="ch-btn-page" onclick="prevChPage()">이전 페이지</button>
-        <div class="ch-page-indicator">${chCurrentPage + 1} / ${chData.length}</div>
-        <button class="ch-btn-page" onclick="nextChPage()">다음 페이지</button>
+      <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="clear" onclick="prevChPage()" ${chCurrentPage === 0 ? 'disabled' : ''}>이전</button>
+        <button class="grade" onclick="nextChPage()" ${chCurrentPage === chData.length - 1 ? 'disabled' : ''}>다음</button>
+        <div class="score">페이지 : ${chCurrentPage + 1} / ${chData.length}</div>
       </div>
     </div>
   `;
-}
+
+  document.querySelectorAll('.ch-blank').forEach((input, blankIndex) => {
+    input.addEventListener('input', () => {
+      localStorage.setItem(`ch_input_${chCurrentPage}_${blankIndex}`, input.value);
+      renderChOverallProgress();
+    });
+  });
+
+  renderChOverallProgress();
+  }
 
 /* ===============================
    채점 / 정답 / 지우기
@@ -8885,6 +9118,7 @@ function gradeCh(){
     }else{
       input.classList.add('wrong');
     }
+    renderChOverallProgress();
   });
 
   const percent = total ? Math.round(correct / total * 100) : 0;
@@ -8901,6 +9135,7 @@ function showChAnswer(){
     input.value = page.answers[i] || '';
     chClearMark(input);
     input.classList.add('correct');
+    renderChOverallProgress();
   });
 
   const total = page.answers.length;
@@ -8915,6 +9150,7 @@ function clearCh(){
   blanks.forEach(input => {
     input.value = '';
     chClearMark(input);
+    renderChOverallProgress();
   });
 
   score.textContent = '정답률 : 0 / 0 (0%)';
@@ -8936,7 +9172,140 @@ function nextChPage(){
     renderChPage();
   }
 }
+function chNorm(text){
+  return String(text || '').replace(/\s+/g, '').trim();
+}
 
+function getChOverallProgress(){
+  let total = 0;
+  let correct = 0;
+
+  chData.forEach((page, pageIndex) => {
+    const answers = page.answers || [];
+
+    answers.forEach((ans, ansIndex) => {
+      total++;
+
+      const saved = localStorage.getItem(`ch_input_${pageIndex}_${ansIndex}`) || '';
+      if(chNorm(saved) === chNorm(ans)){
+        correct++;
+      }
+    });
+  });
+
+  return { correct, total };
+}
+  function renderChOverallProgress(){
+  const box = document.getElementById('chOverallBox');
+  if(!box || !Array.isArray(chData)) return;
+
+  let total = 0;
+  let filled = 0;
+
+  chData.forEach((page, pageIndex) => {
+    const answers = Array.isArray(page.answers) ? page.answers : [];
+    total += answers.length;
+
+    answers.forEach((_, blankIndex) => {
+      const saved = localStorage.getItem(`ch_input_${pageIndex}_${blankIndex}`) || '';
+      if(chNorm(saved) !== '') filled++;
+    });
+  });
+
+  const percent = total ? Math.round(filled / total * 100) : 0;
+  box.textContent = `총론 전체 진도율 : ${filled} / ${total} (${percent}%)`;
+  }
+
+function renderChOverallProgress(){
+  const box = document.getElementById('chOverallScore');
+  if(!box) return;
+
+  const { correct, total } = getChOverallProgress();
+  const percent = total ? Math.round(correct / total * 100) : 0;
+
+  box.textContent = `총론 전체 진도율 : ${correct} / ${total} (${percent}%)`;
+  renderChOverallProgress();
+}
+  function gradeChPage(){
+  const page = chData[chCurrentPage];
+  if(!page) return;
+
+  const inputs = document.querySelectorAll('.ch-blank');
+  const answers = Array.isArray(page.answers) ? page.answers : [];
+
+  let correct = 0;
+  let total = answers.length;
+
+  inputs.forEach((input, i) => {
+    chClearMark(input);
+
+    const user = chNorm(input.value);
+    const ans = chNorm(answers[i] || '');
+
+    if(!ans) return;
+
+    if(user === ans){
+      input.classList.add('correct');
+      correct++;
+    }else{
+      input.classList.add('wrong');
+    }
+  });
+
+  const percent = total ? Math.round(correct / total * 100) : 0;
+  const score = document.getElementById('chPageScore');
+  if(score) score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+}
+
+function showChAnswer(){
+  const page = chData[chCurrentPage];
+  if(!page) return;
+
+  const inputs = document.querySelectorAll('.ch-blank');
+  const answers = Array.isArray(page.answers) ? page.answers : [];
+
+  inputs.forEach((input, i) => {
+    input.value = answers[i] || '';
+    localStorage.setItem(`ch_input_${chCurrentPage}_${i}`, input.value);
+    chClearMark(input);
+    if(answers[i]) input.classList.add('correct');
+  });
+
+  const total = answers.length;
+  const score = document.getElementById('chPageScore');
+  if(score) score.textContent = `정답률 : ${total} / ${total} (100%)`;
+
+  renderChOverallProgress();
+}
+
+function clearChPage(){
+  const inputs = document.querySelectorAll('.ch-blank');
+
+  inputs.forEach((input, i) => {
+    input.value = '';
+    localStorage.removeItem(`ch_input_${chCurrentPage}_${i}`);
+    chClearMark(input);
+  });
+
+  const score = document.getElementById('chPageScore');
+  if(score) score.textContent = '정답률 : 0%';
+
+  renderChOverallProgress();
+}
+
+function prevChPage(){
+  if(chCurrentPage > 0){
+    chCurrentPage--;
+    renderChPage();
+  }
+}
+
+function nextChPage(){
+  if(chCurrentPage < chData.length - 1){
+    chCurrentPage++;
+    renderChPage();
+  }
+  }
 /* ===============================
    총론 탭 열 때 렌더
 =============================== */
