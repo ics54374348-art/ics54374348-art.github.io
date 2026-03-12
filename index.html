@@ -2084,11 +2084,12 @@ const ADMIN_PASSWORD = '20002026';
 
 
 function getPostsContainerByTab(tabId){
-  if(tabId === 'home') return document.getElementById('posts');
+  if(tabId === 'home') return document.getElementById('posts-home');
   return document.getElementById(`posts-${tabId}`);
-}
+  }
   function canWriteInTab(tabId){
   if(tabId === 'home') return true;
+  if(tabId === 'share') return true;
 
   const problemTabs = [
     'kkorean','mmath','ssocial','sscience','eenglish',
@@ -2658,12 +2659,16 @@ function openWrite(){
 function closeWrite(){
   const modal = document.getElementById('writeModal');
   const fileInput = document.getElementById('postFile');
+  const titleEl = document.getElementById('postTitle');
+  const contentEl = document.getElementById('postContent');
 
   if(modal) modal.style.display = 'none';
   if(fileInput) fileInput.value = '';
+  if(titleEl) titleEl.value = '';
+  if(contentEl) contentEl.value = '';
 
   editingPostId = null;
-}
+  }
 
 async function savePost(){
   const titleEl = document.getElementById('postTitle');
@@ -2689,6 +2694,7 @@ async function savePost(){
   };
 
   try{
+    console.log('save 시작', { title, content, tabId: currentTabId });
     if(editingPostId){
       await updatePostById(editingPostId, {
         title,
@@ -2698,7 +2704,7 @@ async function savePost(){
     }else{
       await addPost(postData);
     }
-
+console.log('save 성공');
     closeWrite();
 
     if(titleEl) titleEl.value = '';
@@ -2710,6 +2716,23 @@ async function savePost(){
     alert('저장 실패');
   }
 }
+  async function restoreOldPostsToHome(){
+  try{
+    const all = await loadPosts();
+
+    for(const post of all){
+      if(!post.tabId || post.tabId === '' || post.tabId === null){
+        await updatePostById(post.id, { tabId: 'home' });
+      }
+    }
+
+    await renderPostsForTab('home');
+    alert('기존 홈 공지 복구 완료');
+  }catch(err){
+    console.error(err);
+    alert('복구 실패');
+  }
+  }
 /* ===============================
    초기화
 =============================== */
