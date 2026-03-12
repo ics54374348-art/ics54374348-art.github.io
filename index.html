@@ -1207,6 +1207,41 @@ button{
   line-height:2.1;
   font-size:15px;
   }
+ .ch-text{
+  white-space:pre-wrap;
+  line-height:2.05;
+  font-size:15px;
+}
+
+.ch-para{
+  margin-bottom:18px;
+}
+
+.ch-blank{
+  display:inline-block;
+  width:88px;
+  min-width:88px;
+  height:30px;
+  padding:4px 8px;
+  margin:0 3px;
+  border:1px solid #ced4da;
+  border-radius:6px;
+  font-size:14px;
+  line-height:1.2;
+  vertical-align:middle;
+  box-sizing:border-box;
+  background:#fff;
+}
+
+.ch-blank.correct{
+  background:#e6f4ea !important;
+  border-color:#198754 !important;
+}
+
+.ch-blank.wrong{
+  background:#fde8e8 !important;
+  border-color:#dc3545 !important;
+} 
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -1858,12 +1893,10 @@ if(window.wcs) {
 <div id="ppee" class="content"><h2>체육 신체활동</h2></div>
 <div id="ch" class="content">
   <div id="chOverallScore" class="score" style="margin-bottom:16px;">
-  총론 전체 진도율 : 0 / 0 (0%)
-  </div>
-  <div id="chOverallBox" class="score" style="margin-bottom:16px;">
-  총론 전체 진도율 : 0%
+    총론 전체 진도율 : 0 / 0 (0%)
   </div>
   <div id="chPage"></div>
+</div>
 
   <div id="chPagesWrap"></div>
 
@@ -9016,177 +9049,60 @@ let chCurrentPage = 0;
   `;
   document.head.appendChild(style);
 })();
-
 /* ===============================
-   유틸
+   총론 탭
 =============================== */
+
+let chCurrentPage = 0;
+
+/* 공백 무시 비교 */
 function chNorm(text){
   return String(text || '').replace(/\s+/g,'').trim();
 }
 
+/* 정오답 표시 제거 */
 function chClearMark(el){
   el.classList.remove('correct','wrong');
 }
 
-/* ( ) -> input 로 변환 */
-function chConvertBlank(text){
-  let idx = 0;
+/* ( )를 input으로 바꾸기 + 저장값 불러오기 */
+function chConvertBlank(text, pageIndex){
+  let blankIndex = 0;
+
   return String(text || '').replace(/\(\s*\)/g, () => {
-    return `<input class="ch-blank" data-index="${idx++}" type="text">`;
+    const saved = localStorage.getItem(`ch_input_${pageIndex}_${blankIndex}`) || '';
+    const safeValue = saved.replace(/"/g, '&quot;');
+
+    const html = `<input type="text" class="ch-blank" data-blank-index="${blankIndex}" value="${safeValue}">`;
+    blankIndex++;
+    return html;
   });
 }
 
-/* 문단 렌더 */
-function chBuildHTMLText(text){
+/* 문단 단위 렌더 */
+function chBuildHTMLText(text, pageIndex){
   return String(text || '')
     .split(/\n\s*\n/)
-    .map(paragraph => `<div class="ch-para">${chConvertBlank(paragraph).replace(/\n/g, '<br>')}</div>`)
+    .map(paragraph => {
+      return `<div class="ch-para">${chConvertBlank(paragraph, pageIndex).replace(/\n/g,'<br>')}</div>`;
+    })
     .join('');
 }
 
-/* ===============================
-   렌더링
-=============================== */
-function renderChPage(){
-function renderChPage(){
-  const page = chData[chCurrentPage];
-  if(!page) return;
-
-  const chPage = document.getElementById('chPage');
-  if(!chPage) return;
-
-  let blankIndex = 0;
-
-  const htmlText = String(page.text || '').replace(/\(\s*\)/g, () => {
-    const saved = localStorage.getItem(`ch_input_${chCurrentPage}_${blankIndex}`) || '';
-    const inputHtml = `<input type="text" class="ch-blank" data-blank-index="${blankIndex}" value="${saved.replace(/"/g, '&quot;')}">`;
-    blankIndex++;
-    return inputHtml;
-  });
-
-  chPage.innerHTML = `
-    <div class="competency-box">
-      <div class="competency-title">${page.title || `총론 ${chCurrentPage + 1}`}</div>
-
-      <div class="ch-text">${htmlText}</div>
-
-      <div style="margin-top:16px;">
-        <button class="grade" onclick="gradeChPage()">채점</button>
-        <button class="grade" onclick="showChAnswer()">정답</button>
-        <button class="clear" onclick="clearChPage()">지우기</button>
-      </div>
-
-      <div id="chPageScore" class="score" style="margin-top:12px;">정답률 : 0%</div>
-
-      <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="clear" onclick="prevChPage()" ${chCurrentPage === 0 ? 'disabled' : ''}>이전</button>
-        <button class="grade" onclick="nextChPage()" ${chCurrentPage === chData.length - 1 ? 'disabled' : ''}>다음</button>
-        <div class="score">페이지 : ${chCurrentPage + 1} / ${chData.length}</div>
-      </div>
-    </div>
-  `;
-
-  document.querySelectorAll('.ch-blank').forEach((input, blankIndex) => {
-    input.addEventListener('input', () => {
-      localStorage.setItem(`ch_input_${chCurrentPage}_${blankIndex}`, input.value);
-      renderChOverallProgress();
-    });
-  });
-
-  renderChOverallProgress();
-  }
-
-/* ===============================
-   채점 / 정답 / 지우기
-=============================== */
-function gradeCh(){
-  const page = chData[chCurrentPage];
-  const blanks = document.querySelectorAll('#chPage .ch-blank');
-  const score = document.getElementById('chScore');
-  if(!page || !score) return;
-
-  let correct = 0;
-  let total = page.answers.length;
-
-  blanks.forEach((input, i) => {
-    chClearMark(input);
-    const ans = page.answers[i] || '';
-
-    if(chNorm(input.value) === chNorm(ans)){
-      input.classList.add('correct');
-      correct++;
-    }else{
-      input.classList.add('wrong');
-    }
-    renderChOverallProgress();
-  });
-
-  const percent = total ? Math.round(correct / total * 100) : 0;
-  score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
-}
-
-function showChAnswer(){
-  const page = chData[chCurrentPage];
-  const blanks = document.querySelectorAll('#chPage .ch-blank');
-  const score = document.getElementById('chScore');
-  if(!page || !score) return;
-
-  blanks.forEach((input, i) => {
-    input.value = page.answers[i] || '';
-    chClearMark(input);
-    input.classList.add('correct');
-    renderChOverallProgress();
-  });
-
-  const total = page.answers.length;
-  score.textContent = `정답률 : ${total} / ${total} (100%)`;
-}
-
-function clearCh(){
-  const blanks = document.querySelectorAll('#chPage .ch-blank');
-  const score = document.getElementById('chScore');
-  if(!score) return;
-
-  blanks.forEach(input => {
-    input.value = '';
-    chClearMark(input);
-    renderChOverallProgress();
-  });
-
-  score.textContent = '정답률 : 0 / 0 (0%)';
-}
-
-/* ===============================
-   페이지 이동
-=============================== */
-function prevChPage(){
-  if(chCurrentPage > 0){
-    chCurrentPage--;
-    renderChPage();
-  }
-}
-
-function nextChPage(){
-  if(chCurrentPage < chData.length - 1){
-    chCurrentPage++;
-    renderChPage();
-  }
-}
-function chNorm(text){
-  return String(text || '').replace(/\s+/g, '').trim();
-}
-
+/* 총론 전체 진도율 */
 function getChOverallProgress(){
   let total = 0;
   let correct = 0;
 
+  if(!Array.isArray(chData)) return { correct:0, total:0 };
+
   chData.forEach((page, pageIndex) => {
-    const answers = page.answers || [];
+    const answers = Array.isArray(page.answers) ? page.answers : [];
 
     answers.forEach((ans, ansIndex) => {
       total++;
-
       const saved = localStorage.getItem(`ch_input_${pageIndex}_${ansIndex}`) || '';
+
       if(chNorm(saved) === chNorm(ans)){
         correct++;
       }
@@ -9195,26 +9111,6 @@ function getChOverallProgress(){
 
   return { correct, total };
 }
-  function renderChOverallProgress(){
-  const box = document.getElementById('chOverallBox');
-  if(!box || !Array.isArray(chData)) return;
-
-  let total = 0;
-  let filled = 0;
-
-  chData.forEach((page, pageIndex) => {
-    const answers = Array.isArray(page.answers) ? page.answers : [];
-    total += answers.length;
-
-    answers.forEach((_, blankIndex) => {
-      const saved = localStorage.getItem(`ch_input_${pageIndex}_${blankIndex}`) || '';
-      if(chNorm(saved) !== '') filled++;
-    });
-  });
-
-  const percent = total ? Math.round(filled / total * 100) : 0;
-  box.textContent = `총론 전체 진도율 : ${filled} / ${total} (${percent}%)`;
-  }
 
 function renderChOverallProgress(){
   const box = document.getElementById('chOverallScore');
@@ -9224,13 +9120,55 @@ function renderChOverallProgress(){
   const percent = total ? Math.round(correct / total * 100) : 0;
 
   box.textContent = `총론 전체 진도율 : ${correct} / ${total} (${percent}%)`;
+}
+
+/* 페이지 렌더 */
+function renderChPage(){
+  const page = chData[chCurrentPage];
+  const chPage = document.getElementById('chPage');
+
+  if(!page || !chPage) return;
+
+  const htmlText = chBuildHTMLText(page.text || '', chCurrentPage);
+
+  chPage.innerHTML = `
+    <div class="competency-box">
+      <div class="competency-title">${page.title || `총론 ${chCurrentPage + 1}`}</div>
+
+      <div class="ch-text">${htmlText}</div>
+
+      <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="grade" onclick="gradeChPage()">채점</button>
+        <button class="grade" onclick="showChAnswer()">정답</button>
+        <button class="clear" onclick="clearChPage()">지우기</button>
+      </div>
+
+      <div id="chPageScore" class="score" style="margin-top:12px;">정답률 : 0%</div>
+
+      <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button class="clear" onclick="prevChPage()" ${chCurrentPage === 0 ? 'disabled' : ''}>이전</button>
+        <button class="grade" onclick="nextChPage()" ${chCurrentPage === chData.length - 1 ? 'disabled' : ''}>다음</button>
+        <div class="score">페이지 : ${chCurrentPage + 1} / ${chData.length}</div>
+      </div>
+    </div>
+  `;
+
+  document.querySelectorAll('#chPage .ch-blank').forEach((input, blankIndex) => {
+    input.addEventListener('input', () => {
+      localStorage.setItem(`ch_input_${chCurrentPage}_${blankIndex}`, input.value);
+      renderChOverallProgress();
+    });
+  });
+
   renderChOverallProgress();
 }
-  function gradeChPage(){
+
+/* 채점 */
+function gradeChPage(){
   const page = chData[chCurrentPage];
   if(!page) return;
 
-  const inputs = document.querySelectorAll('.ch-blank');
+  const inputs = document.querySelectorAll('#chPage .ch-blank');
   const answers = Array.isArray(page.answers) ? page.answers : [];
 
   let correct = 0;
@@ -9254,32 +9192,43 @@ function renderChOverallProgress(){
 
   const percent = total ? Math.round(correct / total * 100) : 0;
   const score = document.getElementById('chPageScore');
-  if(score) score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+  if(score){
+    score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+  }
+
+  renderChOverallProgress();
 }
 
+/* 정답 보기 */
 function showChAnswer(){
   const page = chData[chCurrentPage];
   if(!page) return;
 
-  const inputs = document.querySelectorAll('.ch-blank');
+  const inputs = document.querySelectorAll('#chPage .ch-blank');
   const answers = Array.isArray(page.answers) ? page.answers : [];
 
   inputs.forEach((input, i) => {
     input.value = answers[i] || '';
     localStorage.setItem(`ch_input_${chCurrentPage}_${i}`, input.value);
     chClearMark(input);
-    if(answers[i]) input.classList.add('correct');
+
+    if(answers[i]){
+      input.classList.add('correct');
+    }
   });
 
   const total = answers.length;
   const score = document.getElementById('chPageScore');
-  if(score) score.textContent = `정답률 : ${total} / ${total} (100%)`;
+  if(score){
+    score.textContent = `정답률 : ${total} / ${total} (100%)`;
+  }
 
   renderChOverallProgress();
 }
 
+/* 지우기 */
 function clearChPage(){
-  const inputs = document.querySelectorAll('.ch-blank');
+  const inputs = document.querySelectorAll('#chPage .ch-blank');
 
   inputs.forEach((input, i) => {
     input.value = '';
@@ -9288,11 +9237,14 @@ function clearChPage(){
   });
 
   const score = document.getElementById('chPageScore');
-  if(score) score.textContent = '정답률 : 0%';
+  if(score){
+    score.textContent = '정답률 : 0%';
+  }
 
   renderChOverallProgress();
 }
 
+/* 페이지 이동 */
 function prevChPage(){
   if(chCurrentPage > 0){
     chCurrentPage--;
@@ -9305,12 +9257,14 @@ function nextChPage(){
     chCurrentPage++;
     renderChPage();
   }
-  }
-/* ===============================
-   총론 탭 열 때 렌더
-=============================== */
+}
+
+/* 첫 렌더 */
 document.addEventListener('DOMContentLoaded', () => {
-  renderChPage();
+  if(Array.isArray(chData) && chData.length > 0){
+    renderChPage();
+    renderChOverallProgress();
+  }
 });
 </script>
 </body>
