@@ -2089,7 +2089,6 @@ function getPostsContainerByTab(tabId){
 }
   function canWriteInTab(tabId){
   if(tabId === 'home') return true;
-  if(tabId === 'share') return true;
 
   const problemTabs = [
     'kkorean','mmath','ssocial','sscience','eenglish',
@@ -2297,20 +2296,19 @@ function applyAdminUI(){
   }
 
   document.querySelectorAll('.admin-only').forEach(el=>{
-    el.style.display = 'none';
-  });
-
-  if(!isAdmin) return;
-
-  if(canWriteInTab(currentTabId)){
-    const currentContent = document.getElementById(currentTabId);
-    if(currentContent){
-      currentContent.querySelectorAll('.admin-only').forEach(el=>{
-        el.style.display = 'inline-block';
-      });
+    if(!isAdmin){
+      el.style.display = 'none';
+      return;
     }
+
+    if(el.classList.contains('write-btn')){
+      const tab = el.dataset.tab || currentTabId;
+      el.style.display = canWriteInTab(tab) ? 'inline-block' : 'none';
+    }else{
+      el.style.display = 'inline-block';
+    }
+  });
   }
-}
 
 /* ===============================
    Firestore 글 저장/불러오기
@@ -2373,22 +2371,32 @@ async function renderPostsForTab(tabId){
 
   if(requestId !== renderPostsRequestId) return;
 
-  const list = all
-    .map(p => {
-      if(!p.date || isNaN(Number(p.date))) p.date = Date.now();
-      p.views = p.views || 0;
-      p.likes = p.likes || 0;
-      p.comments = Array.isArray(p.comments) ? p.comments : [];
-      p.tabId = p.tabId || 'home';
-      p.pinned = p.pinned === true;
-      return p;
+  const normalized = all.map(p => {
+    return {
+      id: p.id,
+      title: p.title || '',
+      content: p.content || '',
+      date: (!p.date || isNaN(Number(p.date))) ? Date.now() : Number(p.date),
+      views: p.views || 0,
+      likes: p.likes || 0,
+      comments: Array.isArray(p.comments) ? p.comments : [],
+      pinned: p.pinned === true,
+      tabId: p.tabId || 'home'
+    };
+  });
+
+  const list = normalized
+    .filter(p => {
+      if(tabId === 'home'){
+        return (p.tabId === 'home' || !p.tabId);
+      }
+      return p.tabId === tabId;
     })
-    .filter(p => p.tabId === tabId)
     .sort((a,b)=>{
       const ap = a.pinned ? 1 : 0;
       const bp = b.pinned ? 1 : 0;
       if(bp !== ap) return bp - ap;
-      return (b.date || 0) - (a.date || 0);
+      return b.date - a.date;
     });
 
   const seen = new Set();
@@ -2452,18 +2460,6 @@ function addPostToDOM(post, container){
   content.style.display = 'none';
   content.style.marginTop = '8px';
 
-const attachmentBox = document.createElement('div');
-attachmentBox.style.display = 'none';
-attachmentBox.style.marginTop = '10px';
-
-if(post.attachment && post.attachment.url){
-  attachmentBox.innerHTML = `
-    <a href="${post.attachment.url}" target="_blank" rel="noopener noreferrer">
-      📎 ${post.attachment.name || '첨부파일'}
-    </a>
-  `;
-}
-  
   const actionRow = document.createElement('div');
   actionRow.style.display = 'none';
   actionRow.style.marginTop = '10px';
@@ -2518,7 +2514,10 @@ if(post.attachment && post.attachment.url){
 
   commentBtn.onclick = async () => {
     const txt = commentInput.value.trim();
-    if(!txt) return alert('댓글을 입력하세요');
+    if(!txt){
+      alert('댓글을 입력하세요');
+      return;
+    }
 
     const newComment = makeComment(txt);
     const newComments = [...(post.comments || []), newComment];
@@ -2594,9 +2593,8 @@ if(post.attachment && post.attachment.url){
     const isOpen = content.style.display === 'block';
 
     content.style.display = isOpen ? 'none' : 'block';
-attachmentBox.style.display = isOpen ? 'none' : (post.attachment ? 'block' : 'none');
-actionRow.style.display = isOpen ? 'none' : 'block';
-commentWrap.style.display = isOpen ? 'none' : 'block';
+    actionRow.style.display = isOpen ? 'none' : 'block';
+    commentWrap.style.display = isOpen ? 'none' : 'block';
 
     if(!isOpen){
       const newViews = (post.views || 0) + 1;
@@ -2608,16 +2606,16 @@ commentWrap.style.display = isOpen ? 'none' : 'block';
     }
   };
 
-  wrap.append(title, meta, content, attachmentBox, actionRow, commentWrap);
+  wrap.append(title, meta, content, actionRow, commentWrap);
 
   if(isAdmin){
     const edit = document.createElement('button');
     edit.textContent = '수정';
     edit.onclick = () => {
       editingPostId = post.id;
-      postTitle.value = post.title;
-      postContent.value = post.content;
-      writeModal.style.display = 'flex';
+      document.getElementById('postTitle').value = post.title;
+      document.getElementById('postContent').value = post.content;
+      document.getElementById('writeModal').style.display = 'flex';
     };
 
     const del = document.createElement('button');
@@ -2645,7 +2643,7 @@ commentWrap.style.display = isOpen ? 'none' : 'block';
   }
 
   container.appendChild(wrap);
-}
+    }
 /* ===============================
    글쓰기
 =============================== */
@@ -2670,57 +2668,46 @@ function closeWrite(){
 async function savePost(){
   const titleEl = document.getElementById('postTitle');
   const contentEl = document.getElementById('postContent');
-  const fileEl = document.getElementById('postFile');
 
-  const title = titleEl.value.trim();
-  const content = contentEl.value.trim();
-  const file = fileEl?.files?.[0] || null;
+  const title = titleEl ? titleEl.value.trim() : '';
+  const content = contentEl ? contentEl.value.trim() : '';
 
-  if(!title || !content) return alert('입력하세요');
-  if(!canWriteInTab(currentTabId)) return alert('이 탭에서는 글쓰기를 할 수 없습니다.');
+  if(!title || !content){
+    alert('제목과 내용을 입력하세요');
+    return;
+  }
 
-  let attachment = null;
+  const postData = {
+    title,
+    content,
+    tabId: currentTabId || 'home',
+    date: Date.now(),
+    views: 0,
+    likes: 0,
+    comments: [],
+    pinned: false
+  };
 
   try{
-    if(file){
-      attachment = await uploadPostFile(file);
-    }
-
     if(editingPostId){
-      const patch = { title, content };
-
-      if(attachment){
-        patch.attachment = attachment;
-      }
-
-      await updatePostById(editingPostId, patch);
-      editingPostId = null;
-
-    } else {
-      await addPost({
+      await updatePostById(editingPostId, {
         title,
-        content,
-        tabId: currentTabId,
-        subject: getSubjectByTab(currentTabId),
-        date: Date.now(),
-        views: 0,
-        likes: 0,
-        comments: [],
-        pinned: false,
-        attachment: attachment
+        content
       });
+      editingPostId = null;
+    }else{
+      await addPost(postData);
     }
 
     closeWrite();
-    titleEl.value = '';
-    contentEl.value = '';
-    if(fileEl) fileEl.value = '';
 
-    await renderPostsForTab(currentTabId);
+    if(titleEl) titleEl.value = '';
+    if(contentEl) contentEl.value = '';
 
-  }catch(e){
-    console.error(e);
-    alert('저장 중 오류가 발생했습니다.');
+    await renderPostsForTab(currentTabId || 'home');
+  }catch(err){
+    console.error(err);
+    alert('저장 실패');
   }
 }
 /* ===============================
