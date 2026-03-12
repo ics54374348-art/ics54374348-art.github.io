@@ -1052,7 +1052,100 @@ button{
   color:#666;
   margin-bottom:10px;
 }
+/* ===============================
+   총론 탭
+=============================== */
+.ch-page{
+  display:none;
+  background:#fff;
+  border-radius:14px;
+  padding:22px 20px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
+  margin-bottom:14px;
+}
 
+.ch-page.active{
+  display:block;
+}
+
+.ch-page-title{
+  font-size:19px;
+  font-weight:800;
+  margin-bottom:14px;
+  color:#212529;
+}
+
+.ch-paragraph{
+  font-size:16px;
+  line-height:1.9;
+  color:#343a40;
+  white-space:pre-wrap;
+}
+
+.ch-blank{
+  width:90px;
+  min-width:90px;
+  height:30px;
+  padding:4px 8px;
+  border:1px solid #ced4da;
+  border-radius:6px;
+  font-size:14px;
+  text-align:center;
+  vertical-align:middle;
+  box-sizing:border-box;
+}
+
+.ch-blank:focus{
+  outline:none;
+  border-color:#0d6efd;
+  background:#f8fbff;
+}
+
+.ch-actions{
+  margin-top:18px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.ch-score{
+  margin-top:12px;
+  padding:10px 12px;
+  background:#f1f3f5;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:700;
+  color:#495057;
+}
+
+.ch-page-btn{
+  min-width:38px;
+  height:38px;
+  border:none;
+  border-radius:8px;
+  background:#e9ecef;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.ch-page-btn.active{
+  background:#0d6efd;
+  color:#fff;
+}
+
+.ch-blank.correct{
+  background:#e6f4ea !important;
+  border-color:#198754 !important;
+  color:#198754 !important;
+  font-weight:700;
+}
+
+.ch-blank.wrong{
+  background:#fde8e8 !important;
+  border-color:#dc3545 !important;
+  color:#dc3545 !important;
+  font-weight:700;
+}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -1702,7 +1795,17 @@ if(window.wcs) {
   <!-- ===== 문제 탭들 (빈 화면 방지) ===== -->
 
 <div id="ppee" class="content"><h2>체육 신체활동</h2></div>
-<div id="ch" class="content"><h2>총론</h2></div>
+<div id="ch" class="content">
+  <h2></h2>
+
+  <div id="chPagesWrap"></div>
+
+  <div id="chPageNav" style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <button class="clear" onclick="chPrevPage()">이전</button>
+    <div id="chPageNumbers" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+    <button class="grade" onclick="chNextPage()">다음</button>
+  </div>
+</div>
   <div id="kkorean" class="content">
   <h2></h2>
   <button class="admin-only write-btn" data-tab="kkorean" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
@@ -8356,6 +8459,204 @@ document.addEventListener('DOMContentLoaded', () => {
       clearSubnav();
     }
   });
+});
+  /* ===============================
+   총론 탭 데이터
+   - text 안의 ( )를 자동으로 빈칸 input으로 변환
+   - answers 순서와 ( ) 순서를 매칭
+=============================== */
+const chData = [
+  {
+    title: "총론 1",
+    text: "1) 학교는 학년(군)별 교과(군)와 창의적 체험활동의 수업 시수를 ( ), ( )로/으로 자율적으로 편성할 수 있다.",
+    answers: ["학년별", "학기별"]
+  },
+  {
+    title: "총론 2",
+    text: "2) 학교는 학생의 ( )과/와 ( )을/를 고려하여 교육과정을 운영한다.",
+    answers: ["발달", "특성"]
+  }
+];
+
+let chCurrentPage = 0;
+
+/* 공백 무시 */
+function chNorm(text){
+  return String(text || '').replace(/\s+/g,'').trim();
+}
+
+/* 색 제거 */
+function chClearMark(el){
+  el.classList.remove('correct','wrong');
+  el.style.color = '';
+  el.style.background = '';
+}
+
+/* ( )를 input으로 변환 */
+function chRenderTextToHTML(text, pageIndex, answers){
+  let blankIndex = 0;
+
+  return String(text || '').replace(/\(\s*\)/g, () => {
+    const answer = answers?.[blankIndex] || '';
+    const safeAnswer = String(answer).replace(/"/g, '&quot;');
+
+    const html = `
+      <input
+        type="text"
+        class="ch-blank"
+        data-page="${pageIndex}"
+        data-blank-index="${blankIndex}"
+        data-answer="${safeAnswer}"
+      >
+    `;
+
+    blankIndex++;
+    return html;
+  });
+}
+
+/* 페이지 생성 */
+function buildChPages(){
+  const wrap = document.getElementById('chPagesWrap');
+  const pageNumWrap = document.getElementById('chPageNumbers');
+  if(!wrap || !pageNumWrap) return;
+
+  wrap.innerHTML = '';
+  pageNumWrap.innerHTML = '';
+
+  chData.forEach((page, i) => {
+    wrap.innerHTML += `
+      <div class="ch-page ${i === 0 ? 'active' : ''}" data-page-index="${i}">
+        <div class="ch-page-title">${page.title}</div>
+
+        <div class="ch-paragraph">
+          ${chRenderTextToHTML(page.text, i, page.answers)}
+        </div>
+
+        <div class="ch-actions">
+          <button class="grade" onclick="chGradePage(${i})">채점</button>
+          <button class="grade" onclick="chShowAnswer(${i})">정답</button>
+          <button class="clear" onclick="chClearPage(${i})">지우기</button>
+        </div>
+
+        <div class="ch-score" id="chScore${i}">정답률 : 0%</div>
+      </div>
+    `;
+
+    pageNumWrap.innerHTML += `
+      <button
+        type="button"
+        class="ch-page-btn ${i === 0 ? 'active' : ''}"
+        onclick="chGoPage(${i})"
+      >
+        ${i+1}
+      </button>
+    `;
+  });
+}
+
+/* 특정 페이지 input 가져오기 */
+function chGetInputs(pageIndex){
+  const page = document.querySelector(`.ch-page[data-page-index="${pageIndex}"]`);
+  if(!page) return [];
+  return [...page.querySelectorAll('.ch-blank')];
+}
+
+/* 점수 표시 */
+function chSetScore(pageIndex, correct, total){
+  const score = document.getElementById(`chScore${pageIndex}`);
+  if(!score) return;
+
+  const percent = total ? Math.round(correct / total * 100) : 0;
+  score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+}
+
+/* 채점 */
+function chGradePage(pageIndex){
+  const inputs = chGetInputs(pageIndex);
+  let correct = 0;
+  let total = 0;
+
+  inputs.forEach(input => {
+    const answer = input.dataset.answer || '';
+    if(!answer) return;
+
+    total++;
+    chClearMark(input);
+
+    if(chNorm(input.value) === chNorm(answer)){
+      input.classList.add('correct');
+      correct++;
+    }else{
+      input.classList.add('wrong');
+    }
+  });
+
+  chSetScore(pageIndex, correct, total);
+}
+
+/* 정답 보기 */
+function chShowAnswer(pageIndex){
+  const inputs = chGetInputs(pageIndex);
+  let total = 0;
+
+  inputs.forEach(input => {
+    const answer = input.dataset.answer || '';
+    if(!answer) return;
+
+    total++;
+    input.value = answer;
+    chClearMark(input);
+    input.classList.add('correct');
+  });
+
+  chSetScore(pageIndex, total, total);
+}
+
+/* 페이지 지우기 */
+function chClearPage(pageIndex){
+  const inputs = chGetInputs(pageIndex);
+
+  inputs.forEach(input => {
+    input.value = '';
+    chClearMark(input);
+  });
+
+  chSetScore(pageIndex, 0, 0);
+}
+
+/* 페이지 이동 */
+function chGoPage(pageIndex){
+  const pages = document.querySelectorAll('.ch-page');
+  const btns = document.querySelectorAll('.ch-page-btn');
+
+  if(pageIndex < 0 || pageIndex >= pages.length) return;
+  chCurrentPage = pageIndex;
+
+  pages.forEach((page, i) => {
+    page.classList.toggle('active', i === pageIndex);
+  });
+
+  btns.forEach((btn, i) => {
+    btn.classList.toggle('active', i === pageIndex);
+  });
+}
+
+function chPrevPage(){
+  if(chCurrentPage > 0){
+    chGoPage(chCurrentPage - 1);
+  }
+}
+
+function chNextPage(){
+  if(chCurrentPage < chData.length - 1){
+    chGoPage(chCurrentPage + 1);
+  }
+}
+
+/* 실행 */
+document.addEventListener('DOMContentLoaded', () => {
+  buildChPages();
 });
 </script>
 </body>
