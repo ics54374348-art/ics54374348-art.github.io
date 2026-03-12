@@ -1009,6 +1009,49 @@ button{
 }
 
 }
+  .posts-list > div{
+  background:#fff;
+  padding:14px;
+  margin:10px 0;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+
+.file-chip{
+  display:inline-block;
+  margin-top:10px;
+  padding:8px 12px;
+  background:#f1f3f5;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:600;
+  color:#495057;
+  text-decoration:none;
+}
+
+.file-chip:hover{
+  background:#e9ecef;
+}
+
+.post-subject-badge{
+  display:inline-block;
+  margin-right:8px;
+  padding:4px 10px;
+  border-radius:999px;
+  background:#e7f1ff;
+  color:#0d6efd;
+  font-size:12px;
+  font-weight:700;
+}
+
+.write-btn{
+  margin:10px 0 14px;
+}
+
+#share p{
+  color:#666;
+  margin-bottom:10px;
+}
 
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
@@ -1022,6 +1065,7 @@ if(window.wcs) {
   <!-- ✅ Firebase (compat: 기존 JS랑 잘 섞임) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
 </head>
 
 <body>
@@ -1107,6 +1151,7 @@ if(window.wcs) {
 <li onclick="show('ch')">총론</li>
   <li onclick="show('model-quiz')">모형 퀴즈</li>
   <li onclick="show('model-random-quiz')">모형 순서 퀴즈</li>
+  <li onclick="show('share')">자료 공유</li>
 <li onclick="show('check')">체크박스</li>
 </ul>
 </nav>
@@ -1138,11 +1183,14 @@ if(window.wcs) {
   </p>
 
   <div id="siteStats" style="margin:10px 0;"></div>
-  <button class="admin-only" onclick="openWrite()" style="display:none;">
+
+  <button class="admin-only write-btn" data-tab="home" onclick="openWrite()" style="display:none;">
     ✏️ 글쓰기
   </button>
-  <div id="posts"></div>
+
+  <div id="posts-home" class="posts-list"></div>
 </div>
+  
   <div id="model-quiz" class="content">
   <div class="competency-wrap">
     <div class="competency-box">
@@ -1266,6 +1314,32 @@ if(window.wcs) {
 <div id="model-bsj" class="content">
   <div class="competency-wrap" id="modelBsjWrap"></div>
 </div>
+  <div id="share" class="content">
+  <h2>자료 공유</h2>
+
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+    <select id="shareSubjectFilter" style="padding:10px 12px; border:1px solid #ced4da; border-radius:8px;">
+      <option value="">전체 과목</option>
+      <option value="국어">국어</option>
+      <option value="수학">수학</option>
+      <option value="사회">사회</option>
+      <option value="과학">과학</option>
+      <option value="영어">영어</option>
+      <option value="음악">음악</option>
+      <option value="미술">미술</option>
+      <option value="체육">체육</option>
+      <option value="도덕">도덕</option>
+      <option value="실과">실과</option>
+      <option value="바슬즐">바슬즐</option>
+    </select>
+
+    <button class="admin-only write-btn" data-tab="share" onclick="openWrite()" style="display:none;">
+      ✏️ 글쓰기
+    </button>
+  </div>
+
+  <div id="posts-share" class="posts-list"></div>
+  </div>
 <!-- 체크박스 -->
 <div id="check" class="content">
 <h2>전체 진도율</h2>
@@ -1606,8 +1680,19 @@ if(window.wcs) {
 <div id="writeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); justify-content:center; align-items:center;">
   <div style="background:#fff; padding:20px; border-radius:10px; width:400px;">
     <h3>글 작성</h3>
+
     <input id="postTitle" placeholder="제목" style="width:100%; margin-bottom:10px; padding:8px;">
+
     <textarea id="postContent" placeholder="내용" style="width:100%; height:120px; padding:8px;"></textarea>
+
+    <div style="margin-top:10px;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">첨부파일</label>
+      <input id="postFile" type="file" accept=".pdf,.hwp,.hwpx,.txt,.png,.jpg,.jpeg,.doc,.docx">
+      <div style="font-size:12px; color:#666; margin-top:6px;">
+        PDF, 한글, 워드, 이미지 업로드 가능
+      </div>
+    </div>
+
     <div style="margin-top:10px; text-align:right;">
       <button onclick="closeWrite()">취소</button>
       <button onclick="savePost()">저장</button>
@@ -1617,20 +1702,73 @@ if(window.wcs) {
 
   <!-- ===== 문제 탭들 (빈 화면 방지) ===== -->
 
-<div id="kkorean" class="content"><h2>국어 문제</h2></div>
-<div id="mmath" class="content"><h2>수학 문제</h2></div>
-<div id="ssocial" class="content"><h2>사회 문제</h2></div>
-<div id="sscience" class="content"><h2>과학 문제</h2></div>
-<div id="eenglish" class="content"><h2>영어 문제</h2></div>
-<div id="mmusic" class="content"><h2>음악 문제</h2></div>
-<div id="aart" class="content"><h2>미술 문제</h2></div>
-<div id="ppe" class="content"><h2>체육 문제</h2></div>
 <div id="ppee" class="content"><h2>체육 신체활동</h2></div>
-<div id="mmoral" class="content"><h2>도덕 문제</h2></div>
-<div id="ppa" class="content"><h2>실과 문제</h2></div>
-<div id="bbasle" class="content"><h2>바슬즐 문제</h2></div>
 <div id="ch" class="content"><h2>총론</h2></div>
-  
+  <div id="kkorean" class="content">
+  <h2>국어 문제</h2>
+  <button class="admin-only write-btn" data-tab="kkorean" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-kkorean" class="posts-list"></div>
+</div>
+
+<div id="mmath" class="content">
+  <h2>수학 문제</h2>
+  <button class="admin-only write-btn" data-tab="mmath" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-mmath" class="posts-list"></div>
+</div>
+
+<div id="ssocial" class="content">
+  <h2>사회 문제</h2>
+  <button class="admin-only write-btn" data-tab="ssocial" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-ssocial" class="posts-list"></div>
+</div>
+
+<div id="sscience" class="content">
+  <h2>과학 문제</h2>
+  <button class="admin-only write-btn" data-tab="sscience" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-sscience" class="posts-list"></div>
+</div>
+
+<div id="eenglish" class="content">
+  <h2>영어 문제</h2>
+  <button class="admin-only write-btn" data-tab="eenglish" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-eenglish" class="posts-list"></div>
+</div>
+
+<div id="mmusic" class="content">
+  <h2>음악 문제</h2>
+  <button class="admin-only write-btn" data-tab="mmusic" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-mmusic" class="posts-list"></div>
+</div>
+
+<div id="aart" class="content">
+  <h2>미술 문제</h2>
+  <button class="admin-only write-btn" data-tab="aart" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-aart" class="posts-list"></div>
+</div>
+
+<div id="ppe" class="content">
+  <h2>체육 문제</h2>
+  <button class="admin-only write-btn" data-tab="ppe" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-ppe" class="posts-list"></div>
+</div>
+
+<div id="mmoral" class="content">
+  <h2>도덕 문제</h2>
+  <button class="admin-only write-btn" data-tab="mmoral" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-mmoral" class="posts-list"></div>
+</div>
+
+<div id="ppa" class="content">
+  <h2>실과 문제</h2>
+  <button class="admin-only write-btn" data-tab="ppa" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-ppa" class="posts-list"></div>
+</div>
+
+<div id="bbasle" class="content">
+  <h2>바슬즐 문제</h2>
+  <button class="admin-only write-btn" data-tab="bbasle" onclick="openWrite()" style="display:none;">✏️ 글쓰기</button>
+  <div id="posts-bbasle" class="posts-list"></div>
+</div>
 <footer class="site-footer">
   <p>
     ⬇️ 문의 및 오류 제보는 아래 링크로 부탁드립니다. ⬇️<br>
@@ -1942,10 +2080,43 @@ const keyIdeaHTML = [
 
 });
 
-const postsEl = document.getElementById('posts');
 const statsEl = document.getElementById('siteStats');
 const ADMIN_PASSWORD = '20002026';
 
+
+function getPostsContainerByTab(tabId){
+  if(tabId === 'home') return document.getElementById('posts');
+  return document.getElementById(`posts-${tabId}`);
+}
+  function canWriteInTab(tabId){
+  if(tabId === 'home') return true;
+  if(tabId === 'share') return true;
+
+  const problemTabs = [
+    'kkorean','mmath','ssocial','sscience','eenglish',
+    'mmusic','aart','ppe','mmoral','ppa','bbasle'
+  ];
+
+  return problemTabs.includes(tabId);
+  }
+  function getSubjectByTab(tabId){
+  const map = {
+    home: '홈',
+    share: '자료공유',
+    kkorean: '국어',
+    mmath: '수학',
+    ssocial: '사회',
+    sscience: '과학',
+    eenglish: '영어',
+    mmusic: '음악',
+    aart: '미술',
+    ppe: '체육',
+    mmoral: '도덕',
+    ppa: '실과',
+    bbasle: '바슬즐'
+  };
+  return map[tabId] || '';
+  }
 /* ===============================
    ✅ Firebase 초기화
 =============================== */
@@ -1964,7 +2135,8 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.firestore();
-
+const storage = firebase.storage();
+  
 let isAdmin = false;
 let currentTabId = 'home';
 let editingPostId = null;
@@ -2057,6 +2229,7 @@ async function show(id){
   });
 
   target.classList.add('active');
+  applyAdminUI();
 
   // 게시글 탭일 때만 로드
   try{
@@ -2125,8 +2298,19 @@ function applyAdminUI(){
   }
 
   document.querySelectorAll('.admin-only').forEach(el=>{
-    el.style.display = isAdmin ? 'inline-block' : 'none';
+    el.style.display = 'none';
   });
+
+  if(!isAdmin) return;
+
+  if(canWriteInTab(currentTabId)){
+    const currentContent = document.getElementById(currentTabId);
+    if(currentContent){
+      currentContent.querySelectorAll('.admin-only').forEach(el=>{
+        el.style.display = 'inline-block';
+      });
+    }
+  }
 }
 
 /* ===============================
@@ -2149,6 +2333,23 @@ async function updatePostById(postId, patch){
 async function removePost(id){
   await db.collection('posts').doc(String(id)).delete();
 }
+  async function uploadPostFile(file){
+  if(!file) return null;
+
+  const fileName = `${Date.now()}_${file.name}`;
+  const ref = storage.ref().child(`post_files/${fileName}`);
+
+  await ref.put(file);
+
+  const url = await ref.getDownloadURL();
+
+  return {
+    name: file.name,
+    url,
+    type: file.type || '',
+    size: file.size || 0
+  };
+  }
 
 /* ===============================
    날짜 포맷
@@ -2163,14 +2364,14 @@ function formatDate(timestamp){
    탭별 렌더링
 =============================== */
 async function renderPostsForTab(tabId){
-  if(!postsEl) return;
+  const container = getPostsContainerByTab(tabId);
+  if(!container) return;
 
   const requestId = ++renderPostsRequestId;
-  postsEl.innerHTML = '';
+  container.innerHTML = '';
 
   const all = await loadPosts();
 
-  // 더 최신 렌더 요청이 있으면 이전 요청은 버림
   if(requestId !== renderPostsRequestId) return;
 
   const list = all
@@ -2187,7 +2388,6 @@ async function renderPostsForTab(tabId){
     .sort((a,b)=>{
       const ap = a.pinned ? 1 : 0;
       const bp = b.pinned ? 1 : 0;
-
       if(bp !== ap) return bp - ap;
       return (b.date || 0) - (a.date || 0);
     });
@@ -2199,10 +2399,10 @@ async function renderPostsForTab(tabId){
     return true;
   });
 
-  postsEl.innerHTML = '';
+  container.innerHTML = '';
 
   for(const post of uniqueList){
-    addPostToDOM(post);
+    addPostToDOM(post, container);
   }
 }
 
@@ -2233,7 +2433,7 @@ function makeComment(text){
 /* ===============================
    DOM 생성
 =============================== */
-function addPostToDOM(post){
+function addPostToDOM(post, container){
   const wrap = document.createElement('div');
 
   const title = document.createElement('div');
@@ -2253,6 +2453,18 @@ function addPostToDOM(post){
   content.style.display = 'none';
   content.style.marginTop = '8px';
 
+const attachmentBox = document.createElement('div');
+attachmentBox.style.display = 'none';
+attachmentBox.style.marginTop = '10px';
+
+if(post.attachment && post.attachment.url){
+  attachmentBox.innerHTML = `
+    <a href="${post.attachment.url}" target="_blank" rel="noopener noreferrer">
+      📎 ${post.attachment.name || '첨부파일'}
+    </a>
+  `;
+}
+  
   const actionRow = document.createElement('div');
   actionRow.style.display = 'none';
   actionRow.style.marginTop = '10px';
@@ -2383,8 +2595,9 @@ function addPostToDOM(post){
     const isOpen = content.style.display === 'block';
 
     content.style.display = isOpen ? 'none' : 'block';
-    actionRow.style.display = isOpen ? 'none' : 'block';
-    commentWrap.style.display = isOpen ? 'none' : 'block';
+attachmentBox.style.display = isOpen ? 'none' : (post.attachment ? 'block' : 'none');
+actionRow.style.display = isOpen ? 'none' : 'block';
+commentWrap.style.display = isOpen ? 'none' : 'block';
 
     if(!isOpen){
       const newViews = (post.views || 0) + 1;
@@ -2396,7 +2609,7 @@ function addPostToDOM(post){
     }
   };
 
-  wrap.append(title, meta, content, actionRow, commentWrap);
+  wrap.append(title, meta, content, attachmentBox, actionRow, commentWrap);
 
   if(isAdmin){
     const edit = document.createElement('button');
@@ -2432,49 +2645,85 @@ function addPostToDOM(post){
     wrap.append(edit, del, pin, notice);
   }
 
-  postsEl.appendChild(wrap);
+  container.appendChild(wrap);
 }
 /* ===============================
    글쓰기
 =============================== */
 function openWrite(){
   if(!isAdmin) return alert('관리자만 가능');
-  writeModal.style.display = 'flex';
+  if(!canWriteInTab(currentTabId)) return alert('이 탭에서는 글쓰기를 할 수 없습니다.');
+
+  const modal = document.getElementById('writeModal');
+  if(modal) modal.style.display = 'flex';
 }
 
 function closeWrite(){
-  writeModal.style.display = 'none';
+  const modal = document.getElementById('writeModal');
+  const fileInput = document.getElementById('postFile');
+
+  if(modal) modal.style.display = 'none';
+  if(fileInput) fileInput.value = '';
+
   editingPostId = null;
 }
 
 async function savePost(){
-  const title = postTitle.value.trim();
-  const content = postContent.value.trim();
+  const titleEl = document.getElementById('postTitle');
+  const contentEl = document.getElementById('postContent');
+  const fileEl = document.getElementById('postFile');
+
+  const title = titleEl.value.trim();
+  const content = contentEl.value.trim();
+  const file = fileEl?.files?.[0] || null;
+
   if(!title || !content) return alert('입력하세요');
+  if(!canWriteInTab(currentTabId)) return alert('이 탭에서는 글쓰기를 할 수 없습니다.');
 
-  if(editingPostId){
-    await updatePostById(editingPostId, { title, content });
-    editingPostId = null;
-  } else {
-    await addPost({
-  title,
-  content,
-  tabId: currentTabId,
-  date: Date.now(),
-  views: 0,
-  likes: 0,
-  comments: [],
-  pinned: false
-});
+  let attachment = null;
+
+  try{
+    if(file){
+      attachment = await uploadPostFile(file);
+    }
+
+    if(editingPostId){
+      const patch = { title, content };
+
+      if(attachment){
+        patch.attachment = attachment;
+      }
+
+      await updatePostById(editingPostId, patch);
+      editingPostId = null;
+
+    } else {
+      await addPost({
+        title,
+        content,
+        tabId: currentTabId,
+        subject: getSubjectByTab(currentTabId),
+        date: Date.now(),
+        views: 0,
+        likes: 0,
+        comments: [],
+        pinned: false,
+        attachment: attachment
+      });
+    }
+
+    closeWrite();
+    titleEl.value = '';
+    contentEl.value = '';
+    if(fileEl) fileEl.value = '';
+
+    await renderPostsForTab(currentTabId);
+
+  }catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
   }
-
-  closeWrite();
-  postTitle.value = '';
-  postContent.value = '';
-
-  await renderPostsForTab(currentTabId);
 }
-
 /* ===============================
    초기화
 =============================== */
