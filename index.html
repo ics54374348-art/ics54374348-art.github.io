@@ -1500,6 +1500,164 @@ button.clear:hover{
     min-width:0;
   }
 }
+  /* ===============================
+   총론 시간 배당 기준 표
+=============================== */
+.ch-time-table-wrap{
+  max-width:980px;
+  margin:24px auto 0;
+  background:#fff;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
+}
+
+.ch-time-table-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:14px;
+  color:#212529;
+}
+
+.ch-time-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  background:#fff;
+}
+
+.ch-time-table th,
+.ch-time-table td{
+  border:1px solid #bfc5cc;
+  padding:8px 6px;
+  text-align:center;
+  vertical-align:middle;
+  font-size:14px;
+  word-break:keep-all;
+}
+
+.ch-time-table th{
+  background:#d9d9d9;
+  font-weight:700;
+}
+
+.ch-time-table .left-col{
+  background:#efefef;
+  font-weight:700;
+}
+
+.ch-time-table .sum-row td{
+  background:#d9d9d9;
+  font-weight:700;
+}
+
+.ch-time-table .subject-stack{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.ch-time-table .subject-item{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:38px;
+  padding:4px 2px;
+  border:1px dashed #d6d6d6;
+  background:#fafafa;
+}
+
+.ch-time-table .subject-name{
+  font-size:14px;
+  font-weight:600;
+  color:#343a40;
+  white-space:nowrap;
+}
+
+.ch-time-num{
+  width:74px;
+  max-width:100%;
+  height:32px;
+  border:1px solid #ced4da;
+  border-radius:8px;
+  text-align:center;
+  font-size:14px;
+  box-sizing:border-box;
+  background:#fff;
+}
+
+.ch-time-num:focus{
+  outline:none;
+  border-color:#0d6efd;
+  background:#f8fbff;
+}
+
+.ch-time-num.correct{
+  background:#e6f4ea !important;
+  border-color:#198754 !important;
+  color:#198754 !important;
+  font-weight:700;
+}
+
+.ch-time-num.wrong{
+  background:#fde8e8 !important;
+  border-color:#dc3545 !important;
+  color:#dc3545 !important;
+  font-weight:700;
+}
+
+.ch-time-actions{
+  margin-top:14px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.ch-time-score{
+  margin-top:12px;
+  padding:10px 12px;
+  background:#f1f3f5;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:700;
+  color:#495057;
+}
+
+.ch-time-note{
+  margin-top:12px;
+  font-size:13px;
+  color:#666;
+  line-height:1.7;
+  white-space:pre-wrap;
+}
+
+@media (max-width:768px){
+  .ch-time-table-wrap{
+    padding:12px;
+    overflow-x:auto;
+  }
+
+  .ch-time-table{
+    min-width:760px;
+  }
+
+  .ch-time-table th,
+  .ch-time-table td{
+    font-size:13px;
+    padding:6px 4px;
+  }
+
+  .ch-time-num{
+    width:62px;
+    height:30px;
+    font-size:13px;
+  }
+
+  .ch-time-table .subject-name{
+    font-size:13px;
+  }
+}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -9381,12 +9539,15 @@ function renderChPage(){
   if(!page || !chPage) return;
 
   const htmlText = chBuildHTMLText(page.text || '', chCurrentPage);
+  const extraTableHTML = (chCurrentPage === CH_TABLE_PAGE_INDEX) ? buildChTimeTableHTML() : '';
 
   chPage.innerHTML = `
     <div class="competency-box">
       <div class="competency-title">${page.title || `총론 ${chCurrentPage + 1}`}</div>
 
       <div class="ch-text">${htmlText}</div>
+
+      ${extraTableHTML}
 
       <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
         <button class="grade" onclick="gradeChPage()">채점</button>
@@ -9413,6 +9574,7 @@ function renderChPage(){
 
   renderChOverallProgress();
 }
+
 
 /* 채점 */
 function gradeChPage(){
@@ -9517,6 +9679,257 @@ document.addEventListener('DOMContentLoaded', () => {
     renderChOverallProgress();
   }
 });
+  /* ===============================
+   총론 시간 배당 기준 표
+   - 원하는 총론 페이지에 삽입
+=============================== */
+
+const CH_TABLE_PAGE_INDEX = 7; 
+// ← 원하는 총론 페이지 번호로 바꿔
+// 첫 페이지 0, 둘째 1, 셋째 2 ...
+
+const chTimeTableAnswers = {
+  g12_korean: "482",
+  g12_math: "256",
+  g12_good: "144",
+  g12_wise: "224",
+  g12_health: "144",
+  g12_happy: "256",
+
+  g34_korean: "408",
+  g34_social: "272",
+  g34_math: "272",
+  g34_science: "204",
+  g34_pe: "204",
+  g34_art: "272",
+  g34_english: "136",
+
+  g56_korean: "408",
+  g56_social: "272",
+  g56_math: "272",
+  g56_science: "340",
+  g56_pe: "204",
+  g56_art: "272",
+  g56_english: "204",
+
+  sum12: "1506",
+  sum34: "1768",
+  sum56: "1972",
+
+  creative12: "238",
+  creative34: "204",
+  creative56: "204",
+
+  total12: "1744",
+  total34: "1972",
+  total56: "2176"
+};
+
+function chTimeNorm(v){
+  return String(v || '').replace(/\s+/g,'').trim();
+}
+
+function chTimeClearMark(el){
+  el.classList.remove('correct','wrong');
+}
+
+function chTimeInput(key){
+  return `<input type="text" class="ch-time-num" data-key="${key}">`;
+}
+
+function buildChTimeTableHTML(){
+  return `
+    <div class="ch-time-table-wrap" id="chTimeTableWrap">
+      <div class="ch-time-table-title">시간 배당 기준</div>
+
+      <table class="ch-time-table">
+        <tr>
+          <th colspan="2">구분</th>
+          <th>1~2학년</th>
+          <th>3~4학년</th>
+          <th>5~6학년</th>
+        </tr>
+
+        <tr>
+          <td class="left-col" rowspan="8">교과(군)</td>
+          <td class="left-col">국어</td>
+          <td rowspan="7">
+            <div class="subject-stack">
+              <div class="subject-item">
+                <span class="subject-name">국어</span>
+                ${chTimeInput('g12_korean')}
+              </div>
+              <div class="subject-item">
+                <span class="subject-name">수학</span>
+                ${chTimeInput('g12_math')}
+              </div>
+              <div class="subject-item">
+                <span class="subject-name">바른 생활</span>
+                ${chTimeInput('g12_good')}
+              </div>
+              <div class="subject-item">
+                <span class="subject-name">슬기로운 생활</span>
+                ${chTimeInput('g12_wise')}
+              </div>
+              <div class="subject-item">
+                <span class="subject-name">건강한 생활</span>
+                ${chTimeInput('g12_health')}
+              </div>
+              <div class="subject-item">
+                <span class="subject-name">즐거운 생활</span>
+                ${chTimeInput('g12_happy')}
+              </div>
+            </div>
+          </td>
+          <td>${chTimeInput('g34_korean')}</td>
+          <td>${chTimeInput('g56_korean')}</td>
+        </tr>
+
+        <tr>
+          <td class="left-col">사회/도덕</td>
+          <td>${chTimeInput('g34_social')}</td>
+          <td>${chTimeInput('g56_social')}</td>
+        </tr>
+
+        <tr>
+          <td class="left-col">수학</td>
+          <td>${chTimeInput('g34_math')}</td>
+          <td>${chTimeInput('g56_math')}</td>
+        </tr>
+
+        <tr>
+          <td class="left-col">과학/실과</td>
+          <td>${chTimeInput('g34_science')}</td>
+          <td>${chTimeInput('g56_science')}</td>
+        </tr>
+
+        <tr>
+          <td class="left-col">체육</td>
+          <td>${chTimeInput('g34_pe')}</td>
+          <td>${chTimeInput('g56_pe')}</td>
+        </tr>
+
+        <tr>
+          <td class="left-col">예술(음악/미술)</td>
+          <td>${chTimeInput('g34_art')}</td>
+          <td>${chTimeInput('g56_art')}</td>
+        </tr>
+
+        <tr>
+          <td class="left-col">영어</td>
+          <td>${chTimeInput('g34_english')}</td>
+          <td>${chTimeInput('g56_english')}</td>
+        </tr>
+
+        <tr class="sum-row">
+          <td>소계</td>
+          <td>${chTimeInput('sum12')}</td>
+          <td>${chTimeInput('sum34')}</td>
+          <td>${chTimeInput('sum56')}</td>
+        </tr>
+
+        <tr>
+          <td class="left-col" colspan="2">창의적 체험활동</td>
+          <td>${chTimeInput('creative12')}</td>
+          <td>${chTimeInput('creative34')}</td>
+          <td>${chTimeInput('creative56')}</td>
+        </tr>
+
+        <tr class="sum-row">
+          <td colspan="2">학년군별 총 수업 시간 수</td>
+          <td>${chTimeInput('total12')}</td>
+          <td>${chTimeInput('total34')}</td>
+          <td>${chTimeInput('total56')}</td>
+        </tr>
+      </table>
+
+      <div class="ch-time-actions">
+        <button class="grade" onclick="gradeChTimeTable()">채점</button>
+        <button class="grade" onclick="showChTimeTableAnswer()">정답</button>
+        <button class="clear" onclick="clearChTimeTable()">지우기</button>
+      </div>
+
+      <div id="chTimeTableScore" class="ch-time-score">정답률 : 0%</div>
+
+      <div class="ch-time-note">① 1시간의 수업은 40분을 원칙으로 하되, 기후 및 계절, 학생의 발달 정도, 학습 내용의 성격, 학교 실정 등을 고려하여 탄력적으로 편성·운영할 수 있다.
+② 학년군의 교과(군)별 및 창의적 체험활동 시간 배당은 연간 34주를 기준으로 2년간의 기준 수업 시수를 나타낸 것이다.
+③ 학년군별 총 수업 시간 수는 최소 수업 시수를 나타낸 것이다.
+④ 실과의 수업 시간은 5~6학년 과학/실과의 수업 시수에만 포함된다.
+⑤ 정보교육은 실과의 정보영역 시수와 학교자율시간 등을 활용하여 34시간 이상 편성·운영한다.</div>
+    </div>
+  `;
+}
+
+function gradeChTimeTable(){
+  const wrap = document.getElementById('chTimeTableWrap');
+  if(!wrap) return;
+
+  const inputs = wrap.querySelectorAll('.ch-time-num');
+  let total = 0;
+  let correct = 0;
+
+  inputs.forEach(input=>{
+    const key = input.dataset.key;
+    const ans = chTimeTableAnswers[key];
+    if(!ans) return;
+
+    total++;
+    chTimeClearMark(input);
+
+    if(chTimeNorm(input.value) === chTimeNorm(ans)){
+      input.classList.add('correct');
+      correct++;
+    }else{
+      input.classList.add('wrong');
+    }
+  });
+
+  const percent = total ? Math.round(correct / total * 100) : 0;
+  const score = document.getElementById('chTimeTableScore');
+  if(score){
+    score.textContent = `정답률 : ${correct} / ${total} (${percent}%)`;
+  }
+}
+
+function showChTimeTableAnswer(){
+  const wrap = document.getElementById('chTimeTableWrap');
+  if(!wrap) return;
+
+  const inputs = wrap.querySelectorAll('.ch-time-num');
+  let total = 0;
+
+  inputs.forEach(input=>{
+    const key = input.dataset.key;
+    const ans = chTimeTableAnswers[key];
+    if(!ans) return;
+
+    total++;
+    input.value = ans;
+    chTimeClearMark(input);
+    input.classList.add('correct');
+  });
+
+  const score = document.getElementById('chTimeTableScore');
+  if(score){
+    score.textContent = `정답률 : ${total} / ${total} (100%)`;
+  }
+}
+
+function clearChTimeTable(){
+  const wrap = document.getElementById('chTimeTableWrap');
+  if(!wrap) return;
+
+  const inputs = wrap.querySelectorAll('.ch-time-num');
+  inputs.forEach(input=>{
+    input.value = '';
+    chTimeClearMark(input);
+  });
+
+  const score = document.getElementById('chTimeTableScore');
+  if(score){
+    score.textContent = '정답률 : 0%';
+  }
+}
 /* ===============================
    체육 신체활동 34학년 56학년 2페이지형
 =============================== */
