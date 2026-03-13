@@ -901,114 +901,198 @@ button.clear:hover{
   /* ======================================================
    📱 임고AZ 모바일 최적화 (PC 영향 없음)
 ====================================================== */
-
 @media (max-width:768px){
 
-/* 전체 여백 */
-.content{
-  padding:18px 14px;
-}
+  /* 전체 여백 */
+  .content{
+    padding:18px 14px;
+  }
 
-/* 헤더 */
-header{
-  font-size:20px;
-  padding:14px 16px;
-}
+  /* 헤더 */
+  header{
+    font-size:20px;
+    padding:14px 16px;
+  }
 
-/* 네비 메뉴 스크롤 */
-nav ul{
-  overflow-x:auto;
-  white-space:nowrap;
-}
+  /* 네비 메뉴 스크롤 */
+  nav ul{
+    overflow-x:auto;
+    white-space:nowrap;
+  }
 
-nav li{
-  padding:12px 14px;
-  font-size:14px;
-}
+  nav li{
+    padding:12px 14px;
+    font-size:14px;
+  }
 
-/* 서브메뉴 */
-.sub{
-  min-width:120px;
-}
+  /* 서브메뉴 */
+  .sub{
+    min-width:120px;
+  }
 
-/* 제목 */
-.nt-title{
-  font-size:17px;
-}
+  /* 제목 */
+  .nt-title{
+    font-size:17px;
+    line-height:1.5;
+    flex-wrap:wrap;
+  }
 
-/* 카드 */
-.competency-box{
-  padding:14px;
-}
+  /* 카드 */
+  .competency-box{
+    padding:14px;
+  }
 
-/* textarea */
-textarea{
-  font-size:14px;
-  min-height:36px;
-}
+  /* 기본 textarea */
+  textarea{
+    font-size:14px;
+    min-height:36px;
+  }
 
-/* 버튼 */
-button{
-  padding:10px 12px;
-  font-size:14px;
-}
+  /* 버튼 */
+  button{
+    padding:10px 12px;
+    font-size:14px;
+  }
 
-/* 표 가로 스크롤 */
-.subject-table{
-  display:block;
-  overflow-x:auto;
-  white-space:nowrap;
-}
+  /* ✅ 표 바깥 래퍼만 스크롤 */
+  .table-wrap,
+  .social-table,
+  .bs-table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
 
-/* 표 셀 */
-.subject-table th,
-.subject-table td{
-  font-size:13px;
-  padding:8px;
-}
+  /* ✅ 표 자체는 표처럼 유지 */
+  .subject-table,
+  .social-table table,
+  #basle table,
+  #social table{
+    display:table !important;
+    width:100%;
+    min-width:720px;         /* 긴 표는 스크롤되되 안 겹치게 */
+    table-layout:fixed;
+    border-collapse:collapse;
+    white-space:normal !important;
+  }
 
-/* 입력칸 */
-.subject-table textarea{
-  min-height:34px;
-  font-size:13px;
-}
+  /* 표 셀 */
+  .subject-table th,
+  .subject-table td,
+  .social-table th,
+  .social-table td,
+  #basle th,
+  #basle td,
+  #social th,
+  #social td{
+    font-size:13px;
+    padding:8px;
+    white-space:normal !important;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+    vertical-align:top;
+  }
 
-/* 역량 카드 */
-.competency-title{
-  font-size:16px;
-}
+  /* 긴 문장 칸 */
+  .idea-block,
+  .keyidea,
+  .ch-text{
+    white-space:normal !important;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+    line-height:1.7;
+  }
 
-/* 검색창 */
-#siteSearchBox{
-  padding:12px;
-}
+  /* 입력칸 공통 */
+  .subject-table textarea,
+  .subject-table input,
+  .subject-table .blank,
+  .social-table textarea,
+  #basle textarea,
+  #basle .blank,
+  #social textarea{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+  }
 
-#siteSearchInput{
-  font-size:14px;
-}
+  /* 여러 칸 들어가는 레이아웃 안정화 */
+  .rows,
+  .two-col,
+  .two-col .col,
+  .g34,
+  .g56{
+    min-width:0;
+  }
 
-/* 퀴즈 버튼 */
-.random-quiz-row{
-  flex-direction:column;
-  align-items:flex-start;
-}
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+  }
 
-.random-quiz-row button{
-  width:100%;
-}
+  /* textarea 튀어나옴 방지 */
+  .subject-table textarea,
+  .social-table textarea{
+    resize:vertical;
+    overflow-wrap:break-word;
+    word-break:break-word;
+  }
 
-/* 게시글 */
-#posts div{
-  padding:12px;
-}
+  /* 바슬즐 핵심아이디어 빈칸 */
+  .keyidea .ki-input{
+    width:72px !important;
+    max-width:72px !important;
+    display:inline-block;
+    vertical-align:middle;
+  }
 
-/* footer */
-.site-footer{
-  font-size:13px;
-  padding:18px;
-}
+  /* 총론 빈칸 */
+  .ch-blank{
+    width:78px;
+    min-width:78px;
+    max-width:78px;
+    height:32px;
+    font-size:14px;
+    margin:0 3px;
+  }
 
-}
+  /* 역량 카드 */
+  .competency-title{
+    font-size:16px;
+  }
+
+  /* 검색창 */
+  #siteSearchBox{
+    padding:12px;
+  }
+
+  #siteSearchInput{
+    font-size:14px;
+  }
+
+  /* 퀴즈 버튼 */
+  .random-quiz-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .random-quiz-row button{
+    width:100%;
+  }
+
+  /* 게시글 */
+  #posts div{
+    padding:12px;
+  }
+
+  /* footer */
+  .site-footer{
+    font-size:13px;
+    padding:18px;
+  }
+  }
+
   .posts-list > div{
   background:#fff;
   padding:14px;
