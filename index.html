@@ -1325,7 +1325,181 @@ button.clear:hover{
 .ch-blank.wrong{
   background:#fde8e8 !important;
   border-color:#dc3545 !important;
-} 
+}
+  /* ===============================
+   체육 신체활동 2페이지 표
+=============================== */
+.pe-act-card{
+  background:#fff;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+  max-width:1200px;
+  margin:auto;
+}
+
+.pe-act-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:14px;
+}
+
+.pe-act-table-wrap{
+  overflow-x:auto;
+}
+
+.pe-act-table{
+  width:100%;
+  min-width:900px;
+  border-collapse:separate;
+  border-spacing:0;
+  table-layout:fixed;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.pe-act-table th,
+.pe-act-table td{
+  border:1px solid #e5e7eb;
+  padding:10px 8px;
+  text-align:center;
+  vertical-align:middle;
+  font-size:14px;
+  line-height:1.5;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+
+.pe-act-table th{
+  background:#f4f7fb;
+  font-weight:700;
+}
+
+.pe-act-fixed{
+  background:#f8f9fa;
+  font-weight:600;
+}
+
+.pe-act-grade{
+  background:#fff6dd !important;
+  color:#8a5a00;
+  font-weight:700;
+}
+
+.pe-act-input{
+  width:100%;
+  min-height:38px;
+  border:1px solid #cfd8e3;
+  border-radius:10px;
+  box-sizing:border-box;
+  padding:8px 10px;
+  font-size:14px;
+  text-align:center;
+  resize:none;
+  background:#f8fbff;
+}
+
+.pe-act-input:focus{
+  outline:none;
+  border-color:#3b82f6;
+  background:#fff;
+}
+
+.pe-act-input.correct{
+  background:#e6f4ea !important;
+  border-color:#198754 !important;
+  color:#198754 !important;
+  font-weight:700;
+}
+
+.pe-act-input.wrong{
+  background:#fde8e8 !important;
+  border-color:#dc3545 !important;
+  color:#dc3545 !important;
+  font-weight:700;
+}
+
+.pe-act-actions{
+  margin-top:14px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.pe-act-actions button{
+  min-width:100px;
+  height:42px;
+  border:none;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.pe-act-actions .btn-grade,
+.pe-act-actions .btn-answer,
+.pe-act-actions .btn-page{
+  background:#0d6efd;
+  color:#fff;
+}
+
+.pe-act-actions .btn-clear{
+  background:#9ea4aa;
+  color:#fff;
+}
+
+.pe-act-score{
+  margin-top:12px;
+  width:100%;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  border-radius:10px;
+  background:#f4f6f8;
+  border:1px solid #e1e5ea;
+  font-size:14px;
+  font-weight:700;
+  color:#495057;
+  box-sizing:border-box;
+}
+
+.pe-act-page-nav{
+  margin-top:16px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+@media (max-width:768px){
+  .pe-act-card{
+    padding:14px;
+  }
+
+  .pe-act-title{
+    font-size:16px;
+  }
+
+  .pe-act-table th,
+  .pe-act-table td{
+    font-size:13px;
+    padding:8px 6px;
+  }
+
+  .pe-act-input{
+    min-height:34px;
+    font-size:13px;
+    padding:6px 8px;
+  }
+
+  .pe-act-actions button{
+    flex:1 1 calc(33.333% - 8px);
+    min-width:0;
+  }
+}
 </style>
 <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
 <script type="text/javascript">
@@ -1974,7 +2148,9 @@ if(window.wcs) {
 
   <!-- ===== 문제 탭들 (빈 화면 방지) ===== -->
 
-<div id="ppee" class="content"><h2>체육 신체활동</h2></div>
+<div id="ppee" class="content">
+  <div id="peActPage"></div>
+</div>
 <div id="ch" class="content">
   <div id="chOverallScore" class="score" style="margin-bottom:16px;">
     총론 전체 진도율 : 0 / 0 (0%)
@@ -9340,6 +9516,291 @@ document.addEventListener('DOMContentLoaded', () => {
     renderChPage();
     renderChOverallProgress();
   }
+});
+/* ===============================
+   체육 신체활동 34학년 56학년 2페이지형
+=============================== */
+
+const peActPages = [
+  {
+    title: "체육 - 신체활동 (3~4학년)",
+    rows: [
+      ["", "세부 영역", "신체활동 예시", "신체 활동 예시"],
+      ["운동", "기본 체력운동", "체력운동 관련 기본 움직임 기술", "걷기, 달리기, 매달리기, 버티기, 굽히기, 밀기, 당기기"],
+      ["", "", "체력운동 기능", "오래 달리거나 걷기, 팔굽혀펴기, 윗몸말아올리기, 왕복달리기"],
+      ["", "건강 운동 및 생활 습관", "건강 생활 습관", "자세, 체중 및 체형 관리, 위생, 식습관, 정서 관리 활동"],
+      ["", "", "운동 생활 습관", "맨손체조, 산책, 계단 오르기, 생활 주변 운동기구 활용하기"],
+
+      ["스포츠", "기본 움직임의 기초 기술", "이동 움직임", "방향 전환 달리기, 뛰기, 구르기, 옆에서 이동하기"],
+      ["", "", "비이동 움직임", "균형잡기, 구부리기, 회전하기, 흔들기"],
+      ["", "", "조작 움직임", "던지기, 굴리기, 치기, 받기, 차기, 튀기기, 물기, 타기"],
+      ["", "스포츠 유형별 움직임 기술", "기술형 스포츠 유형별 움직임", "앞구르기, 뜀틀기, 전력 달리기, 배영차기, 발차기"],
+      ["", "", "전략형 스포츠 유형별 움직임", "공던지기와 잡기, 공튕기기, 공차기와 멈추기, 공튀기와 받기, 라켓으로 쳐기"],
+      ["", "", "생태형 스포츠 유형별 움직임", "균형 잡고 이동하기, 타고 버티기, 잡고 오르기"],
+
+      ["표현", "기본 움직임의 기초 표현", "이동 움직임 표현", "워킹, 점핑, 호핑, 스키핑, 걸러닝, 러닝, 클라이밍"],
+      ["", "", "비이동 움직임 표현", "튀기, 접기, 비틀기, 제자리 돌기, 펼기, 흔들기"],
+      ["", "", "조작 움직임 표현", "들기, 밀리기"],
+      ["", "기본 움직임의 표현 방법", "추상 표현", "언어 표현, 느낌이나 생각 표현하기"],
+      ["", "", "모방 표현", "사물 표현, 인물 표현, 사건 현상 표현하기"],
+      ["", "", "리듬 표현", "박자, 강약, 빠르기, 패턴에 따라 표현하기"],
+      ["", "", "도구 표현", "공, 공, 천, 줄, 리본막대 등을 활용하여 표현하기"]
+    ]
+  },
+
+  {
+    title: "체육 - 신체활동 (5~6학년)",
+    rows: [
+      ["", "세부 영역", "신체활동 예시", "신체 활동 예시 (~ 등 제외 )"],
+      ["운동", "기본 체력운동", "체력운동 관련 기본 움직임 기술", ""],
+      ["", "", "체력운동 기능", ""],
+      ["", "건강 운동 및 생활 습관", "건강 생활 습관", ""],
+      ["", "", "운동 생활 습관", ""],
+
+      ["스포츠", "기본 움직임의 기초 기술", "이동 움직임", ""],
+      ["", "", "비이동 움직임", ""],
+      ["", "", "조작 움직임", ""],
+      ["", "스포츠 유형별 움직임 기술", "기술형 스포츠 유형별 움직임", ""],
+      ["", "", "전략형 스포츠 유형별 움직임", ""],
+      ["", "", "생태형 스포츠 유형별 움직임", ""],
+
+      ["표현", "기본 움직임의 기초 표현", "이동 움직임 표현", ""],
+      ["", "", "비이동 움직임 표현", ""],
+      ["", "", "조작 움직임 표현", ""],
+      ["", "기본 움직임의 표현 방법", "추상 표현", ""],
+      ["", "", "모방 표현", ""],
+      ["", "", "리듬 표현", ""],
+      ["", "", "도구 표현", ""],
+      ["", "", "", ""],
+      ["", "", "", ""]
+    ]
+  }
+];
+
+/* 파란칸으로 만들 셀 위치
+   rowIndex, colIndex
+   0부터 시작
+   헤더 제외하고 파란칸만 input 처리
+*/
+const peActBlueCells = [
+  // 1페이지
+  [
+    [1,1],[1,2],[1,3],
+    [2,2],[2,3],
+    [3,1],[3,2],[3,3],
+    [4,2],[4,3],
+
+    [5,1],[5,2],[5,3],
+    [6,2],[6,3],
+    [7,2],[7,3],
+    [8,1],[8,2],[8,3],
+    [9,2],[9,3],
+    [10,2],[10,3],
+
+    [11,1],[11,2],[11,3],
+    [12,2],[12,3],
+    [13,2],[13,3],
+    [14,1],[14,2],[14,3],
+    [15,2],[15,3],
+    [16,2],[16,3],
+    [17,2],[17,3]
+  ],
+  // 2페이지
+  [
+    [1,1],[1,2],[1,3],
+    [2,2],[2,3],
+    [3,1],[3,2],[3,3],
+    [4,2],[4,3],
+
+    [5,1],[5,2],[5,3],
+    [6,2],[6,3],
+    [7,2],[7,3],
+    [8,1],[8,2],[8,3],
+    [9,2],[9,3],
+    [10,2],[10,3],
+
+    [11,1],[11,2],[11,3],
+    [12,2],[12,3],
+    [13,2],[13,3],
+    [14,1],[14,2],[14,3],
+    [15,2],[15,3],
+    [16,2],[16,3],
+    [17,2],[17,3]
+  ]
+];
+
+let peActCurrentPage = 0;
+
+function peActNorm(t){
+  return String(t || '').replace(/\s+/g,'').trim();
+}
+
+function peActClearMark(el){
+  el.classList.remove('correct','wrong');
+}
+
+function peActGetAnswer(pageIndex, rowIndex, colIndex){
+  return peActPages[pageIndex]?.rows?.[rowIndex]?.[colIndex] || '';
+}
+
+function peActIsBlueCell(pageIndex, rowIndex, colIndex){
+  return (peActBlueCells[pageIndex] || []).some(([r,c]) => r === rowIndex && c === colIndex);
+}
+
+function renderPeActPage(){
+  const wrap = document.getElementById('peActPage');
+  if(!wrap) return;
+
+  const page = peActPages[peActCurrentPage];
+  const rows = page.rows;
+
+  let tableHTML = `
+    <div class="pe-act-card">
+      <div class="pe-act-title">${page.title}</div>
+      <div class="pe-act-table-wrap">
+        <table class="pe-act-table">
+  `;
+
+  rows.forEach((row, rIdx) => {
+    tableHTML += '<tr>';
+
+    row.forEach((cell, cIdx) => {
+      const tag = rIdx === 0 ? 'th' : 'td';
+
+      let className = '';
+      if(rIdx > 0 && cIdx === 0 && cell) className += ' pe-act-grade';
+      else if(rIdx > 0) className += ' pe-act-fixed';
+
+      if(peActIsBlueCell(peActCurrentPage, rIdx, cIdx)){
+        const saved = localStorage.getItem(`peAct_${peActCurrentPage}_${rIdx}_${cIdx}`) || '';
+        tableHTML += `
+          <td>
+            <textarea
+              class="pe-act-input"
+              data-r="${rIdx}"
+              data-c="${cIdx}"
+            >${saved}</textarea>
+          </td>
+        `;
+      }else{
+        tableHTML += `<${tag} class="${className.trim()}">${cell}</${tag}>`;
+      }
+    });
+
+    tableHTML += '</tr>';
+  });
+
+  tableHTML += `
+        </table>
+      </div>
+
+      <div class="pe-act-actions">
+        <button class="btn-grade" onclick="gradePeActPage()">채점</button>
+        <button class="btn-answer" onclick="showPeActAnswer()">정답</button>
+        <button class="btn-clear" onclick="clearPeActPage()">지우기</button>
+      </div>
+
+      <div id="peActScore" class="pe-act-score">정답률 : 0%</div>
+
+      <div class="pe-act-page-nav">
+        <button class="btn-clear" onclick="prevPeActPage()" ${peActCurrentPage === 0 ? 'disabled' : ''}>이전</button>
+        <button class="btn-page" onclick="nextPeActPage()" ${peActCurrentPage === peActPages.length - 1 ? 'disabled' : ''}>다음</button>
+        <div class="pe-act-score">페이지 : ${peActCurrentPage + 1} / ${peActPages.length}</div>
+      </div>
+    </div>
+  `;
+
+  wrap.innerHTML = tableHTML;
+
+  wrap.querySelectorAll('.pe-act-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const r = input.dataset.r;
+      const c = input.dataset.c;
+      localStorage.setItem(`peAct_${peActCurrentPage}_${r}_${c}`, input.value);
+    });
+  });
+}
+
+function gradePeActPage(){
+  const inputs = document.querySelectorAll('#peActPage .pe-act-input');
+  let total = 0;
+  let correct = 0;
+
+  inputs.forEach(input => {
+    peActClearMark(input);
+
+    const r = Number(input.dataset.r);
+    const c = Number(input.dataset.c);
+    const ans = peActGetAnswer(peActCurrentPage, r, c);
+
+    if(!ans) return;
+
+    total++;
+    if(peActNorm(input.value) === peActNorm(ans)){
+      input.classList.add('correct');
+      correct++;
+    }else{
+      input.classList.add('wrong');
+    }
+  });
+
+  const percent = total ? Math.round(correct / total * 100) : 0;
+  document.getElementById('peActScore').textContent =
+    `정답률 : ${correct} / ${total} (${percent}%)`;
+}
+
+function showPeActAnswer(){
+  const inputs = document.querySelectorAll('#peActPage .pe-act-input');
+  let total = 0;
+
+  inputs.forEach(input => {
+    const r = Number(input.dataset.r);
+    const c = Number(input.dataset.c);
+    const ans = peActGetAnswer(peActCurrentPage, r, c);
+
+    peActClearMark(input);
+
+    if(!ans) return;
+    total++;
+    input.value = ans;
+    input.classList.add('correct');
+    localStorage.setItem(`peAct_${peActCurrentPage}_${r}_${c}`, ans);
+  });
+
+  document.getElementById('peActScore').textContent =
+    `정답률 : ${total} / ${total} (100%)`;
+}
+
+function clearPeActPage(){
+  const inputs = document.querySelectorAll('#peActPage .pe-act-input');
+
+  inputs.forEach(input => {
+    const r = input.dataset.r;
+    const c = input.dataset.c;
+    input.value = '';
+    peActClearMark(input);
+    localStorage.removeItem(`peAct_${peActCurrentPage}_${r}_${c}`);
+  });
+
+  document.getElementById('peActScore').textContent = '정답률 : 0%';
+}
+
+function prevPeActPage(){
+  if(peActCurrentPage > 0){
+    peActCurrentPage--;
+    renderPeActPage();
+  }
+}
+
+function nextPeActPage(){
+  if(peActCurrentPage < peActPages.length - 1){
+    peActCurrentPage++;
+    renderPeActPage();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPeActPage();
 });
 </script>
 </body>
